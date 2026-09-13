@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}Projects — LicenseLens{% endblock %}
+{% block nav_projects %}active{% endblock %}
+{% block page_title %}Projects{% endblock %}
+{% block page_subtitle %}{{ projects|length }} repository workspaces active{% endblock %}
+
+{% block topbar_actions %}
+<a href="{% url 'project_create' %}" class="btn btn-primary btn-sm">
+  + New Project
+</a>
+{% endblock %}
+
+{% block content %}
+
+{% if projects %}
+<div class="projects-grid">
+  {% for project in projects %}
+  <div class="project-card">
+    <div class="project-card-header">
+      <div>
+        <div class="project-name">{{ project.name }}</div>
+        {% if project.description %}
+        <div class="project-desc">{{ project.description }}</div>
+        {% endif %}
+      </div>
+      {% if project.risk_level != 'UNKNOWN' %}
+      <span class="risk-level-badge {{ project.risk_level }}">
+        {% if project.risk_level == 'CRITICAL' %}🔴{% elif project.risk_level == 'HIGH' %}🟠{% elif project.risk_level == 'MEDIUM' %}🟡{% else %}🟢{% endif %}
+        {{ project.risk_level }}
+      </span>
+      {% else %}
+      <span class="badge badge-secondary">No scan</span>
+      {% endif %}
+    </div>
+
+    <div class="project-stats">
+      <div class="project-stat">
+        <div class="project-stat-value text-accent">{{ project.dependency_count }}</div>
+        <div class="project-stat-label">Deps</div>
+      </div>
+      {% if project.risk_score is not None %}
+      <div class="project-stat">
+        <div class="project-stat-value {% if project.risk_level == 'CRITICAL' %}text-danger{% elif project.risk_level == 'HIGH' %}text-warning{% elif project.risk_level == 'MEDIUM' %}text-warning{% else %}text-success{% endif %}">
+          {{ project.risk_score|floatformat:0 }}
+        </div>
+        <div class="project-stat-label">Risk Index</div>
+      </div>
+      {% endif %}
+      <div class="project-stat">
+        <div class="project-stat-value text-secondary">{{ project.scan_count }}</div>
+        <div class="project-stat-label">Scans</div>
+      </div>
+    </div>
+
+    {% if project.repository_url %}
+    <div class="text-xs text-muted mb-16 font-mono" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:flex; align-items:center; gap:6px;">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+      {{ project.repository_url }}
+    </div>
+    {% endif %}
+
+    <div class="flex gap-8" style="margin-top:auto;">
+      <a href="{% url 'project_detail' project.pk %}" class="btn btn-primary btn-sm" style="flex:1; justify-content:center;">
+        View Project →
+      </a>
+      <a href="{% url 'project_delete' project.pk %}" class="btn btn-secondary btn-sm" title="Delete Project" style="color:var(--risk-critical); border-color:#fee2e2;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+      </a>
+    </div>
+
+    <div class="text-xs text-muted mt-12" style="font-weight:500;">
+      Updated {{ project.updated_at|date:"M d, Y" }}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% else %}
+<div class="card empty-state">
+  <div class="empty-state-icon">📁</div>
+  <div class="empty-state-title">No projects yet</div>
+  <div class="empty-state-subtitle">
+    Create your first project to start scanning dependencies for vulnerabilities, license risks, and maintenance issues.
+  </div>
+  <a href="{% url 'project_create' %}" class="btn btn-primary">
+    + Create Your First Project
+  </a>
+</div>
+{% endif %}
+
+{% endblock %}

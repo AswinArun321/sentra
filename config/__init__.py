@@ -1,0 +1,1 @@
+"""LicenseLens config package."""

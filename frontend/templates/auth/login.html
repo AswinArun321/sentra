@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block auth_content %}
+<div class="auth-page">
+  <div class="auth-card animate-fade-in">
+    <div class="auth-logo">
+      <div class="auth-title">Welcome back</div>
+      <div class="auth-subtitle">Sign in to LicenseLens</div>
+    </div>
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags|default:'error' }} mb-16">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
+
+    <form method="POST" action="{% url 'login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}" id="login-form">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label class="form-label" for="email">Email Address</label>
+        <input id="email" type="email" name="email" class="form-control"
+               required autocomplete="email"
+               value="{{ request.POST.email|default:'' }}">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <input id="password" type="password" name="password" class="form-control"
+              required autocomplete="current-password">
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-lg" style="width:100%; justify-content:center; margin-top:10px;" id="login-btn">
+        Sign In →
+      </button>
+    </form>
+
+    <div class="divider"></div>
+
+    <p class="text-center text-sm text-secondary">
+      Don't have an account?
+      <a href="{% url 'register' %}" class="text-accent" style="font-weight:700;">Create one free</a>
+    </p>
+  </div>
+</div>
+
+<script>
+document.getElementById('login-form').addEventListener('submit', function() {
+  const btn = document.getElementById('login-btn');
+  btn.innerHTML = '<span class="spinner"></span> Signing in...';
+  btn.disabled = true;
+});
+</script>
+{% endblock %}

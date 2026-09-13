@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Create Project — LicenseLens{% endblock %}
+{% block nav_projects %}active{% endblock %}
+{% block page_title %}New Project{% endblock %}
+{% block page_subtitle %}Register a new repository workspace to monitor and scan{% endblock %}
+{% block topbar_actions %}
+<a href="{% url 'project_list' %}" class="btn btn-secondary btn-sm">← Back to Projects</a>
+{% endblock %}
+
+{% block content %}
+<div style="max-width:620px; margin:0 auto;">
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">Project Details</div>
+        <div class="card-subtitle">Set up the workspace profile. Dependency manifests can be uploaded after creation.</div>
+      </div>
+    </div>
+
+    <form method="POST" action="{% url 'project_create' %}" id="create-form">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label class="form-label" for="name">Project Name *</label>
+        <input id="name" type="text" name="name" class="form-control"
+               placeholder="e.g. Payments Microservice, Frontend Web App" required
+               value="{{ request.POST.name|default:'' }}">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="description">Description</label>
+        <textarea id="description" name="description" class="form-control"
+                  placeholder="Brief summary of the application stack or purpose (optional)">{{ request.POST.description|default:'' }}</textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="repository_url">Repository URL</label>
+        <input id="repository_url" type="url" name="repository_url" class="form-control"
+               placeholder="https://github.com/organization/repo"
+               value="{{ request.POST.repository_url|default:'' }}">
+      </div>
+
+      <div class="flex gap-12 mt-24">
+        <button type="submit" class="btn btn-primary" id="create-btn">
+          Create Project →
+        </button>
+        <a href="{% url 'project_list' %}" class="btn btn-secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('create-form').addEventListener('submit', function() {
+  const btn = document.getElementById('create-btn');
+  btn.innerHTML = '<span class="spinner"></span> Creating...';
+  btn.disabled = true;
+});
+</script>
+{% endblock %}

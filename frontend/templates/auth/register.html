@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block auth_content %}
+<div class="auth-page">
+  <div class="auth-card animate-fade-in" style="max-width:480px;">
+    <div class="auth-logo">
+      <div class="auth-title">Create Account</div>
+      <div class="auth-subtitle">Start auditing dependencies with Cloud Security Passport</div>
+    </div>
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags|default:'error' }} mb-16">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
+
+    <form method="POST" action="{% url 'register' %}" id="register-form">
+      {% csrf_token %}
+
+      <div class="grid-2" style="gap:14px;">
+        <div class="form-group">
+          <label class="form-label" for="username">Username</label>
+          <input id="username" type="text" name="username" class="form-control"
+                 required autocomplete="username"
+                 value="{{ request.POST.username|default:'' }}">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="email">Email</label>
+          <input id="email" type="email" name="email" class="form-control"
+                 required autocomplete="email"
+                 value="{{ request.POST.email|default:'' }}">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <input id="password" type="password" name="password" class="form-control"
+               required autocomplete="new-password">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password2">Confirm Password</label>
+        <input id="password2" type="password" name="password2" class="form-control"
+               required autocomplete="new-password">
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-lg" style="width:100%; justify-content:center; margin-top:8px;" id="register-btn">
+        Create Account →
+      </button>
+    </form>
+
+    <div class="divider"></div>
+
+    <p class="text-center text-sm text-secondary">
+      Already have an account?
+      <a href="{% url 'login' %}" class="text-accent" style="font-weight:700;">Sign in</a>
+    </p>
+  </div>
+</div>
+
+<script>
+document.getElementById('register-form').addEventListener('submit', function() {
+  const btn = document.getElementById('register-btn');
+  btn.innerHTML = '<span class="spinner"></span> Creating account...';
+  btn.disabled = true;
+});
+</script>
+{% endblock %}

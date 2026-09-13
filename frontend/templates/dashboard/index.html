@@ -1,0 +1,443 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — LicenseLens{% endblock %}
+{% block nav_dashboard %}active{% endblock %}
+{% block page_title %}Weekly sumup{% endblock %}
+{% block page_subtitle %}Get summary of your weekly dependency audits and security risks here.{% endblock %}
+
+{% block content %}
+
+<!-- Dashboard 2-Column Grid matching CloudCash Reference -->
+<div style="display: grid; grid-template-columns: 1.55fr 1fr; gap: 28px; align-items: start;">
+
+  <!-- LEFT COLUMN: Cards & Transaction History -->
+  <div style="display: flex; flex-direction: column; gap: 28px;">
+
+    <!-- 1. "Cards" Section -->
+    <div class="card">
+      <div class="card-header" style="margin-bottom: 20px;">
+        <div class="card-title">Cards</div>
+        <div style="display: flex; gap: 8px;">
+          <button class="topbar-icon-btn" style="width:32px; height:32px; border-radius:8px;" title="Previous card" onclick="switchCard(-1)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <button class="topbar-icon-btn" style="width:32px; height:32px; border-radius:8px;" title="Next card" onclick="switchCard(1)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="hero-card-section">
+        <!-- Blue Gradient Credit Card -->
+        <div class="credit-card-container" id="heroCard">
+          <div class="card-top">
+            <div>
+              <div class="card-brand-label">licenselens</div>
+              <div style="font-size: 8.5px; opacity: 0.8; letter-spacing: 0.8px; text-transform: uppercase;">Security Passport</div>
+            </div>
+            <div class="card-type-chip">PRO PASS</div>
+          </div>
+
+          <div class="card-number" id="cardNumber">5789 •••• •••• 2847</div>
+
+          <div class="card-bottom">
+            <div>
+              <div class="card-holder-label">Card holder</div>
+              <div class="card-holder-name">{{ user.username|title }}</div>
+            </div>
+            <div style="text-align: right;">
+              <div class="card-date-label">Expire date</div>
+              <div class="card-date-val">12/28</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metrics Beside the Card -->
+        <div class="hero-card-metrics">
+          <div class="balance-metric-wrap">
+            <div class="balance-number">
+              ${{ outcome_stats.health_score }}<small>.00</small>
+            </div>
+            <div class="balance-currency-label">Security Health Index</div>
+          </div>
+
+          <div class="sub-metrics-row">
+            <div class="sub-metric-item">
+              <div class="sub-metric-val green">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+                ${{ outcome_stats.safe_packages }}.50
+              </div>
+              <div class="sub-metric-label">Safe Packages</div>
+            </div>
+
+            <div class="sub-metric-item">
+              <div class="sub-metric-val red">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+                ${{ stats.total_vulnerabilities }}.60
+              </div>
+              <div class="sub-metric-label">Identified Vulns</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Limit Slider and Deactivate Toggle beneath Card -->
+      <div class="hero-card-footer">
+        <div class="limit-slider-wrap">
+          <div class="limit-slider-track">
+            <div class="limit-slider-fill" style="width: {{ outcome_stats.limit_pct }}%;"></div>
+          </div>
+          <div class="limit-slider-labels">
+            <span>Weekly scan limit</span>
+            <span><strong>{{ stats.total_dependencies }}</strong> / 500 pkgs</span>
+          </div>
+        </div>
+
+        <label class="toggle-switch-wrap" for="autoScanToggle">
+          <span class="toggle-switch-label" id="toggleLabel">Auto-Scan Active</span>
+          <div class="toggle-switch">
+            <input type="checkbox" id="autoScanToggle" checked onchange="handleToggleChange(this)">
+            <span class="toggle-slider"></span>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <!-- 2. "Transaction history" Section -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Transaction history</div>
+        </div>
+        <a href="{% url 'project_list' %}" class="btn btn-secondary btn-sm" style="font-weight: 700;">
+          View All →
+        </a>
+      </div>
+
+      {% if recent_scans %}
+      <div class="transaction-list">
+        {% for scan in recent_scans %}
+        <a href="{% url 'scan_detail' scan.pk %}" class="transaction-row">
+          <div class="transaction-cell-target">
+
+            <div>
+              <div class="transaction-target-name">{{ scan.project.name }}</div>
+              <div class="transaction-target-desc">{{ scan.source_type|default:"manifest.json" }}</div>
+            </div>
+          </div>
+
+          <div class="transaction-cell-category">
+            {% if "json" in scan.source_type %}JavaScript / npm{% elif "txt" in scan.source_type %}Python / PyPI{% else %}General{% endif %}
+          </div>
+
+          <div class="transaction-cell-date">
+            {{ scan.created_at|date:"d M Y" }}
+          </div>
+
+          <div class="transaction-cell-amount">
+            {% if scan.risk_score is not None %}
+              ${{ scan.risk_score|floatformat:2 }}
+            {% else %}
+              $0.00
+            {% endif %}
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="empty-state" style="padding: 30px;">
+        <div class="empty-state-title">No transactions yet</div>
+        <div class="empty-state-subtitle">Run your first dependency audit scan to see transaction history.</div>
+        <a href="{% url 'project_create' %}" class="btn btn-primary btn-sm">+ Create Project</a>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- 3. Security Analytics Charts (Clean Light Theme) -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Vulnerability Severity Distribution</div>
+          <div class="card-subtitle">Real-time audit breakdown across projects</div>
+        </div>
+      </div>
+      {% if stats.total_vulnerabilities > 0 %}
+      <div class="chart-container" style="height: 200px;">
+        <canvas id="vulnChart"></canvas>
+      </div>
+      {% else %}
+      <div class="empty-state" style="padding: 24px;">
+        <div class="empty-state-title" style="font-size: 14px;">No vulnerabilities detected</div>
+        <div class="empty-state-subtitle" style="font-size: 12px; margin-bottom: 0;">All your dependencies currently pass security policies.</div>
+      </div>
+      {% endif %}
+    </div>
+
+  </div>
+
+  <!-- RIGHT COLUMN: Goals +, Outcome Statistics, New Transaction & Coral Promo -->
+  <div style="display: flex; flex-direction: column; gap: 28px;">
+
+    <!-- 1. "Goals +" Mini-Cards Section -->
+    <div class="card">
+      <div class="card-header" style="margin-bottom: 16px;">
+        <div class="card-title" style="display:flex; align-items:center; gap:6px;">
+          Goals
+          <span style="display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; border-radius:50%; background:var(--accent-amber); color:#fff; font-size:14px; font-weight:800; cursor:pointer;" title="Add Goal">+</span>
+        </div>
+        <button class="topbar-icon-btn" style="width:30px; height:30px; border-radius:8px;" title="Next goals">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+
+      <div class="goals-grid">
+        <!-- Goal 1: Zero Criticals -->
+        <div class="goal-card">
+          <div class="goal-card-amount">${{ stats.critical_vulns|default:"0" }}</div>
+          <div class="goal-card-date">12/20/26</div>
+          <div class="goal-card-icon blue">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
+          <div class="goal-card-name">Zero CVEs</div>
+        </div>
+
+        <!-- Goal 2: License Permissive -->
+        <div class="goal-card">
+          <div class="goal-card-amount">${{ outcome_stats.permissive_pct }}</div>
+          <div class="goal-card-date">12/20/26</div>
+          <div class="goal-card-icon orange">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+            </svg>
+          </div>
+          <div class="goal-card-name">Permissive</div>
+        </div>
+
+        <!-- Goal 3: Safe Packages -->
+        <div class="goal-card">
+          <div class="goal-card-amount">${{ outcome_stats.safe_packages }}</div>
+          <div class="goal-card-date">12/20/26</div>
+          <div class="goal-card-icon green">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+              <line x1="12" y1="22.08" x2="12" y2="12"/>
+            </svg>
+          </div>
+          <div class="goal-card-name">Safe Deps</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. "Outcome Statistics" Section -->
+    <div class="card">
+      <div class="card-header" style="margin-bottom: 20px;">
+        <div class="card-title">Outcome Statistics</div>
+      </div>
+
+      <div class="outcome-stats-list">
+        <!-- Row 1: Shopping / Permissive Licenses -->
+        <div class="outcome-stat-row">
+          <div class="outcome-stat-icon orange">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <circle cx="9" cy="21" r="1"></circle>
+              <circle cx="20" cy="21" r="1"></circle>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+          </div>
+          <div class="outcome-stat-body">
+            <div class="outcome-stat-name">Permissive Licenses</div>
+            <div class="outcome-stat-bar">
+              <div class="outcome-stat-bar-fill orange" style="width: {{ outcome_stats.permissive_pct }}%;"></div>
+            </div>
+          </div>
+          <div class="outcome-stat-percent">{{ outcome_stats.permissive_pct }}%</div>
+        </div>
+
+        <!-- Row 2: Electronics / Vulnerabilities -->
+        <div class="outcome-stat-row">
+          <div class="outcome-stat-icon green">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <rect x="1" y="3" width="15" height="13"></rect>
+              <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+              <circle cx="5.5" cy="18.5" r="2.5"></circle>
+              <circle cx="18.5" cy="18.5" r="2.5"></circle>
+            </svg>
+          </div>
+          <div class="outcome-stat-body">
+            <div class="outcome-stat-name">Zero CVE Clean</div>
+            <div class="outcome-stat-bar">
+              <div class="outcome-stat-bar-fill green" style="width: {% widthratio outcome_stats.safe_packages stats.total_dependencies|default:1 100 %}%;"></div>
+            </div>
+          </div>
+          <div class="outcome-stat-percent">{% widthratio outcome_stats.safe_packages stats.total_dependencies|default:1 100 %}%</div>
+        </div>
+
+        <!-- Row 3: Travels / License Compliance -->
+        <div class="outcome-stat-row">
+          <div class="outcome-stat-icon blue">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M22 2L11 13"></path>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+          </div>
+          <div class="outcome-stat-body">
+            <div class="outcome-stat-name">Audit Compliance</div>
+            <div class="outcome-stat-bar">
+              <div class="outcome-stat-bar-fill blue" style="width: {{ outcome_stats.health_score }}%;"></div>
+            </div>
+          </div>
+          <div class="outcome-stat-percent">{{ outcome_stats.health_score }}%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. "New transaction" & Coral Promo Banner -->
+    <div class="card">
+      <div class="card-header" style="margin-bottom: 16px;">
+        <div class="card-title">New transaction</div>
+      </div>
+
+      <div class="quick-action-widget">
+        <!-- Transfer Box -->
+        <div class="quick-transfer-box">
+          <!-- Team / Project Avatars -->
+          <div class="team-avatar-row">
+            {% if projects %}
+              {% for p in projects|slice:":4" %}
+              <a href="{% url 'project_detail' p.pk %}" class="team-avatar-item" style="text-decoration:none;">
+                <div class="team-avatar-circle">{{ p.name|slice:":1"|upper }}</div>
+                <div class="team-avatar-name">{{ p.name|truncatechars:7 }}</div>
+              </a>
+              {% endfor %}
+            {% else %}
+              <div class="team-avatar-item">
+                <div class="team-avatar-circle">Ann</div>
+                <div class="team-avatar-name">Ann</div>
+              </div>
+              <div class="team-avatar-item">
+                <div class="team-avatar-circle">Mo</div>
+                <div class="team-avatar-name">Monica</div>
+              </div>
+              <div class="team-avatar-item">
+                <div class="team-avatar-circle">Jo</div>
+                <div class="team-avatar-name">John</div>
+              </div>
+            {% endif %}
+
+            <a href="{% url 'project_create' %}" class="team-avatar-item add-new" style="text-decoration:none;">
+              <div class="team-avatar-circle">+</div>
+              <div class="team-avatar-name">Add New</div>
+            </a>
+          </div>
+
+          <!-- Quick Send Bar -->
+          <form method="GET" action="{% url 'project_list' %}" class="quick-send-bar">
+            <span style="color:var(--text-muted); font-weight:700;">$</span>
+            <input type="text" name="q" class="quick-send-input" placeholder="Search project or dep...">
+            <button type="submit" class="btn-quick-send">
+              Send the transfer >
+            </button>
+          </form>
+        </div>
+
+        <!-- Reference Coral Promo Tile -->
+        <a href="{% url 'project_list' %}" class="coral-promo-tile">
+          <div class="coral-promo-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+          </div>
+          <div>
+            <div class="coral-promo-text">Get great audit!</div>
+            <div class="coral-promo-link">Export SBOM ></div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Card Carousel switcher
+const cardColors = [
+  'linear-gradient(135deg, #1877f2 0%, #2f80ed 60%, #4495fc 100%)',
+  'linear-gradient(135deg, #0284c7 0%, #0ea5e9 60%, #38bdf8 100%)',
+  'linear-gradient(135deg, #4f46e5 0%, #6366f1 60%, #818cf8 100%)'
+];
+const cardNumbers = ['5789 •••• •••• 2847', '4129 •••• •••• 9812', '6011 •••• •••• 4401'];
+let currentCardIdx = 0;
+
+function switchCard(direction) {
+  currentCardIdx = (currentCardIdx + direction + cardColors.length) % cardColors.length;
+  const card = document.getElementById('heroCard');
+  const number = document.getElementById('cardNumber');
+  if (card && number) {
+    card.style.background = cardColors[currentCardIdx];
+    number.innerText = cardNumbers[currentCardIdx];
+  }
+}
+
+// Interactive Toggle Switch
+function handleToggleChange(checkbox) {
+  const label = document.getElementById('toggleLabel');
+  if (label) {
+    label.innerText = checkbox.checked ? 'Auto-Scan Active' : 'Deactivate card';
+  }
+}
+
+// Chart.js Configuration in Clean Modern Light Aesthetic
+{% if stats.total_vulnerabilities > 0 %}
+new Chart(document.getElementById('vulnChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Critical', 'High', 'Medium', 'Low'],
+    datasets: [{
+      data: [
+        {{ vuln_chart.critical }},
+        {{ vuln_chart.high }},
+        {{ vuln_chart.medium }},
+        {{ vuln_chart.low }}
+      ],
+      backgroundColor: ['#ff4444', '#ff8c00', '#f59e0b', '#10b981'],
+      borderWidth: 3,
+      borderColor: '#ffffff',
+      hoverOffset: 6,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'right',
+        labels: {
+          color: '#687588',
+          font: { family: 'Plus Jakarta Sans', size: 12, weight: '600' },
+          padding: 14,
+          usePointStyle: true,
+          pointStyleWidth: 8,
+        }
+      },
+      tooltip: {
+        backgroundColor: '#192038',
+        titleColor: '#ffffff',
+        bodyColor: '#e2e8f0',
+        padding: 10,
+        cornerRadius: 8,
+      }
+    },
+    cutout: '72%',
+  }
+});
+{% endif %}
+</script>
+{% endblock %}

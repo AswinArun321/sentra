@@ -1,0 +1,256 @@
+{% extends "base.html" %}
+{% block title %}{{ project.name }} — LicenseLens{% endblock %}
+{% block nav_projects %}active{% endblock %}
+{% block page_title %}{{ project.name }}{% endblock %}
+{% block page_subtitle %}
+  {% if project.repository_url %}
+  <a href="{{ project.repository_url }}" target="_blank" class="text-secondary text-sm" style="display:inline-flex; align-items:center; gap:6px;">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+    {{ project.repository_url }}
+  </a>
+  {% else %}
+  Workspace Repository
+  {% endif %}
+{% endblock %}
+
+{% block topbar_actions %}
+<a href="{% url 'project_list' %}" class="btn btn-secondary btn-sm">← Projects</a>
+<a href="{% url 'project_delete' project.pk %}" class="btn btn-danger btn-sm">Delete</a>
+{% endblock %}
+
+{% block content %}
+
+<!-- Risk Overview + Stats -->
+<div class="grid-3 mb-28" style="align-items:stretch;">
+
+  <!-- Risk Score -->
+  <div class="card" style="text-align:center; display:flex; flex-direction:column; justify-content:center;">
+    <div class="card-title" style="justify-content:center; margin-bottom:18px;">Overall Risk</div>
+    {% if latest_scan %}
+    <div class="risk-score-ring">
+      <svg width="140" height="140" viewBox="0 0 140 140">
+        <circle cx="70" cy="70" r="56" fill="none" stroke="#edf2f9" stroke-width="12"/>
+        <circle cx="70" cy="70" r="56" fill="none"
+          stroke="{% if latest_scan.risk_level == 'CRITICAL' %}#ff4444{% elif latest_scan.risk_level == 'HIGH' %}#ff8c00{% elif latest_scan.risk_level == 'MEDIUM' %}#f59e0b{% else %}#10b981{% endif %}"
+          stroke-width="12"
+          stroke-dasharray="{% widthratio latest_scan.risk_score 100 352 %} 352"
+          stroke-linecap="round"/>
+      </svg>
+      <div class="risk-score-value">
+        <div class="risk-score-number {% if latest_scan.risk_level == 'CRITICAL' %}text-danger{% elif latest_scan.risk_level == 'HIGH' %}text-warning{% elif latest_scan.risk_level == 'MEDIUM' %}text-warning{% else %}text-success{% endif %}">
+          {{ latest_scan.risk_score|floatformat:0 }}
+        </div>
+        <div class="risk-score-max">/ 100</div>
+      </div>
+    </div>
+    <div>
+      <span class="risk-level-badge {{ latest_scan.risk_level }}">{{ latest_scan.risk_level }}</span>
+    </div>
+    {% else %}
+    <div class="empty-state" style="padding:24px;">
+      <div style="font-size:36px; margin-bottom:8px;">📊</div>
+      <div class="empty-state-title" style="font-size:14px;">No scan yet</div>
+      <div class="empty-state-subtitle" style="font-size:12px; margin-bottom:0;">Upload a manifest below to analyze.</div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Scan Stats -->
+  <div class="card" style="grid-column: span 2; display:flex; flex-direction:column; justify-content:space-between;">
+    <div>
+      <div class="card-header" style="margin-bottom:16px;">
+        <div class="card-title">Dependency Overview</div>
+      </div>
+
+      {% if latest_scan %}
+      <div class="grid-2 mb-20">
+        <div class="stat-card info">
+          <div class="stat-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+          </div>
+          <div class="stat-value">{{ latest_scan.dependencies.count }}</div>
+          <div class="stat-label">Total Dependencies</div>
+        </div>
+        <div class="stat-card danger">
+          <div class="stat-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div class="stat-value">{{ latest_scan.vulnerability_count }}</div>
+          <div class="stat-label">Vulnerabilities</div>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px;">
+        {% if latest_scan.critical_count %}
+        <span class="badge badge-critical">🔴 {{ latest_scan.critical_count }} Critical</span>
+        {% endif %}
+        {% if latest_scan.high_count %}
+        <span class="badge badge-high">🟠 {{ latest_scan.high_count }} High</span>
+        {% endif %}
+        {% if latest_scan.medium_count %}
+        <span class="badge badge-medium">🟡 {{ latest_scan.medium_count }} Medium</span>
+        {% endif %}
+        {% if latest_scan.low_count %}
+        <span class="badge badge-low">🟢 {{ latest_scan.low_count }} Low</span>
+        {% endif %}
+      </div>
+      {% else %}
+      <div class="empty-state" style="padding:20px;">
+        <div class="empty-state-subtitle">Upload a dependency file below to run your first scan.</div>
+      </div>
+      {% endif %}
+    </div>
+
+    {% if latest_scan %}
+    <div class="flex gap-8" style="padding-top:16px; border-top:1px solid var(--border-color);">
+      <a href="{% url 'scan_detail' latest_scan.pk %}" class="btn btn-primary btn-sm">View Scan Details →</a>
+      <a href="{% url 'download_report' latest_scan.pk %}" class="btn btn-secondary btn-sm">📥 Download Report</a>
+      <a href="{% url 'download_sbom' latest_scan.pk %}" class="btn btn-secondary btn-sm">📋 SBOM</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Upload Section -->
+<div class="card mb-28">
+  <div class="card-header">
+    <div>
+      <div class="card-title">Upload Dependency Manifest</div>
+      <div class="card-subtitle">Analyze package.json or requirements.txt for immediate security feedback</div>
+    </div>
+  </div>
+
+  <form method="POST" action="{% url 'scan_upload' project.pk %}" enctype="multipart/form-data" id="upload-form">
+    {% csrf_token %}
+    <div class="upload-zone" id="upload-zone">
+      <input type="file" name="file" id="file-input" accept=".json,.txt,.xml"
+             onchange="handleFileSelect(this)">
+      <div class="upload-icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="17 8 12 3 7 8"></polyline>
+          <line x1="12" y1="3" x2="12" y2="15"></line>
+        </svg>
+      </div>
+      <div class="upload-title" id="upload-title">Drop your dependency file here</div>
+      <div class="upload-subtitle">or click to browse from your computer</div>
+      <div class="upload-formats">
+        <span class="format-chip">📦 package.json</span>
+        <span class="format-chip">🐍 requirements.txt</span>
+      </div>
+    </div>
+    <div class="flex gap-12 mt-16" id="upload-actions" style="display:none!important;">
+      <button type="submit" class="btn btn-primary" id="scan-btn">
+        Start Scan →
+      </button>
+      <button type="button" onclick="resetUpload()" class="btn btn-secondary">Cancel</button>
+    </div>
+  </form>
+</div>
+
+<!-- Scan History -->
+{% if scans %}
+<div class="card">
+  <div class="card-header">
+    <div>
+      <div class="card-title">Scan History</div>
+      <div class="card-subtitle">{{ scans|length }} total audit{{ scans|length|pluralize }} executed</div>
+    </div>
+    <span class="badge badge-info">{{ scans|length }} audit{{ scans|length|pluralize }}</span>
+  </div>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>File Manifest</th>
+          <th>Status</th>
+          <th>Risk Score</th>
+          <th>Dependencies</th>
+          <th>Vulnerabilities</th>
+          <th>Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for scan in scans %}
+        <tr>
+          <td class="text-muted font-mono text-xs">#{{ scan.pk }}</td>
+          <td><span class="font-mono text-xs font-bold text-primary">{{ scan.source_type }}</span></td>
+          <td>
+            <span class="scan-status {{ scan.status }}">
+              <span class="status-dot {% if scan.status == 'RUNNING' %}pulse{% endif %}"></span>
+              {{ scan.status }}
+            </span>
+          </td>
+          <td>
+            {% if scan.risk_score is not None %}
+            <span class="risk-level-badge {{ scan.risk_level }}" style="font-size:10px; padding:3px 10px;">
+              {{ scan.risk_score|floatformat:0 }}
+            </span>
+            {% else %}—{% endif %}
+          </td>
+          <td class="text-secondary font-bold">{{ scan.dependencies.count }}</td>
+          <td>
+            {% if scan.vulnerability_count > 0 %}
+            <span class="text-danger font-bold">{{ scan.vulnerability_count }}</span>
+            {% else %}
+            <span class="text-success font-bold">0</span>
+            {% endif %}
+          </td>
+          <td class="text-muted text-xs font-semibold">{{ scan.created_at|date:"M d, Y H:i" }}</td>
+          <td>
+            {% if scan.status == 'COMPLETED' %}
+            <a href="{% url 'scan_detail' scan.pk %}" class="btn btn-secondary btn-sm" style="padding:4px 10px;">View Details →</a>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function handleFileSelect(input) {
+  if (input.files && input.files[0]) {
+    const file = input.files[0];
+    document.getElementById('upload-title').textContent = 'Selected: ' + file.name;
+    document.getElementById('upload-actions').style.removeProperty('display');
+    document.getElementById('upload-actions').style.display = 'flex';
+  }
+}
+
+function resetUpload() {
+  document.getElementById('file-input').value = '';
+  document.getElementById('upload-title').textContent = 'Drop your dependency file here';
+  document.getElementById('upload-actions').style.display = 'none';
+}
+
+const zone = document.getElementById('upload-zone');
+['dragenter', 'dragover'].forEach(name => {
+  zone.addEventListener(name, e => { e.preventDefault(); zone.classList.add('dragover'); });
+});
+['dragleave', 'drop'].forEach(name => {
+  zone.addEventListener(name, e => { e.preventDefault(); zone.classList.remove('dragover'); });
+});
+zone.addEventListener('drop', e => {
+  const dt = e.dataTransfer;
+  const files = dt.files;
+  if (files.length) {
+    document.getElementById('file-input').files = files;
+    handleFileSelect(document.getElementById('file-input'));
+  }
+});
+
+document.getElementById('upload-form').addEventListener('submit', function() {
+  const btn = document.getElementById('scan-btn');
+  btn.innerHTML = '<span class="spinner"></span> Scanning...';
+  btn.disabled = true;
+});
+</script>
+{% endblock %}
