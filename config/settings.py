@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'reports',
     'scanner',
     'frontend',
+    'github_integration',
 ]
 
 MIDDLEWARE = [
@@ -143,6 +144,15 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024   # 5 MB
 OSV_API_URL = os.environ.get('OSV_API_URL', 'https://api.osv.dev/v1/query')
 NVD_API_KEY = os.environ.get('NVD_API_KEY', '')
 GITHUB_ACCESS_TOKEN = os.environ.get('GITHUB_ACCESS_TOKEN', '')
+
+# GitHub OAuth Integration
+GITHUB_CLIENT_ID = os.environ.get('GITHUB_CLIENT_ID', '')
+GITHUB_CLIENT_SECRET = os.environ.get('GITHUB_CLIENT_SECRET', '')
+GITHUB_REDIRECT_URI = os.environ.get(
+    'GITHUB_REDIRECT_URI',
+    'http://127.0.0.1:8000/github/callback/'
+)
+GITHUB_API_URL = os.environ.get('GITHUB_API_URL', 'https://api.github.com')
 
 # Login settings
 LOGIN_URL = '/auth/login/'

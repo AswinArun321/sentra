@@ -54,6 +54,57 @@ def project_detail(request, pk):
         return Response({'message': f'Project "{name}" deleted.'}, status=status.HTTP_204_NO_CONTENT)
 
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def api_project_analysis_status(request, pk):
+    """
+    GET /api/projects/<pk>/analysis-status/
+    Returns automatic analysis progress, stage, detected files, and commit info.
+    """
+    project = get_object_or_404(Project, pk=pk, owner=request.user)
+    return Response({
+        'status': project.analysis_status,
+        'stage': project.analysis_stage,
+        'progress': project.analysis_progress,
+        'commit_sha': project.github_commit_sha,
+        'default_branch': project.github_default_branch,
+        'detected_files': project.detected_files,
+        'detected_manifests': project.detected_manifests,
+        'error': project.analysis_error,
+        'latest_scan_id': project.latest_scan.pk if project.latest_scan else None,
+        'risk_score': project.risk_score,
+        'risk_level': project.risk_level,
+    }, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def api_project_refresh_analysis(request, pk):
+    """
+    POST /api/projects/<pk>/refresh-analysis/
+    Re-runs automatic repository analysis with latest commits and manifest files.
+    """
+    from github_integration.analysis_service import trigger_analysis_in_background
+
+    project = get_object_or_404(Project, pk=pk, owner=request.user)
+    if project.source != 'github' and not project.github_repo_id and not project.repository_url:
+        return Response({'error': 'This project is not connected to a GitHub repository.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    project.analysis_status = 'ANALYZING'
+    project.analysis_stage = 'refreshing'
+    project.analysis_progress = 5
+    project.analysis_error = ''
+    project.save(update_fields=['analysis_status', 'analysis_stage', 'analysis_progress', 'analysis_error'])
+
+    trigger_analysis_in_background(request.user, project)
+
+    return Response({
+        'message': 'Repository analysis refresh started.',
+        'status': project.analysis_status,
+        'project_id': project.id,
+    }, status=status.HTTP_200_OK)
+
+
 # ─── Template (Frontend) Views ─────────────────────────────────
 
 @login_required
@@ -90,10 +141,12 @@ def project_detail_view(request, pk):
     project = get_object_or_404(Project, pk=pk, owner=request.user)
     scans = project.scans.all()
     latest_scan = project.latest_scan
+    is_github = project.source == 'github' or bool(project.github_repo_id) or ('github.com' in (project.repository_url or '').lower())
     return render(request, 'projects/detail.html', {
         'project': project,
         'scans': scans,
         'latest_scan': latest_scan,
+        'is_github': is_github,
     })
 
 

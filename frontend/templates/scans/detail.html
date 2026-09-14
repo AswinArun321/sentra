@@ -6,170 +6,85 @@
 {% block topbar_actions %}
 <a href="{% url 'project_detail' project.pk %}" class="btn btn-secondary btn-sm">← Project</a>
 {% if scan.status == 'COMPLETED' %}
-<a href="{% url 'download_report' scan.pk %}" class="btn btn-primary btn-sm">📥 Download Report</a>
+<a href="{% url 'download_report' scan.pk %}" class="btn btn-primary btn-sm">📥 Report</a>
 <a href="{% url 'download_sbom' scan.pk %}" class="btn btn-secondary btn-sm">📋 SBOM</a>
 {% endif %}
 {% endblock %}
 
 {% block content %}
-
-<!-- Risk Summary Cards -->
+<!-- Top Metrics -->
 <div class="stats-grid mb-28">
-  <div class="stat-card {% if stats.critical > 0 %}danger{% endif %}">
-    <div class="stat-icon">🔴</div>
-    <div class="stat-value">{{ stats.critical }}</div>
-    <div class="stat-label">Critical</div>
-  </div>
-  <div class="stat-card {% if stats.high > 0 %}warning{% endif %}">
-    <div class="stat-icon">🟠</div>
-    <div class="stat-value">{{ stats.high }}</div>
-    <div class="stat-label">High</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-icon">🟡</div>
-    <div class="stat-value">{{ stats.medium }}</div>
-    <div class="stat-label">Medium</div>
-  </div>
-  <div class="stat-card success">
-    <div class="stat-icon">🟢</div>
-    <div class="stat-value">{{ stats.low }}</div>
-    <div class="stat-label">Low</div>
-  </div>
-  <div class="stat-card info">
-    <div class="stat-icon">🔗</div>
-    <div class="stat-value">{{ stats.total_deps }}</div>
-    <div class="stat-label">Dependencies</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-icon">📜</div>
-    <div class="stat-value">{{ stats.license_issues }}</div>
-    <div class="stat-label">License Issues</div>
-  </div>
+  <div class="stat-card"><div class="stat-icon">🔴</div><div class="stat-value">{{ stats.critical }}</div><div class="stat-label">Critical</div></div>
+  <div class="stat-card"><div class="stat-icon">🟠</div><div class="stat-value">{{ stats.high }}</div><div class="stat-label">High</div></div>
+  <div class="stat-card"><div class="stat-icon">🟡</div><div class="stat-value">{{ stats.medium }}</div><div class="stat-label">Medium</div></div>
+  <div class="stat-card"><div class="stat-icon">🟢</div><div class="stat-value">{{ stats.low }}</div><div class="stat-label">Low</div></div>
+  <div class="stat-card"><div class="stat-icon">📦</div><div class="stat-value">{{ stats.total_deps }}</div><div class="stat-label">Dependencies</div></div>
+  <div class="stat-card"><div class="stat-icon">📜</div><div class="stat-value">{{ stats.license_issues }}</div><div class="stat-label">License Issues</div></div>
 </div>
 
-<!-- Risk Score Bar -->
 {% if scan.risk_score is not None %}
 <div class="card mb-28">
   <div class="flex-between mb-8">
     <div>
       <div class="card-title">Overall Risk Score</div>
-      <div class="text-muted text-sm">{{ scan.source_type }} · {{ stats.total_deps }} packages scanned</div>
+      <div class="card-subtitle">{{ scan.source_type }} · {{ stats.total_deps }} packages scanned</div>
     </div>
     <div style="text-align:right;">
-      <span class="risk-level-badge {{ scan.risk_level }}">{{ scan.risk_level }}</span>
-      <div class="text-primary font-bold" style="font-size:32px; margin-top:4px;">{{ scan.risk_score|floatformat:1 }}<span class="text-muted text-sm">/100</span></div>
+      <span class="badge badge-{{ scan.risk_level|lower }}">{{ scan.risk_level }}</span>
+      <div style="font-size:28px; font-weight:800; color:var(--text-title); margin-top:2px;">{{ scan.risk_score|floatformat:1 }}<small style="font-size:12px; color:var(--text-muted);">/100</small></div>
     </div>
   </div>
-  <div class="score-bar" style="height:10px;">
-    <div class="score-bar-fill {% if scan.risk_level == 'CRITICAL' %}critical{% elif scan.risk_level == 'HIGH' %}high{% elif scan.risk_level == 'MEDIUM' %}medium{% else %}low{% endif %}"
-         style="width:{{ scan.risk_score|floatformat:0 }}%"></div>
+  <div class="score-bar" style="height:8px;">
+    <div class="score-bar-fill {{ scan.risk_level|lower }}" style="width:{{ scan.risk_score|floatformat:0 }}%"></div>
   </div>
 </div>
 {% endif %}
 
-<!-- Tabs -->
-<div class="tab-nav" id="tabNav">
-  <button class="tab-btn active" onclick="switchTab('overview', this)">
-    📊 Overview
-  </button>
-  <button class="tab-btn" onclick="switchTab('dependencies', this)">
-    🔗 Dependencies <span class="tab-count">{{ stats.total_deps }}</span>
-  </button>
-  <button class="tab-btn" onclick="switchTab('vulnerabilities', this)">
-    🛡️ Vulnerabilities <span class="tab-count">{{ stats.total_vulns }}</span>
-  </button>
-  <button class="tab-btn" onclick="switchTab('licenses', this)">
-    📜 Licenses
-  </button>
-  <button class="tab-btn" onclick="switchTab('maintenance', this)">
-    🔧 Maintenance
-  </button>
+<!-- Tabs Nav -->
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('overview', this)">Overview</button>
+  <button class="tab-btn" onclick="switchTab('dependencies', this)">Dependencies <span class="tab-count">{{ stats.total_deps }}</span></button>
+  <button class="tab-btn" onclick="switchTab('vulnerabilities', this)">Vulnerabilities <span class="tab-count">{{ stats.total_vulns }}</span></button>
+  <button class="tab-btn" onclick="switchTab('licenses', this)">Licenses</button>
+  <button class="tab-btn" onclick="switchTab('maintenance', this)">Maintenance</button>
 </div>
 
-<!-- Tab: Overview -->
+<!-- Tab 1: Overview -->
 <div class="tab-content active" id="tab-overview">
-  <div class="grid-2 mb-28" style="align-items:start;">
-    <!-- Vuln Chart -->
+  <div class="grid-2 mb-28">
     <div class="card">
-      <div class="card-title mb-16">🛡️ Vulnerability Breakdown</div>
+      <div class="card-title mb-16">Vulnerability Breakdown</div>
       {% if stats.total_vulns > 0 %}
-      <div class="chart-container">
-        <canvas id="vulnChartScan"></canvas>
-      </div>
+      <div class="chart-container"><canvas id="vulnChartScan"></canvas></div>
       {% else %}
-      <div class="empty-state" style="padding:24px;">
-        <div class="empty-state-icon">✅</div>
-        <div class="empty-state-title" style="font-size:14px;">No vulnerabilities found</div>
-      </div>
+      <div class="empty-state"><div class="empty-state-subtitle">No vulnerabilities found. Clean scan!</div></div>
       {% endif %}
     </div>
-
-    <!-- License Chart -->
     <div class="card">
-      <div class="card-title mb-16">📜 License Distribution</div>
+      <div class="card-title mb-16">License Distribution</div>
       {% if license_counts %}
-      <div class="chart-container">
-        <canvas id="licenseChartScan"></canvas>
-      </div>
+      <div class="chart-container"><canvas id="licenseChartScan"></canvas></div>
       {% else %}
-      <div class="empty-state" style="padding:24px;">
-        <div class="empty-state-icon">📜</div>
-        <div class="empty-state-title" style="font-size:14px;">No license data</div>
-      </div>
+      <div class="empty-state"><div class="empty-state-subtitle">No license data detected.</div></div>
       {% endif %}
     </div>
   </div>
-
-  <!-- Top Risky Dependencies -->
   {% with top_deps=deps|dictsortreversed:"risk_score" %}
   {% if top_deps %}
   <div class="card">
-    <div class="card-title mb-16">⚠️ Top Risk Dependencies</div>
-    <div class="table-wrapper">
+    <div class="card-title mb-16">Top Risk Dependencies</div>
+    <div class="table-container">
       <table>
-        <thead>
-          <tr>
-            <th>Package</th>
-            <th>Version</th>
-            <th>Ecosystem</th>
-            <th>License</th>
-            <th>Maintenance</th>
-            <th>Vulnerabilities</th>
-            <th>Risk Score</th>
-          </tr>
-        </thead>
+        <thead><tr><th>Package</th><th>Version</th><th>License</th><th>Status</th><th>Vulns</th><th>Score</th></tr></thead>
         <tbody>
-          {% for dep in top_deps|slice:":10" %}
+          {% for dep in top_deps|slice:":8" %}
           <tr>
-            <td><span class="pkg-name">{{ dep.name }}</span></td>
-            <td><span class="pkg-version">{{ dep.version|default:"?" }}</span></td>
-            <td><span class="badge badge-info">{{ dep.ecosystem }}</span></td>
-            <td>
-              <span class="badge {% if dep.license_category == 'STRONG_COPYLEFT' %}badge-danger{% elif dep.license_category == 'WEAK_COPYLEFT' %}badge-warning{% elif dep.license_category == 'PERMISSIVE' %}badge-success{% else %}badge-secondary{% endif %}">
-                {{ dep.license|truncatechars:15 }}
-              </span>
-            </td>
-            <td>
-              <span class="badge {% if dep.maintenance_status == 'ACTIVE' %}badge-success{% elif dep.maintenance_status == 'ABANDONED' %}badge-danger{% elif dep.maintenance_status == 'STALE' %}badge-warning{% else %}badge-secondary{% endif %}">
-                {{ dep.maintenance_status }}
-              </span>
-            </td>
-            <td>
-              {% if dep.vulnerability_count > 0 %}
-              <span class="badge badge-critical">{{ dep.vulnerability_count }}</span>
-              {% else %}
-              <span class="badge badge-success">0</span>
-              {% endif %}
-            </td>
-            <td>
-              <div style="display:flex; align-items:center; gap:8px;">
-                <div class="score-bar" style="width:60px;">
-                  <div class="score-bar-fill {% if dep.risk_score >= 80 %}critical{% elif dep.risk_score >= 60 %}high{% elif dep.risk_score >= 30 %}medium{% else %}low{% endif %}"
-                       style="width:{{ dep.risk_score|floatformat:0 }}%"></div>
-                </div>
-                <span class="text-xs font-mono font-bold">{{ dep.risk_score|floatformat:0 }}</span>
-              </div>
-            </td>
+            <td><strong>{{ dep.name }}</strong></td>
+            <td>{{ dep.version|default:"?" }}</td>
+            <td><span class="badge badge-info">{{ dep.license|truncatechars:16 }}</span></td>
+            <td><span class="badge badge-info">{{ dep.maintenance_status }}</span></td>
+            <td>{% if dep.vulnerability_count > 0 %}<span class="badge badge-critical">{{ dep.vulnerability_count }}</span>{% else %}0{% endif %}</td>
+            <td><strong>{{ dep.risk_score|floatformat:0 }}</strong></td>
           </tr>
           {% endfor %}
         </tbody>
@@ -180,225 +95,101 @@
   {% endwith %}
 </div>
 
-<!-- Tab: Dependencies -->
+<!-- Tab 2: Dependencies -->
 <div class="tab-content" id="tab-dependencies">
   <div class="card">
     <div class="card-header">
       <div class="card-title">All Dependencies ({{ stats.total_deps }})</div>
-      <div class="search-bar" style="background:#f8fafc; border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:6px 12px; display:flex; align-items:center; gap:8px;">
-        <span>🔍</span>
-        <input type="text" placeholder="Search packages..." id="dep-search" oninput="filterTable('dep-table', this.value)" style="border:none; background:transparent; outline:none; font-size:13px; font-family:inherit;">
-      </div>
+      <input type="text" placeholder="Search..." oninput="filterTable('dep-table', this.value)" class="form-control" style="width:200px; padding:6px 10px;">
     </div>
-
-    {% if deps %}
-    <div class="table-wrapper">
+    <div class="table-container">
       <table id="dep-table">
-        <thead>
-          <tr>
-            <th>Package</th>
-            <th>Version</th>
-            <th>Ecosystem</th>
-            <th>Type</th>
-            <th>License</th>
-            <th>Maintenance</th>
-            <th>Vulns</th>
-            <th>Risk</th>
-          </tr>
-        </thead>
+        <thead><tr><th>Package</th><th>Version</th><th>Ecosystem</th><th>License</th><th>Maintenance</th><th>Vulns</th><th>Risk</th></tr></thead>
         <tbody>
           {% for dep in deps %}
           <tr>
-            <td><span class="pkg-name">{{ dep.name }}</span></td>
-            <td><span class="pkg-version">{{ dep.version|default:"?" }}</span></td>
+            <td><strong>{{ dep.name }}</strong></td>
+            <td>{{ dep.version|default:"?" }}</td>
             <td><span class="badge badge-info">{{ dep.ecosystem }}</span></td>
-            <td>
-              <span class="badge {% if dep.dependency_type == 'direct' %}badge-info{% elif dep.dependency_type == 'dev' %}badge-secondary{% else %}badge-secondary{% endif %}">
-                {{ dep.dependency_type }}
-              </span>
-            </td>
-            <td>
-              <span class="badge {% if dep.license_category == 'STRONG_COPYLEFT' %}badge-danger{% elif dep.license_category == 'WEAK_COPYLEFT' %}badge-warning{% elif dep.license_category == 'PERMISSIVE' %}badge-success{% else %}badge-secondary{% endif %}">
-                {{ dep.license|truncatechars:18 }}
-              </span>
-            </td>
-            <td>
-              <span class="badge {% if dep.maintenance_status == 'ACTIVE' %}badge-success{% elif dep.maintenance_status == 'ABANDONED' %}badge-danger{% elif dep.maintenance_status == 'STALE' %}badge-warning{% elif dep.maintenance_status == 'LOW_ACTIVITY' %}badge-warning{% else %}badge-secondary{% endif %}">
-                {{ dep.maintenance_status }}
-              </span>
-            </td>
-            <td class="text-center">
-              {% if dep.vulnerability_count > 0 %}
-              <span class="badge badge-critical">{{ dep.vulnerability_count }}</span>
-              {% else %}
-              <span class="text-muted">—</span>
-              {% endif %}
-            </td>
-            <td>
-              <div style="display:flex; align-items:center; gap:6px;">
-                <div class="score-bar" style="width:50px;">
-                  <div class="score-bar-fill {% if dep.risk_score >= 80 %}critical{% elif dep.risk_score >= 60 %}high{% elif dep.risk_score >= 30 %}medium{% else %}low{% endif %}"
-                       style="width:{{ dep.risk_score|floatformat:0 }}%"></div>
-                </div>
-                <span class="text-xs font-mono font-bold">{{ dep.risk_score|floatformat:0 }}</span>
-              </div>
-            </td>
+            <td><span class="badge badge-info">{{ dep.license|truncatechars:18 }}</span></td>
+            <td><span class="badge badge-info">{{ dep.maintenance_status }}</span></td>
+            <td>{% if dep.vulnerability_count > 0 %}<span class="badge badge-critical">{{ dep.vulnerability_count }}</span>{% else %}0{% endif %}</td>
+            <td><strong>{{ dep.risk_score|floatformat:0 }}</strong></td>
           </tr>
+          {% empty %}
+          <tr><td colspan="7" class="text-muted">No dependencies found.</td></tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
-    {% else %}
-    <div class="empty-state"><div class="empty-state-subtitle">No dependencies found.</div></div>
-    {% endif %}
   </div>
 </div>
 
-<!-- Tab: Vulnerabilities -->
+<!-- Tab 3: Vulnerabilities -->
 <div class="tab-content" id="tab-vulnerabilities">
-  <div class="card-header mb-16">
-    <div class="card-title">Security Vulnerabilities ({{ stats.total_vulns }})</div>
-  </div>
   {% if vulns %}
+  <div style="display:flex; flex-direction:column; gap:14px;">
     {% for vuln in vulns %}
-    <div class="vuln-card {{ vuln.severity }}">
-      <div class="vuln-header">
-        <span class="badge badge-{{ vuln.severity|lower }}">{{ vuln.severity }}</span>
-        <span class="vuln-id">{{ vuln.identifier }}</span>
-        <span class="vuln-package">in {{ vuln.dependency.name }}=={{ vuln.dependency.version }}</span>
-        {% if vuln.cvss_score %}
-        <span class="badge badge-secondary">CVSS {{ vuln.cvss_score }}</span>
-        {% endif %}
+    <div class="card" style="border-left: 4px solid var(--risk-{{ vuln.severity|lower }});">
+      <div class="flex-between mb-8">
+        <div>
+          <span class="badge badge-{{ vuln.severity|lower }}">{{ vuln.severity }}</span>
+          <strong style="margin-left:8px;">{{ vuln.identifier }}</strong>
+          <span class="card-subtitle" style="margin-left:8px;">in {{ vuln.dependency.name }} ({{ vuln.dependency.version }})</span>
+        </div>
+        {% if vuln.cvss_score %}<span class="badge badge-info">CVSS {{ vuln.cvss_score }}</span>{% endif %}
       </div>
-      {% if vuln.summary %}
-      <div class="vuln-summary">{{ vuln.summary|truncatechars:300 }}</div>
-      {% endif %}
-      {% if vuln.fixed_version %}
-      <div class="vuln-fixed">✅ Fixed in version {{ vuln.fixed_version }}</div>
-      {% endif %}
-      {% if vuln.affected_versions %}
-      <div class="text-xs text-muted mt-8">Affected: {{ vuln.affected_versions }}</div>
-      {% endif %}
-      {% if vuln.references %}
-      <div class="mt-8">
-        {% for ref in vuln.references|slice:":2" %}
-        <a href="{{ ref }}" target="_blank" rel="noopener" class="text-xs text-accent" style="display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
-          🔗 {{ ref|truncatechars:70 }}
-        </a>
-        {% endfor %}
-      </div>
-      {% endif %}
+      <p style="font-size:13px; color:var(--text-secondary); margin-bottom:8px;">{{ vuln.summary|truncatechars:260 }}</p>
+      {% if vuln.fixed_version %}<div style="font-size:12px; color:var(--accent-green); font-weight:700;">Fix: Upgrade to {{ vuln.fixed_version }}</div>{% endif %}
     </div>
     {% endfor %}
-  {% else %}
-  <div class="card empty-state">
-    <div class="empty-state-icon">✅</div>
-    <div class="empty-state-title">No vulnerabilities found</div>
-    <div class="empty-state-subtitle">Great! No known security vulnerabilities were found in this scan.</div>
   </div>
+  {% else %}
+  <div class="card empty-state"><div class="empty-state-title">No vulnerabilities found!</div><div class="empty-state-subtitle">Your project is clean.</div></div>
   {% endif %}
 </div>
 
-<!-- Tab: Licenses -->
+<!-- Tab 4: Licenses -->
 <div class="tab-content" id="tab-licenses">
-  <div class="grid-2 mb-20" style="align-items:start;">
+  <div class="grid-2 mb-28">
     <div class="card">
-      <div class="card-title mb-16">License Summary</div>
-      {% for dep in deps %}
-      {% if dep.license and dep.license != 'Unknown' %}
-      <div style="display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border-color);">
-        <span class="pkg-name">{{ dep.name }}</span>
-        <span class="badge {% if dep.license_category == 'STRONG_COPYLEFT' %}badge-danger{% elif dep.license_category == 'WEAK_COPYLEFT' %}badge-warning{% elif dep.license_category == 'PERMISSIVE' %}badge-success{% else %}badge-secondary{% endif %}">
-          {{ dep.license|truncatechars:20 }}
-        </span>
+      <div class="card-title mb-16">Detected Licenses</div>
+      <div class="table-container">
+        <table>
+          <thead><tr><th>Package</th><th>License</th><th>Category</th></tr></thead>
+          <tbody>
+            {% for dep in deps %}
+            <tr><td>{{ dep.name }}</td><td><strong>{{ dep.license|truncatechars:18 }}</strong></td><td><span class="badge badge-info">{{ dep.license_category }}</span></td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
       </div>
-      {% endif %}
+    </div>
+    <div class="card">
+      <div class="card-title mb-16">Category Breakdown</div>
+      {% for k, v in license_counts.items %}
+      <div class="flex-between" style="padding:10px 0; border-bottom:1px solid var(--border-color);">
+        <span>{{ k }}</span><span class="badge badge-info">{{ v }}</span>
+      </div>
       {% endfor %}
     </div>
-
-    <div class="card">
-      <div class="card-title mb-16">License Categories</div>
-      <div style="display:flex; flex-direction:column; gap:12px;">
-        <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 14px; background:var(--bg-input); border-radius:var(--radius-sm); border:1px solid var(--border-color);">
-          <div>
-            <div class="font-semibold text-primary text-sm">Permissive</div>
-            <div class="text-xs text-muted">MIT, Apache, BSD, ISC</div>
-          </div>
-          <span class="badge badge-success">{{ deps|dictsort:"license_category"|length }}</span>
-        </div>
-
-        {% regroup deps by license_category as dep_groups %}
-        {% for group in dep_groups %}
-        <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 14px; background:var(--bg-input); border-radius:var(--radius-sm); border:1px solid var(--border-color);">
-          <div>
-            <div class="font-semibold text-primary text-sm">{{ group.grouper }}</div>
-          </div>
-          <span class="badge {% if group.grouper == 'STRONG_COPYLEFT' %}badge-danger{% elif group.grouper == 'WEAK_COPYLEFT' %}badge-warning{% elif group.grouper == 'PERMISSIVE' %}badge-success{% else %}badge-secondary{% endif %}">
-            {{ group.list|length }}
-          </span>
-        </div>
-        {% endfor %}
-      </div>
-    </div>
-  </div>
-
-  <!-- License Warning -->
-  <div class="alert alert-warning">
-    <span>⚠️</span>
-    <span><strong>Disclaimer:</strong> LicenseLens provides automated analysis only. License compatibility depends on software usage, distribution, and organizational policies. Consult qualified legal professionals for final compliance decisions.</span>
   </div>
 </div>
 
-<!-- Tab: Maintenance -->
+<!-- Tab 5: Maintenance -->
 <div class="tab-content" id="tab-maintenance">
-  <div class="grid-4 mb-24">
-    <div class="stat-card success">
-      <div class="stat-icon">✅</div>
-      <div class="stat-value">{{ maint_counts.ACTIVE|default:0 }}</div>
-      <div class="stat-label">Active</div>
-    </div>
-    <div class="stat-card warning">
-      <div class="stat-icon">⚠️</div>
-      <div class="stat-value">{{ maint_counts.LOW_ACTIVITY|default:0 }}</div>
-      <div class="stat-label">Low Activity</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon">⏰</div>
-      <div class="stat-value">{{ maint_counts.STALE|default:0 }}</div>
-      <div class="stat-label">Stale</div>
-    </div>
-    <div class="stat-card danger">
-      <div class="stat-icon">💀</div>
-      <div class="stat-value">{{ maint_counts.ABANDONED|default:0 }}</div>
-      <div class="stat-label">Abandoned</div>
-    </div>
-  </div>
-
   <div class="card">
-    <div class="card-title mb-16">Package Maintenance Status</div>
-    <div class="table-wrapper">
+    <div class="card-title mb-16">Maintenance Health</div>
+    <div class="table-container">
       <table>
-        <thead>
-          <tr>
-            <th>Package</th>
-            <th>Version</th>
-            <th>Status</th>
-            <th>Last Release</th>
-            <th>Releases</th>
-          </tr>
-        </thead>
+        <thead><tr><th>Package</th><th>Status</th><th>Last Release</th><th>Release Count</th></tr></thead>
         <tbody>
           {% for dep in deps %}
           <tr>
-            <td><span class="pkg-name">{{ dep.name }}</span></td>
-            <td><span class="pkg-version">{{ dep.version|default:"?" }}</span></td>
-            <td>
-              <span class="badge {% if dep.maintenance_status == 'ACTIVE' %}badge-success{% elif dep.maintenance_status == 'ABANDONED' %}badge-danger{% elif dep.maintenance_status == 'STALE' %}badge-warning{% elif dep.maintenance_status == 'LOW_ACTIVITY' %}badge-warning{% else %}badge-secondary{% endif %}">
-                {{ dep.maintenance_status }}
-              </span>
-            </td>
-            <td class="text-muted text-xs">{{ dep.last_release_date|date:"M d, Y"|default:"Unknown" }}</td>
-            <td class="text-muted text-xs">{{ dep.release_count|default:"?" }}</td>
+            <td><strong>{{ dep.name }}</strong></td>
+            <td><span class="badge badge-info">{{ dep.maintenance_status }}</span></td>
+            <td>{{ dep.last_release_date|default:"Unknown" }}</td>
+            <td>{{ dep.release_count }}</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -406,31 +197,39 @@
     </div>
   </div>
 </div>
-
 {% endblock %}
 
 {% block extra_js %}
 <script>
-// Tab switching
-function switchTab(name, btn) {
-  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
   btn.classList.add('active');
 }
-
-// Table search
-function filterTable(tableId, query) {
-  const rows = document.querySelectorAll('#' + tableId + ' tbody tr');
-  const q = query.toLowerCase();
-  rows.forEach(row => {
-    row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+function filterTable(id, val) {
+  const q = val.toLowerCase();
+  document.querySelectorAll('#' + id + ' tbody tr').forEach(r => {
+    r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none';
   });
 }
+function getThemeColors() {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  return {
+    cardBg: isDark ? '#151f32' : '#ffffff',
+    textMuted: isDark ? '#94a3b8' : '#64748b',
+    textPrimary: isDark ? '#e2e8f0' : '#1e293b',
+    gridColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)'
+  };
+}
 
-// Vuln chart
+let vulnChartInstance = null;
+let licenseChartInstance = null;
+
+const colors = getThemeColors();
+
 {% if stats.total_vulns > 0 %}
-new Chart(document.getElementById('vulnChartScan'), {
+vulnChartInstance = new Chart(document.getElementById('vulnChartScan'), {
   type: 'doughnut',
   data: {
     labels: ['Critical', 'High', 'Medium', 'Low'],
@@ -438,40 +237,61 @@ new Chart(document.getElementById('vulnChartScan'), {
       data: [{{ stats.critical }}, {{ stats.high }}, {{ stats.medium }}, {{ stats.low }}],
       backgroundColor: ['#ff4444', '#ff8c00', '#f59e0b', '#10b981'],
       borderWidth: 2,
-      borderColor: '#ffffff',
-      hoverOffset: 6,
+      borderColor: colors.cardBg
     }]
   },
-  options: {
-    responsive: true, maintainAspectRatio: false,
-    plugins: {
-      legend: { position: 'right', labels: { color: '#687588', font: { family: 'Plus Jakarta Sans', size: 12, weight: '600' }, padding: 14, usePointStyle: true } },
-      tooltip: { backgroundColor: '#192038', titleColor: '#ffffff', bodyColor: '#e2e8f0', padding: 10, cornerRadius: 8 }
-    },
-    cutout: '70%',
-  }
+  options: { responsive: true, maintainAspectRatio: false, cutout: '70%' }
 });
 {% endif %}
 
-// License chart
 {% if license_counts %}
-const lLabels = [{% for k,v in license_counts.items %}"{{ k }}"{% if not forloop.last %},{% endif %}{% endfor %}];
-const lData   = [{% for k,v in license_counts.items %}{{ v }}{% if not forloop.last %},{% endif %}{% endfor %}];
-new Chart(document.getElementById('licenseChartScan'), {
+licenseChartInstance = new Chart(document.getElementById('licenseChartScan'), {
   type: 'bar',
   data: {
-    labels: lLabels,
-    datasets: [{ data: lData, backgroundColor: ['#1977f3','#00b4d8','#10b981','#f59e0b','#ff9900','#ff6444','#8b5cf6','#64748b'], borderRadius: 6, borderSkipped: false }]
+    labels: [{% for k in license_counts.keys %}"{{ k }}"{% if not forloop.last %},{% endif %}{% endfor %}],
+    datasets: [{
+      data: [{% for v in license_counts.values %}{{ v }}{% if not forloop.last %},{% endif %}{% endfor %}],
+      backgroundColor: '#1977f3',
+      borderRadius: 4
+    }]
   },
   options: {
-    responsive: true, maintainAspectRatio: false, indexAxis: 'y',
-    plugins: { legend: { display: false }, tooltip: { backgroundColor: '#192038', titleColor: '#ffffff', bodyColor: '#e2e8f0', padding: 10, cornerRadius: 8 } },
+    responsive: true,
+    maintainAspectRatio: false,
+    indexAxis: 'y',
+    plugins: {
+      legend: { display: false }
+    },
     scales: {
-      x: { ticks: { color: '#8f9cae', font: { family: 'Plus Jakarta Sans', size: 11 } }, grid: { color: '#f1f5f9' } },
-      y: { ticks: { color: '#192038', font: { family: 'JetBrains Mono', size: 11, weight: '600' } }, grid: { display: false } }
+      x: {
+        grid: { color: colors.gridColor },
+        ticks: { color: colors.textMuted }
+      },
+      y: {
+        grid: { display: false },
+        ticks: { color: colors.textMuted }
+      }
     }
   }
 });
 {% endif %}
+
+window.addEventListener('themechange', function() {
+  const tc = getThemeColors();
+  if (vulnChartInstance) {
+    vulnChartInstance.data.datasets[0].borderColor = tc.cardBg;
+    vulnChartInstance.update();
+  }
+  if (licenseChartInstance) {
+    if (licenseChartInstance.options.scales.x) {
+      licenseChartInstance.options.scales.x.grid.color = tc.gridColor;
+      licenseChartInstance.options.scales.x.ticks.color = tc.textMuted;
+    }
+    if (licenseChartInstance.options.scales.y) {
+      licenseChartInstance.options.scales.y.ticks.color = tc.textMuted;
+    }
+    licenseChartInstance.update();
+  }
+});
 </script>
 {% endblock %}

@@ -1,90 +1,53 @@
+import logging
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count, Avg
-from projects.models import Project
-from scans.models import Scan
-from vulnerabilities.models import Vulnerability
-from collections import Counter
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import status
+
+from .services import DashboardService
+
+logger = logging.getLogger(__name__)
 
 
 @login_required
 def dashboard_view(request):
-    """Main dashboard — overview of all projects and scans."""
-    user = request.user
-    projects = Project.objects.filter(owner=user)
-
-    # Recent scans
-    recent_scans = Scan.objects.filter(
-        project__owner=user,
-        status='COMPLETED'
-    ).select_related('project')[:10]
-
-    # Aggregate stats
-    from dependencies.models import Dependency
-    all_deps = Dependency.objects.filter(scan__project__owner=user, scan__status='COMPLETED')
-    all_vulns = Vulnerability.objects.filter(dependency__scan__project__owner=user, dependency__scan__status='COMPLETED')
-
-    total_deps = all_deps.count()
-    crit_vulns = all_vulns.filter(severity='CRITICAL').count()
-    high_vulns = all_vulns.filter(severity='HIGH').count()
-    license_issues = all_deps.filter(license_category__in=['STRONG_COPYLEFT', 'UNKNOWN']).count()
-    stale_packages = all_deps.filter(maintenance_status__in=['STALE', 'ABANDONED']).count()
-    total_vulns = all_vulns.count()
-
-    stats = {
-        'total_projects': projects.count(),
-        'total_scans': Scan.objects.filter(project__owner=user).count(),
-        'total_dependencies': total_deps,
-        'total_vulnerabilities': total_vulns,
-        'critical_vulns': crit_vulns,
-        'high_vulns': high_vulns,
-        'license_issues': license_issues,
-        'stale_packages': stale_packages,
-    }
-
-    # Reference Dashboard metrics
-    if total_deps > 0:
-        permissive_count = all_deps.filter(license_category='PERMISSIVE').count()
-        permissive_pct = round((permissive_count / total_deps) * 100) if total_deps else 100
-        vuln_pct = min(100, round((total_vulns / total_deps) * 100))
-        copyleft_pct = min(100, round((license_issues / total_deps) * 100))
-        penalty = (crit_vulns * 25) + (high_vulns * 12) + (license_issues * 6)
-        health_score = max(10, min(100, 100 - penalty))
-        safe_packages = max(0, total_deps - total_vulns)
-        limit_pct = min(100, round((total_deps / max(1, total_deps + 50)) * 100))
-    else:
-        permissive_pct = 100
-        vuln_pct = 0
-        copyleft_pct = 0
-        health_score = 100
-        safe_packages = 0
-        limit_pct = 0
-
-    outcome_stats = {
-        'permissive_pct': permissive_pct,
-        'vuln_pct': vuln_pct,
-        'copyleft_pct': copyleft_pct,
-        'health_score': health_score,
-        'safe_packages': safe_packages,
-        'limit_pct': limit_pct,
-    }
-
-    # Vuln breakdown for chart
-    vuln_chart = {
-        'critical': crit_vulns,
-        'high': high_vulns,
-        'medium': all_vulns.filter(severity='MEDIUM').count(),
-        'low': all_vulns.filter(severity='LOW').count(),
-    }
-
-    # License distribution for chart
-    license_counts = dict(Counter(d.license for d in all_deps).most_common(8))
+    """
+    Renders the LicenseLens Security & Compliance Dashboard.
+    Provides initial baseline context from DashboardService for fast first paint,
+    while dashboard.js enhances live state and interaction.
+    """
+    service = DashboardService()
+    dashboard_data = service.get_overview(request.user)
 
     return render(request, 'dashboard/index.html', {
-        'projects': projects,
-        'recent_scans': recent_scans,
-        'stats': stats,
-        'outcome_stats': outcome_stats,
-        'vuln_chart': vuln_chart,
-        'license_counts': license_counts,
+        'dashboard': dashboard_data,
+        'summary': dashboard_data['summary'],
+        'vulnerabilities': dashboard_data['vulnerabilities'],
+        'project_health': dashboard_data['project_health'],
+        'attention_required': dashboard_data['attention_required'],
+        'recent_scans': dashboard_data['recent_scans'],
+        'github': dashboard_data['github'],
+        'repository_health': dashboard_data['repository_health'],
     })
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def api_dashboard_overview(request):
+    """
+    GET /api/dashboard/overview/
+    Returns aggregated security, compliance, vulnerability, and repository health metrics
+    strictly filtered for the authenticated user.
+    """
+    try:
+        service = DashboardService()
+        data = service.get_overview(request.user)
+        return Response(data, status=status.HTTP_200_OK)
+    except Exception as e:
+        logger.error("Error generating dashboard overview for user %s: %s", request.user.username, str(e), exc_info=True)
+        return Response(
+            {'error': 'Unable to load dashboard overview. Please try again.'},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )

@@ -35,5 +35,98 @@
       <a href="{% url 'logout' %}" class="btn btn-danger">Sign Out</a>
     </div>
   </div>
+
+  <!-- GitHub Integration Card -->
+  <div class="card mt-24" style="text-align: left;">
+    <div class="card-header">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div style="width: 36px; height: 36px; border-radius: 8px; background: #24292e; color: #fff; display: flex; align-items: center; justify-content: center;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="card-title">GitHub Integration</div>
+          <div class="card-subtitle">Connect GitHub to search, browse, and import your repositories directly.</div>
+        </div>
+      </div>
+    </div>
+
+    {% if user.github_connection %}
+    <div style="padding: 14px 16px; background: var(--sec-low-bg, #f0fdf4); border: 1px solid var(--sec-low-border, #bbf7d0); border-radius: var(--radius-sm); margin-bottom: 20px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; background: var(--sec-low, #16a34a); color: #fff; border-radius: 50%; font-size: 12px;">✓</span>
+          <span style="font-weight: 700; color: var(--sec-low, #166534);">Connected as @{{ user.github_connection.github_username }}</span>
+        </div>
+        <span class="text-xs text-muted">
+          Since {{ user.github_connection.connected_at|date:"M d, Y" }}
+        </span>
+      </div>
+    </div>
+
+    <div class="flex gap-12" style="align-items: center; flex-wrap: wrap;">
+      <a href="{% url 'github_repositories' %}" class="btn btn-primary btn-sm">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+        </svg>
+        View Repositories →
+      </a>
+
+      <button type="button" class="btn btn-secondary btn-sm" id="btn-show-disconnect" style="color: var(--risk-critical); border-color: var(--sec-critical-border, #fee2e2);">
+        Disconnect GitHub
+      </button>
+    </div>
+
+    <!-- Disconnect Modal -->
+    <div id="disconnect-modal" style="display:none; margin-top:20px; padding:16px; background:var(--sec-critical-bg, #fffbfb); border:1px solid var(--sec-critical-border, #fecaca); border-radius:var(--radius-sm);">
+      <div style="font-weight:700; color:var(--risk-critical); font-size:14px; margin-bottom:6px;">
+        Disconnect GitHub?
+      </div>
+      <p style="font-size:12px; color:var(--text-secondary); margin-bottom:14px; line-height:1.5;">
+        LicenseLens will no longer be able to access repositories from this GitHub account.<br>
+        <strong>Note:</strong> Existing LicenseLens projects and scans will <strong>not</strong> be deleted.
+      </p>
+      <form method="POST" action="{% url 'github_disconnect' %}" style="display:inline;">
+        {% csrf_token %}
+        <div class="flex gap-8">
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-cancel-disconnect">Cancel</button>
+          <button type="submit" class="btn btn-danger btn-sm">Yes, Disconnect</button>
+        </div>
+      </form>
+    </div>
+
+    {% else %}
+    <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px;">
+      Connect your GitHub account to import repositories directly into LicenseLens without needing to manually copy and paste repository URLs.
+    </p>
+    <a href="{% url 'github_connect' %}" class="btn btn-primary" style="background: #24292e; border-color: #24292e; display: inline-flex;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+      </svg>
+      Connect GitHub →
+    </a>
+    {% endif %}
+  </div>
 </div>
+
+<script>
+const showDisconnectBtn = document.getElementById('btn-show-disconnect');
+const cancelDisconnectBtn = document.getElementById('btn-cancel-disconnect');
+const disconnectModal = document.getElementById('disconnect-modal');
+
+if (showDisconnectBtn && disconnectModal) {
+  showDisconnectBtn.addEventListener('click', function() {
+    disconnectModal.style.display = 'block';
+    showDisconnectBtn.style.display = 'none';
+  });
+}
+if (cancelDisconnectBtn && disconnectModal && showDisconnectBtn) {
+  cancelDisconnectBtn.addEventListener('click', function() {
+    disconnectModal.style.display = 'none';
+    showDisconnectBtn.style.display = 'inline-flex';
+  });
+}
+</script>
+
 {% endblock %}

@@ -12,6 +12,35 @@ class Project(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     repository_url = models.URLField(blank=True)
+    SOURCE_CHOICES = [
+        ('manual', 'Manual Upload'),
+        ('github', 'GitHub Repository'),
+    ]
+
+    ANALYSIS_STATUS_CHOICES = [
+        ('NONE', 'None'),
+        ('IMPORTING', 'Importing'),
+        ('ANALYZING', 'Analyzing'),
+        ('COMPLETED', 'Completed'),
+        ('NO_MANIFEST', 'No Manifest'),
+        ('PARTIAL', 'Partial Analysis'),
+        ('FAILED', 'Failed'),
+    ]
+
+    source = models.CharField(max_length=20, choices=SOURCE_CHOICES, default='manual')
+    github_repo_id = models.BigIntegerField(null=True, blank=True)
+    github_owner = models.CharField(max_length=150, blank=True)
+    github_repo_name = models.CharField(max_length=150, blank=True)
+    github_default_branch = models.CharField(max_length=100, blank=True, default='main')
+    github_commit_sha = models.CharField(max_length=40, blank=True)
+
+    analysis_status = models.CharField(max_length=30, choices=ANALYSIS_STATUS_CHOICES, default='NONE')
+    analysis_stage = models.CharField(max_length=80, blank=True)
+    analysis_progress = models.IntegerField(default=0)
+    analysis_error = models.TextField(blank=True)
+    detected_manifests = models.JSONField(default=list, blank=True)
+    detected_files = models.JSONField(default=dict, blank=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -1,0 +1,278 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}GitHub Repositories — LicenseLens{% endblock %}
+{% block nav_github %}active{% endblock %}
+{% block page_title %}GitHub Repositories{% endblock %}
+{% block page_subtitle %}Browse and import your GitHub repositories into LicenseLens for automated dependency scanning{% endblock %}
+
+{% block topbar_actions %}
+{% if is_connected %}
+<a href="{% url 'profile' %}" class="btn btn-secondary btn-sm">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+    <circle cx="12" cy="7" r="4"></circle>
+  </svg>
+  GitHub Settings
+</a>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+{% if not is_connected %}
+<!-- Not Connected State -->
+<div style="max-width: 640px; margin: 40px auto;">
+  <div class="card" style="text-align: center; padding: 48px 36px;">
+    <div style="width: 76px; height: 76px; border-radius: 50%; background: #24292e; color: #fff; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px; box-shadow: 0 8px 24px rgba(36, 41, 46, 0.2);">
+      <svg width="42" height="42" viewBox="0 0 24 24" fill="currentColor">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+      </svg>
+    </div>
+
+    <h2 style="font-size: 22px; font-weight: 800; color: var(--text-title); margin-bottom: 10px;">
+      Connect your GitHub Account
+    </h2>
+    <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.6; max-width: 480px; margin: 0 auto 28px;">
+      Seamlessly link your GitHub account to LicenseLens. Browse your repositories and import them directly into workspace projects to detect vulnerabilities and evaluate open-source license compliance.
+    </p>
+
+    <div style="background: var(--bg-base); border-radius: var(--radius-sm); border: 1px solid var(--border-color); padding: 16px; margin-bottom: 28px; text-align: left;">
+      <div style="font-weight: 700; font-size: 12px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;">Permissions Requested</div>
+      <div style="display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: var(--text-primary);">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Read access to your repositories and organizations</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Verify your GitHub user identity</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Safe server-side token storage — tokens are never exposed</span>
+        </div>
+      </div>
+    </div>
+
+    {% if not has_credentials %}
+    <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: var(--radius-sm); padding: 16px; margin-bottom: 24px; text-align: left;">
+      <div style="font-weight: 700; color: #b45309; font-size: 13px; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        GitHub OAuth App Credentials Required
+      </div>
+      <p style="font-size: 12px; color: #78350f; line-height: 1.5; margin-bottom: 10px;">
+        To connect your GitHub account, you must register a GitHub OAuth app and add your Client ID and Client Secret to your <code>.env</code> file:
+      </p>
+      <div style="font-size: 12px; background: #fff; border: 1px solid #fde68a; border-radius: 6px; padding: 10px; font-family: monospace; color: #451a03; line-height: 1.6;">
+        <div><strong>1. Go to:</strong> <a href="https://github.com/settings/developers" target="_blank" rel="noopener noreferrer" style="text-decoration: underline;">GitHub Developer Settings → OAuth Apps</a></div>
+        <div><strong>2. Homepage URL:</strong> http://127.0.0.1:8000/</div>
+        <div><strong>3. Callback URL:</strong> http://127.0.0.1:8000/github/callback/</div>
+        <div style="margin-top: 6px; padding-top: 6px; border-top: 1px dashed #fde68a; color: #15803d;">
+          GITHUB_CLIENT_ID=your_client_id<br>
+          GITHUB_CLIENT_SECRET=your_client_secret
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <a href="{% url 'github_connect' %}" class="btn btn-primary" style="padding: 12px 28px; font-size: 14px; background: #24292e; border: 1px solid #24292e;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+      </svg>
+      Authorize with GitHub →
+    </a>
+  </div>
+</div>
+
+{% else %}
+<!-- Connected State Header & Filters -->
+<div class="card mb-24" style="padding: 18px 24px;">
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+    <!-- Connection Badge -->
+    <div style="display: flex; align-items: center; gap: 14px;">
+      <div style="width: 44px; height: 44px; border-radius: 50%; background: #24292e; color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+        </svg>
+      </div>
+      <div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 16px; font-weight: 800; color: var(--text-title);">@{{ connection.github_username }}</span>
+          <span class="badge badge-low" style="font-size: 10px; display: inline-flex; align-items: center; gap: 4px;">
+            <span style="width: 6px; height: 6px; border-radius: 50%; background: #15803d; display: inline-block;"></span> Connected
+          </span>
+        </div>
+        <div style="font-size: 12px; color: var(--text-muted);">
+          Linked since {{ connection.connected_at|date:"M d, Y" }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div style="display: flex; gap: 10px;">
+      <button id="refresh-repos-btn" class="btn btn-secondary btn-sm" title="Refresh repositories">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="23 4 23 10 17 10"></polyline>
+          <polyline points="1 20 1 14 7 14"></polyline>
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+        </svg>
+        Refresh
+      </button>
+      <a href="{% url 'profile' %}" class="btn btn-secondary btn-sm" style="color: var(--risk-critical); border-color: #fee2e2;">
+        Disconnect
+      </a>
+    </div>
+  </div>
+
+  <div class="divider" style="margin: 16px 0;"></div>
+
+  <!-- Search and Controls -->
+  <div style="display: flex; gap: 14px; flex-wrap: wrap; align-items: center;">
+    <div style="flex: 1; min-width: 260px; position: relative;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); pointer-events: none;">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input type="text" id="repo-search-input" class="form-control" placeholder="Search repositories by name, language or keyword..." style="padding-left: 36px;">
+    </div>
+
+    <div style="display: flex; gap: 8px;">
+      <select id="repo-filter-privacy" class="form-control" style="width: auto; font-size: 13px; padding: 8px 12px;">
+        <option value="all">All Visibility</option>
+        <option value="public">Public</option>
+        <option value="private">Private</option>
+      </select>
+      <select id="repo-filter-sort" class="form-control" style="width: auto; font-size: 13px; padding: 8px 12px;">
+        <option value="updated">Recently Updated</option>
+        <option value="name">Repository Name</option>
+        <option value="stars">Most Stars</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- Loading Container -->
+<div id="repos-loading" style="text-align: center; padding: 60px 20px;">
+  <div style="display: inline-block; width: 36px; height: 36px; border: 3px solid rgba(25, 119, 243, 0.2); border-top-color: var(--accent-primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 12px;"></div>
+  <div style="font-weight: 700; color: var(--text-title); font-size: 15px;">Loading your GitHub repositories...</div>
+  <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Fetching directly from GitHub API</div>
+</div>
+
+<!-- Error Banner -->
+<div id="repos-error" class="card empty-state" style="display: none; border-color: #fee2e2; background: #fffbfb;">
+  <div style="font-size: 32px; margin-bottom: 10px;">⚠️</div>
+  <div class="empty-state-title" style="color: var(--risk-critical);" id="repos-error-title">Unable to load repositories</div>
+  <div class="empty-state-subtitle" id="repos-error-msg">A connection error occurred while communicating with GitHub.</div>
+  <button id="repos-retry-btn" class="btn btn-primary btn-sm">Try Again</button>
+</div>
+
+<!-- Repositories Grid -->
+<div id="repos-grid" class="projects-grid" style="display: none;">
+  <!-- Rendered via JS -->
+</div>
+
+<!-- Empty Repositories State -->
+<div id="repos-empty" class="card empty-state" style="display: none;">
+  <div class="empty-state-icon">📦</div>
+  <div class="empty-state-title">No repositories found</div>
+  <div class="empty-state-subtitle">
+    We couldn't find any repositories on this GitHub account. Create a repository on GitHub and refresh this page.
+  </div>
+  <a href="https://github.com/new" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+    + Create Repository on GitHub
+  </a>
+</div>
+
+<!-- Search Empty State -->
+<div id="repos-search-empty" class="card empty-state" style="display: none;">
+  <div class="empty-state-icon">🔍</div>
+  <div class="empty-state-title">No matching repositories</div>
+  <div class="empty-state-subtitle" id="search-empty-text">
+    No repositories match your filter criteria.
+  </div>
+  <button id="clear-search-btn" class="btn btn-secondary btn-sm">
+    Clear Search
+  </button>
+</div>
+
+<!-- Load More Bar -->
+<div id="repos-load-more" style="text-align: center; margin-top: 24px; display: none;">
+  <button id="load-more-btn" class="btn btn-secondary">
+    Load More Repositories ↓
+  </button>
+</div>
+
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+{% if is_connected %}
+<script src="{% static 'js/github.js' %}"></script>
+<style>
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.repo-card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-card);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.25s ease, border-color 0.25s ease;
+}
+.repo-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+.repo-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.repo-card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-title);
+  word-break: break-word;
+}
+.repo-card-fullname {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: monospace;
+  margin-top: 2px;
+}
+.repo-card-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 16px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 38px;
+}
+.repo-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-color);
+}
+.lang-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+  background: var(--accent-primary);
+}
+</style>
+{% endif %}
+{% endblock %}

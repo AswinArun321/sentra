@@ -2,148 +2,191 @@
 {% block title %}{{ project.name }} — LicenseLens{% endblock %}
 {% block nav_projects %}active{% endblock %}
 {% block page_title %}{{ project.name }}{% endblock %}
-{% block page_subtitle %}
-  {% if project.repository_url %}
-  <a href="{{ project.repository_url }}" target="_blank" class="text-secondary text-sm" style="display:inline-flex; align-items:center; gap:6px;">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
-    {{ project.repository_url }}
-  </a>
-  {% else %}
-  Workspace Repository
-  {% endif %}
-{% endblock %}
+{% block page_subtitle %}{{ project.repository_url|default:"Workspace Repository" }}{% endblock %}
 
 {% block topbar_actions %}
 <a href="{% url 'project_list' %}" class="btn btn-secondary btn-sm">← Projects</a>
+{% if is_github and project.repository_url %}
+<a href="{{ project.repository_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" title="View repository on GitHub">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; margin-right:4px;">
+    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+  </svg>
+  GitHub ↗
+</a>
+{% endif %}
+{% if is_github %}
+<button type="button" id="refreshAnalysisBtn" class="btn btn-primary btn-sm" onclick="refreshAnalysis({{ project.pk }})">
+  <span id="refreshIcon">⟳</span> Refresh Analysis
+</button>
+{% endif %}
 <a href="{% url 'project_delete' project.pk %}" class="btn btn-danger btn-sm">Delete</a>
 {% endblock %}
 
 {% block content %}
-
-<!-- Risk Overview + Stats -->
-<div class="grid-3 mb-28" style="align-items:stretch;">
-
-  <!-- Risk Score -->
-  <div class="card" style="text-align:center; display:flex; flex-direction:column; justify-content:center;">
-    <div class="card-title" style="justify-content:center; margin-bottom:18px;">Overall Risk</div>
-    {% if latest_scan %}
-    <div class="risk-score-ring">
-      <svg width="140" height="140" viewBox="0 0 140 140">
-        <circle cx="70" cy="70" r="56" fill="none" stroke="#edf2f9" stroke-width="12"/>
-        <circle cx="70" cy="70" r="56" fill="none"
-          stroke="{% if latest_scan.risk_level == 'CRITICAL' %}#ff4444{% elif latest_scan.risk_level == 'HIGH' %}#ff8c00{% elif latest_scan.risk_level == 'MEDIUM' %}#f59e0b{% else %}#10b981{% endif %}"
-          stroke-width="12"
-          stroke-dasharray="{% widthratio latest_scan.risk_score 100 352 %} 352"
-          stroke-linecap="round"/>
-      </svg>
-      <div class="risk-score-value">
-        <div class="risk-score-number {% if latest_scan.risk_level == 'CRITICAL' %}text-danger{% elif latest_scan.risk_level == 'HIGH' %}text-warning{% elif latest_scan.risk_level == 'MEDIUM' %}text-warning{% else %}text-success{% endif %}">
-          {{ latest_scan.risk_score|floatformat:0 }}
+{% if is_github %}
+<!-- GitHub Repository Overview Card -->
+<div class="card mb-28" id="github-repo-card">
+  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+    <div style="display:flex; align-items:center; gap:12px;">
+      <div style="width:40px; height:40px; border-radius:10px; background:var(--bg-hover, #f1f5f9); display:flex; align-items:center; justify-content:center;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+        </svg>
+      </div>
+      <div>
+        <div style="font-weight:700; font-size:16px; color:var(--text-title);">
+          {{ project.github_owner|default:project.owner.username }}/{{ project.github_repo_name|default:project.name }}
         </div>
-        <div class="risk-score-max">/ 100</div>
+        <div style="font-size:12px; color:var(--text-muted); display:flex; align-items:center; gap:8px; margin-top:2px;">
+          <span>Branch: <strong>{{ project.github_default_branch|default:"main" }}</strong></span>
+          {% if project.github_commit_sha %}
+          <span>•</span>
+          <span title="{{ project.github_commit_sha }}">Commit: <code style="padding:2px 6px; border-radius:4px; background:var(--bg-hover); font-size:11px;">{{ project.github_commit_sha|slice:":7" }}</code></span>
+          {% endif %}
+        </div>
       </div>
     </div>
-    <div>
-      <span class="risk-level-badge {{ latest_scan.risk_level }}">{{ latest_scan.risk_level }}</span>
+
+    <div style="display:flex; align-items:center; gap:10px;">
+      {% if project.analysis_status == 'ANALYZING' or project.analysis_status == 'IMPORTING' %}
+        <span class="badge badge-medium" id="status-badge" style="display:inline-flex; align-items:center; gap:6px;">
+          <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#f59e0b; animation:pulse 1s infinite;"></span>
+          Analyzing Repository...
+        </span>
+      {% elif project.analysis_status == 'COMPLETED' %}
+        <span class="badge badge-low" id="status-badge">✓ Analysis Complete</span>
+      {% elif project.analysis_status == 'PARTIAL' %}
+        <span class="badge badge-medium" id="status-badge">⚠ Partial Analysis</span>
+      {% elif project.analysis_status == 'NO_MANIFEST' %}
+        <span class="badge badge-medium" id="status-badge">ℹ No Manifest Found</span>
+      {% elif project.analysis_status == 'FAILED' %}
+        <span class="badge badge-critical" id="status-badge">✕ Analysis Failed</span>
+      {% endif %}
     </div>
+  </div>
+
+  <!-- Detected Repository Elements -->
+  {% if project.detected_files or project.detected_manifests %}
+  <div style="margin-top:16px; pt-12; border-top:1px solid var(--border-color); padding-top:14px; display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+    <span style="font-size:12px; font-weight:600; color:var(--text-muted);">Detected in Repository:</span>
+    
+    {% for manifest in project.detected_manifests %}
+      {% if manifest.supported %}
+        <span class="badge badge-low" style="font-size:11px;">✓ {{ manifest.path }} ({{ manifest.display_name }})</span>
+      {% else %}
+        <span class="badge badge-info" style="font-size:11px;" title="Manifest detected but parser not yet active">ℹ {{ manifest.path }} (Unsupported)</span>
+      {% endif %}
+    {% endfor %}
+
+    {% if project.detected_files.readme.present %}
+      <span class="badge badge-low" style="font-size:11px;">✓ README ({{ project.detected_files.readme.filename }})</span>
+    {% elif project.detected_files %}
+      <span class="badge badge-high" style="font-size:11px;">⚠ README Missing</span>
+    {% endif %}
+
+    {% if project.detected_files.license.present %}
+      <span class="badge badge-low" style="font-size:11px;">✓ License ({{ project.detected_files.license.spdx_id|default:project.detected_files.license.filename|default:"Present" }})</span>
+    {% elif project.detected_files %}
+      <span class="badge badge-high" style="font-size:11px;">⚠ License Missing</span>
+    {% endif %}
+  </div>
+  {% endif %}
+</div>
+
+<!-- Live Analysis Progress Card (Visible when ANALYZING) -->
+<div id="live-progress-card" class="card mb-28" style="display:{% if project.analysis_status == 'ANALYZING' or project.analysis_status == 'IMPORTING' %}block{% else %}none{% endif %}; border: 1px solid var(--primary);">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+    <div style="font-weight:700; color:var(--text-title); display:flex; align-items:center; gap:8px;">
+      <span class="spinner" style="width:16px; height:16px; border-width:2px;"></span>
+      <span id="analysis-stage-text">{{ project.analysis_stage|default:"Inspecting repository..." }}</span>
+    </div>
+    <div style="font-size:13px; font-weight:700; color:var(--primary);" id="analysis-progress-percent">
+      {{ project.analysis_progress|default:10 }}%
+    </div>
+  </div>
+  <div style="width:100%; height:8px; background:var(--bg-hover); border-radius:4px; overflow:hidden;">
+    <div id="analysis-progress-bar" style="height:100%; width:{{ project.analysis_progress|default:10 }}%; background:var(--primary); transition:width 0.4s ease;"></div>
+  </div>
+  <div style="font-size:12px; color:var(--text-muted); margin-top:8px;">
+    LicenseLens is reading repository tree, detecting manifests, checking README and licenses, and running security audits.
+  </div>
+</div>
+
+<!-- No Manifest Alert Card -->
+{% if project.analysis_status == 'NO_MANIFEST' %}
+<div class="card mb-28" style="border-left: 4px solid #f59e0b; background: rgba(245, 158, 11, 0.05);">
+  <div style="font-weight:700; font-size:15px; color:var(--text-title); margin-bottom:4px;">
+    ⚠ No Supported Dependency Manifest Found
+  </div>
+  <div style="font-size:13px; color:var(--text-muted); margin-bottom:10px;">
+    {{ project.analysis_error|default:"LicenseLens could not find a supported dependency manifest (package.json or requirements.txt) in this repository." }}
+    You can manually upload a manifest below to run dependency vulnerability and license scans.
+  </div>
+</div>
+{% endif %}
+
+<!-- Failed Analysis Alert Card -->
+{% if project.analysis_status == 'FAILED' %}
+<div class="card mb-28" style="border-left: 4px solid #ef4444; background: rgba(239, 68, 68, 0.05);">
+  <div style="font-weight:700; font-size:15px; color:#ef4444; margin-bottom:4px;">
+    ✕ Repository Analysis Failed
+  </div>
+  <div style="font-size:13px; color:var(--text-muted); margin-bottom:10px;">
+    {{ project.analysis_error|default:"An error occurred while communicating with GitHub or analyzing repository contents." }}
+  </div>
+  <button type="button" class="btn btn-secondary btn-sm" onclick="refreshAnalysis({{ project.pk }})">⟳ Retry Analysis</button>
+</div>
+{% endif %}
+{% endif %}
+
+<!-- Standard Scan Results Metrics -->
+<div class="grid-3 mb-28">
+  <div class="card" style="text-align:center;">
+    <div class="card-title mb-16">Overall Risk</div>
+    {% if latest_scan %}
+      <div style="font-size:36px; font-weight:800; color:var(--text-title); margin-bottom:6px;">{{ latest_scan.risk_score|floatformat:0 }}<span style="font-size:14px; color:var(--text-muted);">/100</span></div>
+      <span class="badge badge-{{ latest_scan.risk_level|lower }}">{{ latest_scan.risk_level }}</span>
     {% else %}
-    <div class="empty-state" style="padding:24px;">
-      <div style="font-size:36px; margin-bottom:8px;">📊</div>
-      <div class="empty-state-title" style="font-size:14px;">No scan yet</div>
-      <div class="empty-state-subtitle" style="font-size:12px; margin-bottom:0;">Upload a manifest below to analyze.</div>
-    </div>
+      <div class="empty-state"><div class="empty-state-subtitle">{% if project.analysis_status == 'ANALYZING' %}Analysis in progress...{% elif is_github %}No scans yet. Refresh analysis or upload below.{% else %}No scans yet. Upload a manifest below.{% endif %}</div></div>
     {% endif %}
   </div>
 
-  <!-- Scan Stats -->
-  <div class="card" style="grid-column: span 2; display:flex; flex-direction:column; justify-content:space-between;">
-    <div>
-      <div class="card-header" style="margin-bottom:16px;">
-        <div class="card-title">Dependency Overview</div>
-      </div>
-
-      {% if latest_scan %}
-      <div class="grid-2 mb-20">
-        <div class="stat-card info">
-          <div class="stat-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
-          </div>
-          <div class="stat-value">{{ latest_scan.dependencies.count }}</div>
-          <div class="stat-label">Total Dependencies</div>
-        </div>
-        <div class="stat-card danger">
-          <div class="stat-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          </div>
-          <div class="stat-value">{{ latest_scan.vulnerability_count }}</div>
-          <div class="stat-label">Vulnerabilities</div>
-        </div>
-      </div>
-
-      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px;">
-        {% if latest_scan.critical_count %}
-        <span class="badge badge-critical">🔴 {{ latest_scan.critical_count }} Critical</span>
-        {% endif %}
-        {% if latest_scan.high_count %}
-        <span class="badge badge-high">🟠 {{ latest_scan.high_count }} High</span>
-        {% endif %}
-        {% if latest_scan.medium_count %}
-        <span class="badge badge-medium">🟡 {{ latest_scan.medium_count }} Medium</span>
-        {% endif %}
-        {% if latest_scan.low_count %}
-        <span class="badge badge-low">🟢 {{ latest_scan.low_count }} Low</span>
-        {% endif %}
-      </div>
-      {% else %}
-      <div class="empty-state" style="padding:20px;">
-        <div class="empty-state-subtitle">Upload a dependency file below to run your first scan.</div>
-      </div>
-      {% endif %}
-    </div>
-
+  <div class="card" style="grid-column: span 2;">
+    <div class="card-header"><div class="card-title">Dependency Overview</div></div>
     {% if latest_scan %}
-    <div class="flex gap-8" style="padding-top:16px; border-top:1px solid var(--border-color);">
-      <a href="{% url 'scan_detail' latest_scan.pk %}" class="btn btn-primary btn-sm">View Scan Details →</a>
-      <a href="{% url 'download_report' latest_scan.pk %}" class="btn btn-secondary btn-sm">📥 Download Report</a>
+    <div class="grid-2 mb-16">
+      <div class="stat-card"><div class="stat-value">{{ latest_scan.dependencies.count }}</div><div class="stat-label">Dependencies</div></div>
+      <div class="stat-card"><div class="stat-value">{{ latest_scan.vulnerability_count }}</div><div class="stat-label">Vulnerabilities</div></div>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <a href="{% url 'scan_detail' latest_scan.pk %}" class="btn btn-primary btn-sm">View Details →</a>
+      <a href="{% url 'download_report' latest_scan.pk %}" class="btn btn-secondary btn-sm">📥 Report</a>
       <a href="{% url 'download_sbom' latest_scan.pk %}" class="btn btn-secondary btn-sm">📋 SBOM</a>
     </div>
+    {% else %}
+    <div class="empty-state"><div class="empty-state-subtitle">{% if project.analysis_status == 'ANALYZING' %}Scanners are running automatically...{% else %}Run your first scan to populate metrics.{% endif %}</div></div>
     {% endif %}
   </div>
 </div>
 
-<!-- Upload Section -->
+<!-- Upload Dependency Manifest (Primary for manual projects, fallback for GitHub) -->
 <div class="card mb-28">
   <div class="card-header">
     <div>
-      <div class="card-title">Upload Dependency Manifest</div>
-      <div class="card-subtitle">Analyze package.json or requirements.txt for immediate security feedback</div>
+      <div class="card-title">{% if is_github %}Manual Manifest Upload (Fallback){% else %}Upload Dependency Manifest{% endif %}</div>
+      <div class="card-subtitle">Supported files: package.json (npm) or requirements.txt (PyPI)</div>
     </div>
   </div>
-
-  <form method="POST" action="{% url 'scan_upload' project.pk %}" enctype="multipart/form-data" id="upload-form">
+  <form method="POST" action="{% url 'scan_upload' project.pk %}" enctype="multipart/form-data">
     {% csrf_token %}
-    <div class="upload-zone" id="upload-zone">
-      <input type="file" name="file" id="file-input" accept=".json,.txt,.xml"
-             onchange="handleFileSelect(this)">
-      <div class="upload-icon">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-          <polyline points="17 8 12 3 7 8"></polyline>
-          <line x1="12" y1="3" x2="12" y2="15"></line>
-        </svg>
-      </div>
-      <div class="upload-title" id="upload-title">Drop your dependency file here</div>
-      <div class="upload-subtitle">or click to browse from your computer</div>
-      <div class="upload-formats">
-        <span class="format-chip">📦 package.json</span>
-        <span class="format-chip">🐍 requirements.txt</span>
-      </div>
+    <div class="upload-dropzone" onclick="document.getElementById('fileInput').click()">
+      <div style="font-size:32px; margin-bottom:8px;">📁</div>
+      <div id="fileTitle" style="font-weight:700; color:var(--text-title); margin-bottom:4px;">Click or drag manifest file here</div>
+      <div class="card-subtitle">package.json or requirements.txt (Max 5MB)</div>
+      <input type="file" name="file" id="fileInput" accept=".json,.txt" style="display:none;" onchange="document.getElementById('fileTitle').innerText = this.files[0].name; document.getElementById('scanBtn').style.display='inline-flex';">
     </div>
-    <div class="flex gap-12 mt-16" id="upload-actions" style="display:none!important;">
-      <button type="submit" class="btn btn-primary" id="scan-btn">
-        Start Scan →
-      </button>
-      <button type="button" onclick="resetUpload()" class="btn btn-secondary">Cancel</button>
+    <div style="margin-top:14px;">
+      <button type="submit" id="scanBtn" class="btn btn-primary" style="display:none;">Start Scan →</button>
     </div>
   </form>
 </div>
@@ -151,59 +194,21 @@
 <!-- Scan History -->
 {% if scans %}
 <div class="card">
-  <div class="card-header">
-    <div>
-      <div class="card-title">Scan History</div>
-      <div class="card-subtitle">{{ scans|length }} total audit{{ scans|length|pluralize }} executed</div>
-    </div>
-    <span class="badge badge-info">{{ scans|length }} audit{{ scans|length|pluralize }}</span>
-  </div>
-  <div class="table-wrapper">
+  <div class="card-header"><div class="card-title">Scan History</div></div>
+  <div class="table-container">
     <table>
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>File Manifest</th>
-          <th>Status</th>
-          <th>Risk Score</th>
-          <th>Dependencies</th>
-          <th>Vulnerabilities</th>
-          <th>Date</th>
-          <th>Action</th>
-        </tr>
-      </thead>
+      <thead><tr><th>#</th><th>File</th><th>Status</th><th>Score</th><th>Deps</th><th>Vulns</th><th>Date</th><th>Action</th></tr></thead>
       <tbody>
-        {% for scan in scans %}
+        {% for s in scans %}
         <tr>
-          <td class="text-muted font-mono text-xs">#{{ scan.pk }}</td>
-          <td><span class="font-mono text-xs font-bold text-primary">{{ scan.source_type }}</span></td>
-          <td>
-            <span class="scan-status {{ scan.status }}">
-              <span class="status-dot {% if scan.status == 'RUNNING' %}pulse{% endif %}"></span>
-              {{ scan.status }}
-            </span>
-          </td>
-          <td>
-            {% if scan.risk_score is not None %}
-            <span class="risk-level-badge {{ scan.risk_level }}" style="font-size:10px; padding:3px 10px;">
-              {{ scan.risk_score|floatformat:0 }}
-            </span>
-            {% else %}—{% endif %}
-          </td>
-          <td class="text-secondary font-bold">{{ scan.dependencies.count }}</td>
-          <td>
-            {% if scan.vulnerability_count > 0 %}
-            <span class="text-danger font-bold">{{ scan.vulnerability_count }}</span>
-            {% else %}
-            <span class="text-success font-bold">0</span>
-            {% endif %}
-          </td>
-          <td class="text-muted text-xs font-semibold">{{ scan.created_at|date:"M d, Y H:i" }}</td>
-          <td>
-            {% if scan.status == 'COMPLETED' %}
-            <a href="{% url 'scan_detail' scan.pk %}" class="btn btn-secondary btn-sm" style="padding:4px 10px;">View Details →</a>
-            {% endif %}
-          </td>
+          <td>#{{ s.pk }}</td>
+          <td><strong>{{ s.file_name|default:s.source_type }}</strong></td>
+          <td><span class="badge badge-info">{{ s.status }}</span></td>
+          <td>{% if s.risk_score is not None %}<span class="badge badge-{{ s.risk_level|lower }}">{{ s.risk_score|floatformat:0 }}</span>{% else %}—{% endif %}</td>
+          <td>{{ s.dependencies.count }}</td>
+          <td>{{ s.vulnerability_count }}</td>
+          <td>{{ s.created_at|date:"M d, Y H:i" }}</td>
+          <td>{% if s.status == 'COMPLETED' %}<a href="{% url 'scan_detail' s.pk %}" class="btn btn-secondary btn-sm">View →</a>{% endif %}</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -212,45 +217,89 @@
 </div>
 {% endif %}
 
-{% endblock %}
-
-{% block extra_js %}
 <script>
-function handleFileSelect(input) {
-  if (input.files && input.files[0]) {
-    const file = input.files[0];
-    document.getElementById('upload-title').textContent = 'Selected: ' + file.name;
-    document.getElementById('upload-actions').style.removeProperty('display');
-    document.getElementById('upload-actions').style.display = 'flex';
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
   }
+  return cookieValue;
 }
 
-function resetUpload() {
-  document.getElementById('file-input').value = '';
-  document.getElementById('upload-title').textContent = 'Drop your dependency file here';
-  document.getElementById('upload-actions').style.display = 'none';
+// Polling for live analysis progress
+{% if is_github %}
+let pollTimer = null;
+
+function checkAnalysisStatus(projectId) {
+  fetch(`/api/projects/${projectId}/analysis-status/`, {
+    headers: { 'Accept': 'application/json' }
+  })
+  .then(res => res.json())
+  .then(data => {
+    const liveCard = document.getElementById('live-progress-card');
+    const stageEl = document.getElementById('analysis-stage-text');
+    const percentEl = document.getElementById('analysis-progress-percent');
+    const barEl = document.getElementById('analysis-progress-bar');
+    const badgeEl = document.getElementById('status-badge');
+
+    if (data.status === 'ANALYZING' || data.status === 'IMPORTING') {
+      if (liveCard) liveCard.style.display = 'block';
+      if (stageEl && data.stage) stageEl.textContent = data.stage.replace(/_/g, ' ');
+      if (percentEl) percentEl.textContent = (data.progress || 10) + '%';
+      if (barEl) barEl.style.width = (data.progress || 10) + '%';
+      pollTimer = setTimeout(() => checkAnalysisStatus(projectId), 1500);
+    } else {
+      // Completed, No Manifest, Partial, or Failed
+      if (pollTimer) clearTimeout(pollTimer);
+      window.location.reload();
+    }
+  })
+  .catch(err => {
+    console.warn('Status poll error:', err);
+    pollTimer = setTimeout(() => checkAnalysisStatus(projectId), 3000);
+  });
 }
 
-const zone = document.getElementById('upload-zone');
-['dragenter', 'dragover'].forEach(name => {
-  zone.addEventListener(name, e => { e.preventDefault(); zone.classList.add('dragover'); });
+{% if project.analysis_status == 'ANALYZING' or project.analysis_status == 'IMPORTING' %}
+document.addEventListener('DOMContentLoaded', () => {
+  checkAnalysisStatus({{ project.pk }});
 });
-['dragleave', 'drop'].forEach(name => {
-  zone.addEventListener(name, e => { e.preventDefault(); zone.classList.remove('dragover'); });
-});
-zone.addEventListener('drop', e => {
-  const dt = e.dataTransfer;
-  const files = dt.files;
-  if (files.length) {
-    document.getElementById('file-input').files = files;
-    handleFileSelect(document.getElementById('file-input'));
-  }
-});
+{% endif %}
 
-document.getElementById('upload-form').addEventListener('submit', function() {
-  const btn = document.getElementById('scan-btn');
-  btn.innerHTML = '<span class="spinner"></span> Scanning...';
-  btn.disabled = true;
-});
+function refreshAnalysis(projectId) {
+  const btn = document.getElementById('refreshAnalysisBtn');
+  if (btn) btn.disabled = true;
+  const icon = document.getElementById('refreshIcon');
+  if (icon) icon.textContent = '⏳';
+
+  fetch(`/api/projects/${projectId}/refresh-analysis/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': getCookie('csrftoken'),
+      'Accept': 'application/json',
+    }
+  })
+  .then(res => res.json())
+  .then(data => {
+    const liveCard = document.getElementById('live-progress-card');
+    if (liveCard) liveCard.style.display = 'block';
+    checkAnalysisStatus(projectId);
+  })
+  .catch(err => {
+    alert('Failed to trigger analysis refresh: ' + err.message);
+    if (btn) btn.disabled = false;
+    if (icon) icon.textContent = '⟳';
+  });
+}
+{% endif %}
 </script>
 {% endblock %}
+
