@@ -7,6 +7,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.shortcuts import redirect
 from scans.views import api_start_scan, api_project_scans
+from frontend import views_public
 
 urlpatterns = [
     # Admin
@@ -21,8 +22,15 @@ urlpatterns = [
     path('api/github/', include('github_integration.api_urls')),
     path('api/dashboard/', include('frontend.api_urls')),
 
+    # Public Pages (accessible prior to authentication)
+    path('', views_public.home_view, name='home'),
+    path('features/', views_public.features_view, name='features'),
+    path('how-it-works/', views_public.how_it_works_view, name='how_it_works'),
+    path('about/', views_public.about_view, name='about'),
+    path('docs/', views_public.docs_view, name='documentation'),
+    path('contact/', views_public.contact_view, name='contact'),
+
     # Frontend (template views)
-    path('', lambda request: redirect('dashboard') if request.user.is_authenticated else redirect('login'), name='home'),
     path('auth/', include('accounts.frontend_urls')),
     path('dashboard/', include('frontend.urls')),
     path('projects/', include('projects.frontend_urls')),

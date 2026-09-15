@@ -1,0 +1,91 @@
+{% extends "public/base.html" %}
+{% load static %}
+
+{% block title %}SENTRA | Contact — Project Inquiries & Support{% endblock %}
+{% block meta_description %}Have a question about SENTRA? Contact the project team for inquiries, feedback, bug reports, or collaboration.{% endblock %}
+
+{% block content %}
+<!-- Contact Header -->
+<section class="public-section" style="padding-bottom: 40px;">
+  <div class="public-container">
+    <div class="section-header" style="margin-bottom: 24px;">
+      <div class="section-tag">Get in Touch</div>
+      <h1 class="section-title">Have a Question About SENTRA?</h1>
+      <p class="section-subtitle">
+        Connect with the engineering team for inquiries, vulnerability disclosure, feature feedback, or technical collaboration.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Contact Channels Grid -->
+<section class="public-section public-section-alt">
+  <div class="public-container">
+    <div class="public-container-narrow" style="padding: 0;">
+      <div class="features-grid-2">
+        <!-- Direct Inquiries -->
+        <div class="feature-box">
+          <div class="feature-icon-wrapper">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+          </div>
+          <h2 class="feature-box-title">Email Inquiries</h2>
+          <p class="feature-box-desc">
+            For technical inquiries, feedback, or project support, reach out directly to the project team:
+          </p>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; color: var(--accent-primary); padding: 10px 14px; background: var(--bg-hover); border-radius: var(--radius-sm); display: inline-block;">
+            admin@sentra.dev
+          </div>
+        </div>
+
+        <!-- GitHub Repository -->
+        <div class="feature-box">
+          <div class="feature-icon-wrapper">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+            </svg>
+          </div>
+          <h2 class="feature-box-title">Source Repository</h2>
+          <p class="feature-box-desc">
+            Explore the codebase, inspect project structure, track development progress, or report defects:
+          </p>
+          <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="feature-link" style="margin-top: 8px;">
+            GitHub Project Repository →
+          </a>
+        </div>
+      </div>
+
+      <!-- FAQ Box -->
+      <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 36px; box-shadow: var(--shadow-card); margin-top: 36px;">
+        <h3 style="font-size: 18px; font-weight: 800; color: var(--text-title); margin-bottom: 12px;">Responsible Security Disclosure</h3>
+        <p style="font-size: 14.5px; color: var(--text-secondary); line-height: 1.65; margin: 0;">
+          If you discover a security vulnerability within SENTRA or its integrated services, please send a detailed summary directly to the project team at <strong style="color: var(--text-title);">admin@sentra.dev</strong>. We prioritize security reports and work swiftly to address verified issues.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Call to Action Banner -->
+<section class="public-section">
+  <div class="public-container">
+    <div class="cta-banner">
+      <h2 class="cta-banner-title">Start Auditing Your Codebase</h2>
+      <p class="cta-banner-desc">
+        Connect your GitHub repositories to SENTRA and experience automated dependency inspection and risk intelligence.
+      </p>
+      {% if user.is_authenticated %}
+      <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg">
+        Go to Dashboard →
+      </a>
+      {% else %}
+      <a href="{% url 'register' %}" class="btn btn-primary btn-lg">
+        Create Your Account →
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

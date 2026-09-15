@@ -1,0 +1,174 @@
+{% extends "public/base.html" %}
+{% load static %}
+
+{% block title %}SENTRA | Documentation & User Guide{% endblock %}
+{% block meta_description %}Comprehensive documentation for SENTRA: getting started, GitHub integration, supported manifest formats, risk scoring metrics, and CycloneDX SBOM export.{% endblock %}
+
+{% block content %}
+<!-- Docs Header -->
+<section class="public-section" style="padding-bottom: 40px;">
+  <div class="public-container">
+    <div class="section-header" style="margin-bottom: 24px;">
+      <div class="section-tag">Documentation</div>
+      <h1 class="section-title">Platform Documentation<br>&amp; User Guide</h1>
+      <p class="section-subtitle">
+        Everything you need to know to connect repositories, run automatic audits, interpret security scores, and export compliance reports.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Main Documentation Content -->
+<section class="public-section public-section-alt">
+  <div class="public-container">
+    <div class="public-container-narrow" style="padding: 0;">
+
+      <!-- 1. Getting Started -->
+      <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 36px; box-shadow: var(--shadow-card); margin-bottom: 32px;">
+        <h2 style="font-size: 22px; font-weight: 800; color: var(--text-title); margin-bottom: 16px;">
+          1. Getting Started
+        </h2>
+        <p style="font-size: 15px; color: var(--text-secondary); line-height: 1.65; margin-bottom: 16px;">
+          Getting started with SENTRA takes less than two minutes:
+        </p>
+        <ol style="font-size: 14.5px; color: var(--text-secondary); line-height: 1.8; margin: 0 0 20px 20px; padding: 0;">
+          <li><strong>Create an account:</strong> Register with your username, email, and password.</li>
+          <li><strong>Connect GitHub:</strong> Authorize SENTRA through the secure GitHub OAuth integration.</li>
+          <li><strong>Import a repository:</strong> Browse your public and private repositories and select one to audit.</li>
+          <li><strong>Automatic analysis:</strong> SENTRA retrieves manifests, matches CVEs, audits README completeness, and categorizes licenses.</li>
+          <li><strong>Review security posture:</strong> Inspect actionable findings and recommendations on your dashboard.</li>
+        </ol>
+      </div>
+
+      <!-- 2. Connecting GitHub -->
+      <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 36px; box-shadow: var(--shadow-card); margin-bottom: 32px;">
+        <h2 style="font-size: 22px; font-weight: 800; color: var(--text-title); margin-bottom: 16px;">
+          2. Connecting GitHub &amp; Security
+        </h2>
+        <p style="font-size: 15px; color: var(--text-secondary); line-height: 1.65; margin-bottom: 14px;">
+          SENTRA requests minimal read-only permissions to inspect repository files and directory trees.
+        </p>
+        <ul style="font-size: 14.5px; color: var(--text-secondary); line-height: 1.8; margin: 0 0 16px 20px; padding: 0;">
+          <li><strong>OAuth State Validation:</strong> Protects against Cross-Site Request Forgery during authorization handshakes.</li>
+          <li><strong>Per-User Account Isolation:</strong> Each user connection is strictly bounded. Users cannot see or import another user's private repositories.</li>
+          <li><strong>Token Protection:</strong> OAuth access tokens are encrypted and kept strictly on the backend; they are never sent to browser storage or exposed in URLs.</li>
+          <li><strong>Revocation:</strong> You can disconnect your GitHub account at any time from your Account Profile.</li>
+        </ul>
+      </div>
+
+      <!-- 3. Supported Manifests Table -->
+      <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 36px; box-shadow: var(--shadow-card); margin-bottom: 32px;">
+        <h2 style="font-size: 22px; font-weight: 800; color: var(--text-title); margin-bottom: 16px;">
+          3. Supported Dependency Manifests
+        </h2>
+        <p style="font-size: 15px; color: var(--text-secondary); line-height: 1.65; margin-bottom: 20px;">
+          SENTRA automatically inspects repository file trees for supported package definitions:
+        </p>
+
+        <div class="specs-table-wrap" style="margin: 0 0 16px 0;">
+          <table class="specs-table">
+            <thead>
+              <tr>
+                <th>File Format</th>
+                <th>Ecosystem</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="specs-code">requirements.txt</span></td>
+                <td>Python</td>
+                <td><span class="badge" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">Fully Supported</span></td>
+              </tr>
+              <tr>
+                <td><span class="specs-code">package.json</span></td>
+                <td>Node.js</td>
+                <td><span class="badge" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">Fully Supported</span></td>
+              </tr>
+              <tr>
+                <td><span class="specs-code">pyproject.toml</span></td>
+                <td>Python</td>
+                <td><span class="badge" style="background: var(--bg-hover); color: var(--text-secondary);">Manifest Detection</span></td>
+              </tr>
+              <tr>
+                <td><span class="specs-code">package-lock.json</span></td>
+                <td>npm</td>
+                <td><span class="badge" style="background: var(--bg-hover); color: var(--text-secondary);">Manifest Detection</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 4. Understanding Risk Scores -->
+      <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 36px; box-shadow: var(--shadow-card); margin-bottom: 32px;">
+        <h2 style="font-size: 22px; font-weight: 800; color: var(--text-title); margin-bottom: 16px;">
+          4. Understanding Risk Scores
+        </h2>
+        <p style="font-size: 15px; color: var(--text-secondary); line-height: 1.65; margin-bottom: 16px;">
+          SENTRA's risk engine aggregates signals into a unified 0–100 risk score. A lower score reflects a more secure repository:
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 20px;">
+          <div style="padding: 14px; border-radius: var(--radius-sm); background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2);">
+            <div style="font-weight: 700; color: #10b981; font-size: 14px; margin-bottom: 2px;">Low Risk (0 - 24)</div>
+            <div style="font-size: 12.5px; color: var(--text-secondary);">Clean dependencies, minimal or zero known CVEs, permissive licensing.</div>
+          </div>
+          <div style="padding: 14px; border-radius: var(--radius-sm); background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.2);">
+            <div style="font-weight: 700; color: #f59e0b; font-size: 14px; margin-bottom: 2px;">Medium Risk (25 - 49)</div>
+            <div style="font-size: 12.5px; color: var(--text-secondary);">Moderate vulnerabilities, weak copyleft licenses, or outdated packages.</div>
+          </div>
+          <div style="padding: 14px; border-radius: var(--radius-sm); background: rgba(255, 140, 0, 0.08); border: 1px solid rgba(255, 140, 0, 0.2);">
+            <div style="font-weight: 700; color: #ff8c00; font-size: 14px; margin-bottom: 2px;">High Risk (50 - 74)</div>
+            <div style="font-size: 12.5px; color: var(--text-secondary);">High-severity CVEs or strong copyleft licenses requiring source disclosure.</div>
+          </div>
+          <div style="padding: 14px; border-radius: var(--radius-sm); background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.2);">
+            <div style="font-weight: 700; color: #ef4444; font-size: 14px; margin-bottom: 2px;">Critical Risk (75 - 100)</div>
+            <div style="font-size: 12.5px; color: var(--text-secondary);">Critical severity vulnerabilities with active exploits requiring immediate attention.</div>
+          </div>
+        </div>
+
+        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6; margin: 0;">
+          <strong>Note:</strong> SENTRA risk scores are informational engineering assessments based on automated checks. They do not constitute formal legal advice or standardized compliance certifications.
+        </p>
+      </div>
+
+      <!-- 5. Exporting Assets -->
+      <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 36px; box-shadow: var(--shadow-card);">
+        <h2 style="font-size: 22px; font-weight: 800; color: var(--text-title); margin-bottom: 16px;">
+          5. Exporting Security Assets
+        </h2>
+        <p style="font-size: 15px; color: var(--text-secondary); line-height: 1.65; margin-bottom: 16px;">
+          Every completed scan allows you to download machine-readable assets:
+        </p>
+        <ul style="font-size: 14.5px; color: var(--text-secondary); line-height: 1.8; margin: 0 0 20px 20px; padding: 0;">
+          <li><strong>JSON Security Report</strong> — Detailed breakdown of dependencies, risk scores, CVE entries, and license findings.</li>
+          <li><strong>CycloneDX 1.4 SBOM</strong> — Standardized Software Bill of Materials in JSON format, ready for supply-chain compliance workflows.</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Call to Action Banner -->
+<section class="public-section">
+  <div class="public-container">
+    <div class="cta-banner">
+      <h2 class="cta-banner-title">Ready to Begin?</h2>
+      <p class="cta-banner-desc">
+        Create an account to start scanning your repositories with SENTRA.
+      </p>
+      {% if user.is_authenticated %}
+      <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg">
+        Go to Dashboard →
+      </a>
+      {% else %}
+      <a href="{% url 'register' %}" class="btn btn-primary btn-lg">
+        Get Started →
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

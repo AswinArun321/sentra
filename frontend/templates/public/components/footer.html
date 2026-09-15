@@ -1,0 +1,60 @@
+{% load static %}
+<footer class="public-footer">
+  <div class="public-container">
+    <div class="footer-grid">
+      <!-- Brand column -->
+      <div class="footer-brand-col">
+        <a href="{% url 'home' %}" class="nav-brand" style="display: inline-flex;">
+          <div class="brand-icon-box">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+          </div>
+          <span class="brand-name">SENTRA<span class="brand-dot">.</span></span>
+        </a>
+        <p class="footer-brand-desc">
+          Repository Security &amp; Intelligence Platform. Know your code. Secure what you ship.
+        </p>
+      </div>
+
+      <!-- Product links -->
+      <div class="footer-col">
+        <div class="footer-col-title">Product</div>
+        <ul class="footer-links">
+          <li><a href="{% url 'features' %}" class="footer-link">Features</a></li>
+          <li><a href="{% url 'how_it_works' %}" class="footer-link">How It Works</a></li>
+          <li><a href="{% url 'documentation' %}" class="footer-link">Documentation</a></li>
+        </ul>
+      </div>
+
+      <!-- Company links -->
+      <div class="footer-col">
+        <div class="footer-col-title">Platform</div>
+        <ul class="footer-links">
+          <li><a href="{% url 'about' %}" class="footer-link">About Us</a></li>
+          <li><a href="{% url 'contact' %}" class="footer-link">Contact</a></li>
+        </ul>
+      </div>
+
+      <!-- Account links -->
+      <div class="footer-col">
+        <div class="footer-col-title">Account</div>
+        <ul class="footer-links">
+          {% if user.is_authenticated %}
+          <li><a href="{% url 'dashboard' %}" class="footer-link">Dashboard</a></li>
+          <li><a href="{% url 'profile' %}" class="footer-link">Profile</a></li>
+          <li><a href="{% url 'logout' %}" class="footer-link">Sign Out</a></li>
+          {% else %}
+          <li><a href="{% url 'login' %}" class="footer-link">Sign In</a></li>
+          <li><a href="{% url 'register' %}" class="footer-link">Sign Up</a></li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div>&copy; 2026 SENTRA. All rights reserved.</div>
+      <div>Repository Security, Dependency Intelligence &amp; Open-Source Compliance.</div>
+    </div>
+  </div>
+</footer>

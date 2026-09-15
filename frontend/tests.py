@@ -193,3 +193,61 @@ class DashboardAPITestCase(TestCase):
         self.assertTemplateUsed(response, 'dashboard/index.html')
         self.assertContains(response, 'Security & Compliance Overview')
         self.assertContains(response, 'AlphaProject')
+
+
+class PublicPagesTestCase(TestCase):
+    """
+    Tests for public pre-authentication pages:
+    Home, Features, How It Works, About, Documentation, Contact, and Signup alias.
+    """
+
+    def setUp(self):
+        self.client = Client()
+
+    def test_public_home_page_loads_without_auth(self):
+        response = self.client.get(reverse('home'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'public/home.html')
+        self.assertContains(response, 'KNOW YOUR CODE')
+        self.assertContains(response, 'SENTRA')
+
+    def test_public_features_page(self):
+        response = self.client.get(reverse('features'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'public/features.html')
+        self.assertContains(response, 'Repository Security')
+
+    def test_public_how_it_works_page(self):
+        response = self.client.get(reverse('how_it_works'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'public/how_it_works.html')
+        self.assertContains(response, 'Automatic Repository Analysis')
+
+    def test_public_about_page(self):
+        response = self.client.get(reverse('about'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'public/about.html')
+        self.assertContains(response, 'Our Mission')
+
+    def test_public_documentation_page(self):
+        response = self.client.get(reverse('documentation'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'public/documentation.html')
+        self.assertContains(response, 'Platform Documentation')
+
+    def test_public_contact_page(self):
+        response = self.client.get(reverse('contact'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'public/contact.html')
+        self.assertContains(response, 'Have a Question About SENTRA?')
+
+    def test_signup_alias_route(self):
+        response = self.client.get(reverse('signup'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'auth/register.html')
+
+    def test_protected_dashboard_redirects_unauthenticated(self):
+        response = self.client.get(reverse('dashboard'))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('/auth/login/', response.url)
+

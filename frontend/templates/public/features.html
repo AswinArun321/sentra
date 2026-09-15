@@ -1,0 +1,184 @@
+{% extends "public/base.html" %}
+{% load static %}
+
+{% block title %}SENTRA | Features — Repository Security & Intelligence{% endblock %}
+{% block meta_description %}Explore SENTRA capabilities: vulnerability detection, dependency intelligence, open-source license compliance, README health audits, and multi-factor risk scoring.{% endblock %}
+
+{% block content %}
+<!-- Features Header -->
+<section class="public-section" style="padding-bottom: 40px;">
+  <div class="public-container">
+    <div class="section-header" style="margin-bottom: 24px;">
+      <div class="section-tag">Platform Features</div>
+      <h1 class="section-title">Repository Security,<br>All in One Place.</h1>
+      <p class="section-subtitle">
+        SENTRA brings dependency analysis, vulnerability detection, license intelligence, repository health, and documentation checks into one unified platform.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Deep Dive Feature Sections -->
+<section class="public-section public-section-alt">
+  <div class="public-container">
+    <div class="features-grid-2">
+      <!-- Feature 1: Vulnerability Detection -->
+      <div class="feature-box">
+        <div class="feature-icon-wrapper">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+        </div>
+        <h2 class="feature-box-title">Vulnerability Detection</h2>
+        <p class="feature-box-desc">
+          SENTRA continuously queries authoritative databases including OSV.dev to identify known CVEs across open-source dependencies. Every finding details severity, affected version ranges, CVSS scores, and available patches to accelerate remediation without false promises of unverified zero-day detection.
+        </p>
+      </div>
+
+      <!-- Feature 2: Dependency Intelligence -->
+      <div class="feature-box">
+        <div class="feature-icon-wrapper">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+          </svg>
+        </div>
+        <h2 class="feature-box-title">Dependency Intelligence</h2>
+        <p class="feature-box-desc">
+          Automated parsers traverse repository trees to identify project manifests such as requirements.txt and package.json. SENTRA extracts exact package names and versions, maps dependencies across ecosystems, and catalogs libraries directly from repository commits without requiring manual uploads.
+        </p>
+      </div>
+
+      <!-- Feature 3: License Compliance -->
+      <div class="feature-box">
+        <div class="feature-icon-wrapper">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+          </svg>
+        </div>
+        <h2 class="feature-box-title">License Compliance</h2>
+        <p class="feature-box-desc">
+          Understand open-source legal obligations before deployment. SENTRA detects licenses associated with third-party components and organizes them into distinct categories: Permissive (e.g. MIT, Apache-2.0, BSD), Copyleft (e.g. GPLv3), Weak Copyleft (e.g. LGPL, MPL), and Unknown, flagging potential compliance violations.
+        </p>
+      </div>
+
+      <!-- Feature 4: README Health -->
+      <div class="feature-box">
+        <div class="feature-icon-wrapper">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+          </svg>
+        </div>
+        <h2 class="feature-box-title">README Health</h2>
+        <p class="feature-box-desc">
+          Complete documentation accelerates onboarding and prevents deployment misconfigurations. SENTRA checks for README presence, evaluates section completeness across overview, installation, usage, and contribution guidelines, and provides ready-to-commit templates directly to GitHub.
+        </p>
+      </div>
+
+      <!-- Feature 5: Repository Health -->
+      <div class="feature-box">
+        <div class="feature-icon-wrapper">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+          </svg>
+        </div>
+        <h2 class="feature-box-title">Repository Health</h2>
+        <p class="feature-box-desc">
+          Beyond individual packages, SENTRA evaluates commit recency, license presence, and maintainer activity across dependencies to flag abandoned libraries that no longer receive security updates.
+        </p>
+      </div>
+
+      <!-- Feature 6: Risk Intelligence -->
+      <div class="feature-box">
+        <div class="feature-icon-wrapper">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="20" x2="18" y2="10"></line>
+            <line x1="12" y1="20" x2="12" y2="4"></line>
+            <line x1="6" y1="20" x2="6" y2="14"></line>
+          </svg>
+        </div>
+        <h2 class="feature-box-title">Risk Intelligence Engine</h2>
+        <p class="feature-box-desc">
+          Analysis signals are combined into a weighted repository risk score (Security 50%, License Compliance 25%, Maintenance 15%, Dependency Health 10%). The resulting score provides clear visibility into overall risk without falsely claiming to represent an official external standard.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Supported Dependency Formats Table -->
+<section class="public-section">
+  <div class="public-container">
+    <div class="section-header" style="margin-bottom: 32px;">
+      <div class="section-tag">Compatibility</div>
+      <h2 class="section-title">Supported Dependency Formats</h2>
+      <p class="section-subtitle">
+        SENTRA inspects supported manifest formats through automatic tree detection and dedicated parsers.
+      </p>
+    </div>
+
+    <div class="specs-table-wrap">
+      <table class="specs-table">
+        <thead>
+          <tr>
+            <th>Manifest File</th>
+            <th>Ecosystem</th>
+            <th>Parser Status</th>
+            <th>Inspection Level</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="specs-code">requirements.txt</span></td>
+            <td>Python / PyPI</td>
+            <td><span class="badge badge-low" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">Active</span></td>
+            <td>Direct package parsing &amp; version extraction</td>
+          </tr>
+          <tr>
+            <td><span class="specs-code">package.json</span></td>
+            <td>Node.js / npm</td>
+            <td><span class="badge badge-low" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">Active</span></td>
+            <td>Dependencies &amp; devDependencies inspection</td>
+          </tr>
+          <tr>
+            <td><span class="specs-code">pyproject.toml</span></td>
+            <td>Python / PEP 518</td>
+            <td><span class="badge" style="background: var(--bg-hover); color: var(--text-secondary);">Detected</span></td>
+            <td>Repository manifest identification &amp; tree signal</td>
+          </tr>
+          <tr>
+            <td><span class="specs-code">package-lock.json</span></td>
+            <td>npm</td>
+            <td><span class="badge" style="background: var(--bg-hover); color: var(--text-secondary);">Detected</span></td>
+            <td>Lockfile detection &amp; tree signal</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- Call to Action Banner -->
+<section class="public-section public-section-alt">
+  <div class="public-container">
+    <div class="cta-banner">
+      <h2 class="cta-banner-title">Start Auditing Your Codebase</h2>
+      <p class="cta-banner-desc">
+        Connect your GitHub repositories to SENTRA and experience automated dependency inspection and risk intelligence.
+      </p>
+      {% if user.is_authenticated %}
+      <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg">
+        Go to Dashboard →
+      </a>
+      {% else %}
+      <a href="{% url 'register' %}" class="btn btn-primary btn-lg">
+        Create Your Account →
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

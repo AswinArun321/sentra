@@ -1,0 +1,175 @@
+{% extends "public/base.html" %}
+{% load static %}
+
+{% block title %}SENTRA | How It Works — Automatic Repository Analysis{% endblock %}
+{% block meta_description %}Learn how SENTRA executes automatic GitHub repository analysis: OAuth integration, tree inspection, manifest detection, vulnerability matching, and risk scoring.{% endblock %}
+
+{% block content %}
+<!-- How It Works Header -->
+<section class="public-section" style="padding-bottom: 40px;">
+  <div class="public-container">
+    <div class="section-header" style="margin-bottom: 24px;">
+      <div class="section-tag">Analysis Architecture</div>
+      <h1 class="section-title">Automatic Repository Analysis</h1>
+      <p class="section-subtitle">
+        Understand how SENTRA inspects software repositories from initial GitHub connection through manifest discovery, vulnerability matching, and risk assessment.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Visual Workflow Pipeline Diagram -->
+<section class="public-section public-section-alt">
+  <div class="public-container">
+    <div class="workflow-diagram">
+      <div class="flow-stage">
+        <!-- Node 1: GitHub -->
+        <div class="flow-card-node">
+          <div class="flow-card-title">GitHub Repository</div>
+          <div class="flow-card-sub">Public or Private Repository Workspace</div>
+        </div>
+
+        <div class="flow-connector-vertical"></div>
+
+        <!-- Node 2: Import -->
+        <div class="flow-card-node primary">
+          <div class="flow-card-title">SENTRA Repository Import</div>
+          <div class="flow-card-sub">Secure OAuth Handshake &amp; Account Isolation</div>
+        </div>
+
+        <div class="flow-connector-vertical"></div>
+
+        <!-- Node 3: Tree Inspection -->
+        <div class="flow-card-node">
+          <div class="flow-card-title">Repository Tree Inspection</div>
+          <div class="flow-card-sub">Recursive Detection of Manifests, README &amp; License Files</div>
+        </div>
+
+        <div class="flow-connector-vertical"></div>
+
+        <!-- Node 4: Parallel Modules -->
+        <div class="flow-parallel-grid">
+          <div class="flow-card-node">
+            <div class="flow-card-title">Dependencies &amp; CVEs</div>
+            <div class="flow-card-sub">Manifest Parsing &amp; OSV.dev Matching</div>
+          </div>
+          <div class="flow-card-node">
+            <div class="flow-card-title">README Health</div>
+            <div class="flow-card-sub">Documentation Quality &amp; Section Audit</div>
+          </div>
+          <div class="flow-card-node">
+            <div class="flow-card-title">License Compliance</div>
+            <div class="flow-card-sub">Open-Source License Categorization</div>
+          </div>
+        </div>
+
+        <div class="flow-connector-vertical"></div>
+
+        <!-- Node 5: Risk Engine -->
+        <div class="flow-card-node primary">
+          <div class="flow-card-title">SENTRA Risk Engine</div>
+          <div class="flow-card-sub">Multi-factor Weighted Scoring Algorithm</div>
+        </div>
+
+        <div class="flow-connector-vertical"></div>
+
+        <!-- Node 6: Dashboard & Reports -->
+        <div class="flow-card-node">
+          <div class="flow-card-title">Security Dashboard &amp; SBOM</div>
+          <div class="flow-card-sub">Actionable Findings, Risk Score &amp; CycloneDX Export</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Step by Step Breakdown -->
+<section class="public-section">
+  <div class="public-container">
+    <div class="section-header">
+      <div class="section-tag">Step-by-Step Pipeline</div>
+      <h2 class="section-title">The Six Phases of Analysis</h2>
+      <p class="section-subtitle">
+        A closer look at what happens behind the scenes when a repository is imported into SENTRA.
+      </p>
+    </div>
+
+    <div class="features-grid-2">
+      <!-- Step 1 -->
+      <div class="feature-box">
+        <span class="step-badge">Step 1</span>
+        <h3 class="feature-box-title">Secure GitHub Connection</h3>
+        <p class="feature-box-desc">
+          Users connect their GitHub account using OAuth 2.0 with state verification. SENTRA enforces strict multi-user account isolation: User A never sees User B's repositories, and tokens are stored securely on the server without exposure to client-side storage or URLs.
+        </p>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="feature-box">
+        <span class="step-badge">Step 2</span>
+        <h3 class="feature-box-title">Repository Selection</h3>
+        <p class="feature-box-desc">
+          SENTRA queries the GitHub API using the user's isolated token to display accessible repositories. Developers can review repository metadata, primary languages, and star counts before selecting which project workspace to import.
+        </p>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="feature-box">
+        <span class="step-badge">Step 3</span>
+        <h3 class="feature-box-title">Repository Tree Inspection</h3>
+        <p class="feature-box-desc">
+          Upon import, SENTRA inspects the repository's Git tree. The manifest detector scans for supported files (requirements.txt, package.json, pyproject.toml), filters out ignored vendor directories (node_modules, site-packages), and identifies README and LICENSE files.
+        </p>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="feature-box">
+        <span class="step-badge">Step 4</span>
+        <h3 class="feature-box-title">Automated File Retrieval</h3>
+        <p class="feature-box-desc">
+          Instead of requiring manual uploads, SENTRA automatically retrieves the required manifest files directly through GitHub's API. This enables automatic scanning while still maintaining manual upload support for custom offline files.
+        </p>
+      </div>
+
+      <!-- Step 5 -->
+      <div class="feature-box">
+        <span class="step-badge">Step 5</span>
+        <h3 class="feature-box-title">Multi-Dimensional Analysis</h3>
+        <p class="feature-box-desc">
+          The engine executes targeted inspection modules: dependencies are extracted and queried against OSV.dev for CVEs, licenses are checked against categorization rules, and the README analyzer audits documentation completeness and structure.
+        </p>
+      </div>
+
+      <!-- Step 6 -->
+      <div class="feature-box">
+        <span class="step-badge">Step 6</span>
+        <h3 class="feature-box-title">Risk Assessment &amp; Reporting</h3>
+        <p class="feature-box-desc">
+          Signals are aggregated by the risk engine to compute a 0-100 score and qualitative rating (Low, Medium, High, Critical). Results are immediately visible on the dashboard, with one-click export to standard JSON reports and CycloneDX 1.4 SBOMs.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Call to Action Banner -->
+<section class="public-section public-section-alt">
+  <div class="public-container">
+    <div class="cta-banner">
+      <h2 class="cta-banner-title">Experience Automated Analysis</h2>
+      <p class="cta-banner-desc">
+        Connect your GitHub repositories to SENTRA and get instant visibility into your software supply chain.
+      </p>
+      {% if user.is_authenticated %}
+      <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg">
+        Go to Dashboard →
+      </a>
+      {% else %}
+      <a href="{% url 'register' %}" class="btn btn-primary btn-lg">
+        Get Started Free →
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}SENTRA — Repository Security & Intelligence Platform{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}SENTRA automatically analyzes GitHub repositories for dependency, vulnerability, license, documentation, and repository-health risks.{% endblock %}">
+  {% load static %}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    (function() {
+      try {
+        var saved = localStorage.getItem('sentra-theme') || localStorage.getItem('licenselens-theme');
+        var theme = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+        document.documentElement.style.colorScheme = theme;
+      } catch(e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="{% static 'css/main.css' %}?v=23">
+  <link rel="stylesheet" href="{% static 'css/public.css' %}?v=1">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%231977f3'/><path d='M35 50 L45 60 L65 40' stroke='white' stroke-width='8' fill='none' stroke-linecap='round'/></svg>">
+  {% block extra_css %}{% endblock %}
+</head>
+<body class="public-page">
+
+  <!-- Shared Public Navbar -->
+  {% include "public/components/navbar.html" %}
+
+  <!-- Page Content -->
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Shared Public Footer -->
+  {% include "public/components/footer.html" %}
+
+  <script src="{% static 'js/theme.js' %}"></script>
+  <script>
+    // Mobile Drawer Toggle
+    (function() {
+      const btn = document.getElementById('mobileMenuBtn');
+      const drawer = document.getElementById('mobileDrawer');
+      if (btn && drawer) {
+        btn.addEventListener('click', function() {
+          drawer.classList.toggle('open');
+        });
+      }
+    })();
+  </script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,121 @@
+{% extends "public/base.html" %}
+{% load static %}
+
+{% block title %}SENTRA | About Us — Building Better Security Visibility{% endblock %}
+{% block meta_description %}Learn about SENTRA's mission, core principles, and the engineering behind the Repository Security & Intelligence Platform.{% endblock %}
+
+{% block content %}
+<!-- About Header -->
+<section class="public-section" style="padding-bottom: 40px;">
+  <div class="public-container">
+    <div class="section-header" style="margin-bottom: 24px;">
+      <div class="section-tag">About SENTRA</div>
+      <h1 class="section-title">Building Better Visibility<br>Into Software Security</h1>
+      <p class="section-subtitle">
+        SENTRA was created to bring software supply-chain signals—vulnerabilities, dependencies, licenses, documentation, and repository health—into one clear intelligence platform.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Problem Statement & Mission -->
+<section class="public-section public-section-alt">
+  <div class="public-container">
+    <div class="public-container-narrow" style="padding: 0;">
+      <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 40px; box-shadow: var(--shadow-card); margin-bottom: 40px;">
+        <h2 style="font-size: 24px; font-weight: 800; color: var(--text-title); margin-bottom: 16px;">The Problem</h2>
+        <p style="font-size: 15.5px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 24px;">
+          Modern applications build on top of dozens or hundreds of open-source packages. This introduces vulnerabilities buried in transitive dependencies, incompatible copyleft licenses, and abandoned projects that no longer receive security maintenance.
+        </p>
+        <p style="font-size: 15.5px; color: var(--text-secondary); line-height: 1.7; margin: 0;">
+          Existing security tools often focus solely on vulnerability alerts without context, overwhelming developers with noisy notifications while ignoring documentation health and license compliance obligations.
+        </p>
+      </div>
+
+      <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 40px; box-shadow: var(--shadow-card);">
+        <h2 style="font-size: 24px; font-weight: 800; color: var(--text-title); margin-bottom: 16px;">Our Mission</h2>
+        <blockquote style="font-size: 18px; font-weight: 600; color: var(--accent-primary); line-height: 1.6; margin: 0 0 16px 0; border-left: 3px solid var(--accent-primary); padding-left: 20px;">
+          "To make repository security easier to understand by turning complex software supply-chain information into clear, actionable insights."
+        </blockquote>
+        <p style="font-size: 15px; color: var(--text-secondary); line-height: 1.65; margin: 0;">
+          SENTRA provides engineering teams, security auditors, and individual developers with an intuitive interface to understand what they are shipping before it reaches production.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Architecture Values -->
+<section class="public-section">
+  <div class="public-container">
+    <div class="section-header">
+      <div class="section-tag">Engineering Values</div>
+      <h2 class="section-title">Core Design Principles</h2>
+      <p class="section-subtitle">
+        How SENTRA is built to ensure reliability, security, and developer clarity.
+      </p>
+    </div>
+
+    <div class="features-grid-3">
+      <div class="feature-box">
+        <div class="feature-icon-wrapper">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+        </div>
+        <h3 class="feature-box-title">Account Isolation</h3>
+        <p class="feature-box-desc">
+          Strict security boundaries ensure user access tokens and connected repositories remain isolated per account. No shared state or leaking credentials.
+        </p>
+      </div>
+
+      <div class="feature-box">
+        <div class="feature-icon-wrapper">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+          </svg>
+        </div>
+        <h3 class="feature-box-title">Automated Workflows</h3>
+        <p class="feature-box-desc">
+          Zero-configuration repository inspection automatically discovers manifests and documentation directly from Git trees without requiring complex setup.
+        </p>
+      </div>
+
+      <div class="feature-box">
+        <div class="feature-icon-wrapper">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="20" x2="18" y2="10"></line>
+            <line x1="12" y1="20" x2="12" y2="4"></line>
+            <line x1="6" y1="20" x2="6" y2="14"></line>
+          </svg>
+        </div>
+        <h3 class="feature-box-title">Actionable Transparency</h3>
+        <p class="feature-box-desc">
+          Every risk score and finding is explainable. We clearly present the methodology and recommendations so engineers understand what to fix and why.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Call to Action Banner -->
+<section class="public-section public-section-alt">
+  <div class="public-container">
+    <div class="cta-banner">
+      <h2 class="cta-banner-title">Build With Confidence</h2>
+      <p class="cta-banner-desc">
+        Join developers securing their open-source dependencies and repositories with SENTRA.
+      </p>
+      {% if user.is_authenticated %}
+      <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg">
+        Go to Dashboard →
+      </a>
+      {% else %}
+      <a href="{% url 'register' %}" class="btn btn-primary btn-lg">
+        Get Started →
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}
