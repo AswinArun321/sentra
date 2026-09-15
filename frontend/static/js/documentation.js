@@ -1,5 +1,5 @@
 /**
- * LicenseLens — README Documentation Analyzer & Recommendation Client
+ * SENTRA — README Documentation Analyzer & Recommendation Client
  */
 
 (function () {
@@ -313,11 +313,11 @@
     if (exists) {
       modalOverwriteWrap.style.display = 'block';
       modalOverwriteCheckbox.checked = false;
-      modalCommitMsgInput.value = `Update ${filename} via LicenseLens`;
+      modalCommitMsgInput.value = `Update ${filename} via SENTRA`;
     } else {
       modalOverwriteWrap.style.display = 'none';
       modalOverwriteCheckbox.checked = false;
-      modalCommitMsgInput.value = 'Add README.md via LicenseLens';
+      modalCommitMsgInput.value = 'Add README.md via SENTRA';
     }
 
     modalBackdrop.style.display = 'flex';
@@ -330,7 +330,7 @@
   // Commit README to GitHub
   async function commitReadme() {
     const content = editorTextarea.value.trim();
-    const commitMessage = modalCommitMsgInput.value.trim() || 'Add README.md via LicenseLens';
+    const commitMessage = modalCommitMsgInput.value.trim() || 'Add README.md via SENTRA';
     const exists = analysisData && analysisData.exists;
     const overwrite = modalOverwriteCheckbox ? modalOverwriteCheckbox.checked : false;
 

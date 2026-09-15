@@ -1,5 +1,5 @@
 """
-LicenseLens — Automatic GitHub Repository Analysis Service.
+SENTRA — Automatic GitHub Repository Analysis Service.
 Coordinates repository metadata retrieval, tree fetching, manifest detection,
 file retrieval, and execution of the existing scan pipeline.
 """
@@ -215,7 +215,7 @@ class RepositoryAnalysisService:
                 project.analysis_progress = 85
                 project.save(update_fields=['analysis_stage', 'analysis_progress'])
 
-                # Create Scan record reusing existing LicenseLens scanning engine
+                # Create Scan record reusing existing SENTRA scanning engine
                 file_basename = os.path.basename(manifest_path)
                 scan = Scan.objects.create(
                     project=project,
@@ -282,7 +282,7 @@ class RepositoryAnalysisService:
             project.analysis_status = 'FAILED'
             project.analysis_stage = 'failed'
             if getattr(e, 'status_code', None) == 403:
-                project.analysis_error = "LicenseLens cannot access this repository. Please check GitHub permissions."
+                project.analysis_error = "SENTRA cannot access this repository. Please check GitHub permissions."
             else:
                 project.analysis_error = f"GitHub API error: {str(e)[:200]}"
             project.save(update_fields=['analysis_status', 'analysis_stage', 'analysis_error'])

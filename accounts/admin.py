@@ -9,5 +9,5 @@ class CustomUserAdmin(UserAdmin):
     search_fields = ('email', 'username')
     ordering = ('-date_joined',)
     fieldsets = UserAdmin.fieldsets + (
-        ('LicenseLens', {'fields': ()}),
+        ('SENTRA', {'fields': ()}),
     )

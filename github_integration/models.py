@@ -4,7 +4,7 @@ from django.conf import settings
 
 class GitHubConnection(models.Model):
     """
-    Stores GitHub OAuth connection information per LicenseLens user.
+    Stores GitHub OAuth connection information per SENTRA user.
     """
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,

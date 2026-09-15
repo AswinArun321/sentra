@@ -3,7 +3,7 @@ from django.db import models
 
 
 class User(AbstractUser):
-    """Extended user model for LicenseLens."""
+    """Extended user model for SENTRA."""
     email = models.EmailField(unique=True)
 
     USERNAME_FIELD = 'email'

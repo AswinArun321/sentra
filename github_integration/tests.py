@@ -90,11 +90,11 @@ class GitHubServiceTestCase(TestCase):
         mock_response.json.return_value = [
             {
                 "id": 999,
-                "name": "LicenseLens",
-                "full_name": "octocat/LicenseLens",
-                "description": "Dependency risk auditor",
+                "name": "SENTRA",
+                "full_name": "octocat/SENTRA",
+                "description": "Repository Security & Intelligence Platform",
                 "private": False,
-                "html_url": "https://github.com/octocat/LicenseLens",
+                "html_url": "https://github.com/octocat/SENTRA",
                 "default_branch": "main",
                 "language": "Python",
                 "updated_at": "2026-09-14T09:00:00Z",
@@ -107,7 +107,7 @@ class GitHubServiceTestCase(TestCase):
 
         repos = self.service.get_repositories("gho_dummy_token")
         self.assertEqual(len(repos), 1)
-        self.assertEqual(repos[0]["name"], "LicenseLens")
+        self.assertEqual(repos[0]["name"], "SENTRA")
         self.assertEqual(repos[0]["language"], "Python")
         self.assertFalse(repos[0]["private"])
 
@@ -370,7 +370,7 @@ class DocumentationAnalyzerTestCase(TestCase):
             self.assertIsNone(res["filename"])
 
     def test_analyze_readme_text_full_score(self):
-        full_markdown = """# LicenseLens Security Auditor
+        full_markdown = """# SENTRA Security Auditor
 
 ## Overview
 A comprehensive vulnerability and dependency auditor for modern applications.

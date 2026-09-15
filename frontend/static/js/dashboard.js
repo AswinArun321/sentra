@@ -1,5 +1,5 @@
 /**
- * LicenseLens — Security & Compliance Dashboard Controller
+ * SENTRA — Security & Intelligence Dashboard Controller
  * Asynchronously loads and renders dynamic metrics, charts, attention items,
  * recent scans, and GitHub health.
  */

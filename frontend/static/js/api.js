@@ -1,10 +1,10 @@
-/* LicenseLens — Client-side API helper using fetch + JWT from sessionStorage */
+/* SENTRA — Client-side API helper using fetch + JWT from sessionStorage */
 
 const API = {
   baseURL: '/api',
 
   getToken() {
-    return localStorage.getItem('ll_access_token') || '';
+    return localStorage.getItem('sentra_access_token') || localStorage.getItem('ll_access_token') || '';
   },
 
   async request(method, path, body = null) {

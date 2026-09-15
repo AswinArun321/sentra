@@ -108,7 +108,7 @@ def github_callback_view(request):
         messages.error(request, f"Unable to retrieve GitHub profile: {str(e)}")
         return redirect('profile')
 
-    # 5. Prevent account collision: Check if another LicenseLens user already connected this GitHub account
+    # 5. Prevent account collision: Check if another SENTRA user already connected this GitHub account
     existing_connection = GitHubConnection.objects.filter(
         github_user_id=gh_user['id']
     ).exclude(user=request.user).first()
@@ -118,7 +118,7 @@ def github_callback_view(request):
             "GitHub account @%s (ID %s) is already connected to user %s",
             gh_user['login'], gh_user['id'], existing_connection.user.username
         )
-        messages.error(request, "This GitHub account is already connected to another LicenseLens account.")
+        messages.error(request, "This GitHub account is already connected to another SENTRA account.")
         return redirect('profile')
 
     # 6. Create or update GitHubConnection record for current user
@@ -131,7 +131,7 @@ def github_callback_view(request):
         }
     )
 
-    logger.info("GitHub account @%s connected for LicenseLens user %s", gh_user['login'], request.user.username)
+    logger.info("GitHub account @%s connected for SENTRA user %s", gh_user['login'], request.user.username)
     messages.success(request, f"Connected to GitHub as @{gh_user['login']}!")
     return redirect('github_repositories')
 
@@ -416,7 +416,7 @@ def _import_repo(request, repo_id):
 def api_github_import(request):
     """
     POST /api/github/import/
-    Import a repository as a LicenseLens Project via request body { "repository_id": ... }.
+    Import a repository as a SENTRA Project via request body { "repository_id": ... }.
     """
     serializer = GitHubImportSerializer(data=request.data)
     if not serializer.is_valid():
@@ -429,7 +429,7 @@ def api_github_import(request):
 def api_github_import_by_id(request, repo_id):
     """
     POST /api/github/repositories/<repo_id>/import/
-    Import a repository as a LicenseLens Project using repo_id from URL path.
+    Import a repository as a SENTRA Project using repo_id from URL path.
     """
     return _import_repo(request, repo_id)
 

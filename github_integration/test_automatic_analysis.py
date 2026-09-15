@@ -86,7 +86,7 @@ class RepositoryAnalysisServiceTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(
             username='repo_tester',
-            email='tester@licenselens.dev',
+            email='tester@sentra.dev',
             password='TestPassword123!'
         )
         self.connection = GitHubConnection.objects.create(
@@ -242,7 +242,7 @@ class RepositoryAnalysisServiceTests(TestCase):
         self.assertFalse(result)
         self.project.refresh_from_db()
         self.assertEqual(self.project.analysis_status, 'FAILED')
-        self.assertEqual(self.project.analysis_error, "LicenseLens cannot access this repository. Please check GitHub permissions.")
+        self.assertEqual(self.project.analysis_error, "SENTRA cannot access this repository. Please check GitHub permissions.")
 
     def test_manual_project_remains_unaffected(self):
         manual_proj = Project.objects.create(

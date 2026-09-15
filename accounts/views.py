@@ -103,7 +103,7 @@ def register_view(request):
         if serializer.is_valid():
             user = serializer.save()
             login(request, user)
-            messages.success(request, f'Welcome to LicenseLens, {user.username}!')
+            messages.success(request, f'Welcome to SENTRA, {user.username}!')
             return redirect('dashboard')
         for field, errors in serializer.errors.items():
             for error in errors:

@@ -1,5 +1,5 @@
 """
-LicenseLens — Manifest & File Detector for GitHub Repositories.
+SENTRA — Manifest & File Detector for GitHub Repositories.
 Detects dependency manifests (Python, Node.js, Java, Go, Rust, etc.),
 nested structures, READMEs, and LICENSE files from repository trees.
 """

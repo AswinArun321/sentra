@@ -1,24 +1,25 @@
-# LicenseLens
+# SENTRA — Repository Security & Intelligence Platform
 
-> **Software Dependency Risk & Open-Source Compliance Auditor**
+> **Know your code. Secure what you ship.**
 
-LicenseLens analyzes your project's dependencies for security vulnerabilities, license compliance issues, and maintenance health — all in one place.
+SENTRA automatically analyzes software repositories to identify dependency, vulnerability, license, documentation, and repository health risks — delivering comprehensive security visibility in one unified platform.
 
-![LicenseLens Dashboard](docs/screenshot.png)
+![SENTRA Dashboard](docs/screenshot.png)
 
 ---
 
-## Features
+## Core Capabilities
 
-- 🔍 **Dependency Scanning** — Upload `package.json` or `requirements.txt`
-- 🛡️ **Vulnerability Detection** — Queries OSV.dev for known CVEs
-- 📜 **License Analysis** — Detects and categorizes open-source licenses
-- 🔧 **Maintenance Health** — Flags stale or abandoned packages
-- 📊 **Risk Scoring** — Weighted risk score (Security 50%, License 25%, Maintenance 15%, Dependency 10%)
-- 🎯 **Risk Findings** — Human-readable explanations and remediation advice
-- 📥 **JSON Reports** — Downloadable security report
-- 📋 **CycloneDX SBOM** — Software Bill of Materials export
-- 🔐 **Authentication** — Email/password login with session management
+- 🔗 **GitHub Repository Integration** — Seamlessly connect GitHub accounts with strict per-user account isolation
+- ⚡ **Automatic Repository Inspection** — Automatic tree inspection, manifest discovery, and background analysis
+- 🔍 **Dependency Detection** — Automatically detects and parses `package.json`, `requirements.txt`, and more
+- 🛡️ **Vulnerability Analysis** — Real-time vulnerability lookup against OSV.dev and national databases
+- 📜 **Open-Source License Analysis** — Identifies, verifies, and categorizes licenses to flag compliance risks
+- 📖 **README Documentation Health** — Evaluates repository documentation completeness and generates recommendations
+- 🏥 **Repository Health Metrics** — Tracks maintenance health, commit activity, stale packages, and risk signals
+- 📊 **Intelligent Risk Scoring** — Multi-factor weighted risk engine (Security, License, Maintenance, Dependency)
+- 📋 **CycloneDX SBOM & Reports** — Export CycloneDX 1.4 standard SBOMs and downloadable JSON security audits
+- 🔐 **Secure Multi-User Platform** — Django session and JWT authentication with protected credential management
 
 ---
 
@@ -27,13 +28,13 @@ LicenseLens analyzes your project's dependencies for security vulnerabilities, l
 | Layer | Technology |
 |---|---|
 | Backend | Django 5.1 + Django REST Framework |
-| Database | SQLite (dev) / PostgreSQL (prod) |
-| Auth | Django sessions + JWT (djangorestframework-simplejwt) |
-| Frontend | Django Templates + Vanilla JS + Chart.js |
-| Styling | Custom CSS (dark security dashboard theme) |
-| Vuln API | OSV.dev (open, no key required) |
-| License API | PyPI JSON API + npm Registry |
-| SBOM | CycloneDX 1.4 JSON |
+| Database | SQLite (development) / PostgreSQL (production) |
+| Authentication | Django Sessions + SimpleJWT |
+| Frontend | Django Templates + Vanilla JavaScript + Chart.js |
+| Styling | Custom CSS (Responsive Dark / Light Adaptive Theme) |
+| Vulnerability Data | OSV.dev API (open, no key required) + optional NVD |
+| Package Metadata | PyPI JSON API + npm Registry |
+| Standards | CycloneDX 1.4 JSON SBOM |
 
 ---
 
@@ -42,8 +43,8 @@ LicenseLens analyzes your project's dependencies for security vulnerabilities, l
 ### 1. Clone and install dependencies
 
 ```bash
-git clone https://github.com/yourname/LicenseLens_Django.git
-cd LicenseLens_Django
+git clone https://github.com/yourname/SENTRA.git
+cd SENTRA
 pip install -r requirements.txt
 ```
 
@@ -51,7 +52,7 @@ pip install -r requirements.txt
 
 ```bash
 cp .env.example .env
-# Edit .env with your settings
+# Edit .env with your settings (GitHub OAuth credentials, Secret Key, etc.)
 ```
 
 ### 3. Run migrations
@@ -76,29 +77,25 @@ Visit [http://localhost:8000](http://localhost:8000)
 
 ---
 
-## Default Admin Account
+## Default Test Credentials
 
-After setup, use these credentials to test immediately:
+After running migrations and fixtures, you can log in with:
 
-```
-Email:    admin@licenselens.dev
-Password: LicenseLens2026!
+```text
+Email:    admin@sentra.dev
+Password: SentraPassword2026!
 ```
 
 ---
 
-## Usage
+## Usage Workflow
 
-1. **Register** or log in
-2. **Create a Project** (e.g., "My Backend App")
-3. **Upload** a `package.json` or `requirements.txt`
-4. **Wait** for the scan to complete (synchronous, ~10-30 seconds)
-5. **View** the scan results:
-   - Vulnerability severity breakdown
-   - License categories and compliance warnings
-   - Maintenance health of each package
-   - Overall risk score
-6. **Download** a JSON report or CycloneDX SBOM
+1. **Sign In** — Log into your SENTRA account or register a new workspace profile.
+2. **Connect GitHub (Optional)** — Link your GitHub account securely to import repositories with a single click.
+3. **Register / Import Repository** — Import directly from GitHub or create a workspace project and upload `package.json` / `requirements.txt`.
+4. **Automatic Analysis** — SENTRA analyzes repository tree, manifests, README documentation, licenses, and CVEs.
+5. **Review Risk & Compliance** — Inspect vulnerability severities, license categorization, README audit scores, and overall risk rating.
+6. **Export Security Assets** — Download standard JSON security audit reports and CycloneDX 1.4 SBOMs.
 
 ---
 
@@ -109,42 +106,48 @@ Password: LicenseLens2026!
 | POST | `/api/auth/register/` | Register a new user |
 | POST | `/api/auth/login/` | Login and get JWT tokens |
 | GET | `/api/auth/profile/` | Get user profile |
-| GET | `/api/projects/` | List projects |
+| GET | `/api/dashboard/overview/` | Dashboard metrics & summary |
+| GET | `/api/projects/` | List user projects |
 | POST | `/api/projects/` | Create project |
-| POST | `/api/projects/{id}/scan/` | Upload file and start scan |
+| POST | `/api/projects/{id}/scan/` | Upload manifest and execute scan |
+| GET | `/api/projects/{id}/analysis-status/` | Check automatic analysis progress |
+| GET | `/api/github/status/` | Check GitHub connection status |
+| GET | `/api/github/repositories/` | List user's GitHub repositories |
+| POST | `/api/github/import/` | Import GitHub repository as project |
 | GET | `/api/scans/{id}/` | Get scan details |
-| GET | `/api/scans/{id}/dependencies/` | List dependencies |
-| GET | `/api/scans/{id}/vulnerabilities/` | List vulnerabilities |
+| GET | `/api/scans/{id}/dependencies/` | List detected dependencies |
+| GET | `/api/scans/{id}/vulnerabilities/` | List detected vulnerabilities |
 | GET | `/api/scans/{id}/report/` | Get JSON report |
 
 ---
 
 ## Project Structure
 
-```
-LicenseLens_Django/
-├── config/          # Django project settings & URLs
-├── accounts/        # User authentication
-├── projects/        # Project management
-├── scans/           # Scan lifecycle
-├── dependencies/    # Dependency model
-├── vulnerabilities/ # Vulnerability & RiskFinding models
-├── reports/         # Report generation (JSON + SBOM)
-├── scanner/         # Core scanning engine
-│   ├── parsers/     # package.json & requirements.txt parsers
-│   ├── vulnerability.py    # OSV API client
+```text
+SENTRA/
+├── config/              # Django project settings & URLs
+├── accounts/            # User authentication & profile management
+├── projects/            # Repository project workspaces
+├── scans/               # Scan lifecycle & tracking
+├── dependencies/        # Dependency models & catalog
+├── vulnerabilities/     # Vulnerability & RiskFinding models
+├── github_integration/  # GitHub OAuth, repository sync & auto-analysis
+├── reports/             # Report generation (JSON + CycloneDX SBOM)
+├── scanner/             # Core scanning engine & parsers
+│   ├── parsers/         # Manifest parsers (package.json, requirements.txt)
+│   ├── vulnerability.py # OSV API integration
 │   ├── license_analyzer.py # License detection & categorization
-│   ├── maintenance.py      # Package maintenance health
-│   ├── risk_engine.py      # Risk scoring
-│   └── orchestrator.py     # Scan pipeline orchestrator
-└── frontend/        # Django templates + static assets
+│   ├── maintenance.py   # Maintenance health & metrics
+│   ├── risk_engine.py   # Multi-factor risk engine
+│   └── orchestrator.py  # Pipeline orchestrator
+└── frontend/            # Adaptive UI templates & static assets
 ```
 
 ---
 
 ## Disclaimer
 
-> LicenseLens provides automated software dependency risk and open-source compliance analysis. Its findings are informational and should not be treated as legal or security guarantees. Final compliance decisions should be reviewed by qualified security or legal professionals.
+> SENTRA provides automated software dependency risk, repository health, and open-source compliance analysis. Its findings are informational and should not be treated as legal or security guarantees. Final compliance decisions should be reviewed by qualified security or legal professionals.
 
 ---
 

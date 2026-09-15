@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}{{ project.name }} — LicenseLens{% endblock %}
+{% block title %}{{ project.name }} — SENTRA{% endblock %}
 {% block nav_projects %}active{% endblock %}
 {% block page_title %}{{ project.name }}{% endblock %}
 {% block page_subtitle %}{{ project.repository_url|default:"Workspace Repository" }}{% endblock %}
@@ -115,7 +115,7 @@
     <div id="analysis-progress-bar" style="height:100%; width:{{ project.analysis_progress|default:10 }}%; background:var(--primary); transition:width 0.4s ease;"></div>
   </div>
   <div style="font-size:12px; color:var(--text-muted); margin-top:8px;">
-    LicenseLens is reading repository tree, detecting manifests, checking README and licenses, and running security audits.
+    SENTRA is reading repository tree, detecting manifests, checking README and licenses, and running security audits.
   </div>
 </div>
 
@@ -126,7 +126,7 @@
     ⚠ No Supported Dependency Manifest Found
   </div>
   <div style="font-size:13px; color:var(--text-muted); margin-bottom:10px;">
-    {{ project.analysis_error|default:"LicenseLens could not find a supported dependency manifest (package.json or requirements.txt) in this repository." }}
+    {{ project.analysis_error|default:"SENTRA could not find a supported dependency manifest (package.json or requirements.txt) in this repository." }}
     You can manually upload a manifest below to run dependency vulnerability and license scans.
   </div>
 </div>

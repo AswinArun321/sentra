@@ -1,5 +1,5 @@
 /**
- * LicenseLens — GitHub Repositories Explorer
+ * SENTRA — GitHub Repositories Explorer
  * Handles async repository fetching, client-side filtering, and repository imports.
  */
 
@@ -77,7 +77,7 @@
     }
   }
 
-  // Fetch Repositories from LicenseLens API
+  // Fetch Repositories from SENTRA API
   async function fetchRepositories(page = 1, append = false) {
     if (isLoading) return;
     isLoading = true;

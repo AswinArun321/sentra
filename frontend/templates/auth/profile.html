@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}User Profile — LicenseLens{% endblock %}
+{% block title %}User Profile — SENTRA{% endblock %}
 {% block page_title %}Account Profile{% endblock %}
 {% block page_subtitle %}Workspace credentials and settings{% endblock %}
 {% block nav_profile %}active{% endblock %}
@@ -84,8 +84,8 @@
         Disconnect GitHub?
       </div>
       <p style="font-size:12px; color:var(--text-secondary); margin-bottom:14px; line-height:1.5;">
-        LicenseLens will no longer be able to access repositories from this GitHub account.<br>
-        <strong>Note:</strong> Existing LicenseLens projects and scans will <strong>not</strong> be deleted.
+        SENTRA will no longer be able to access repositories from this GitHub account.<br>
+        <strong>Note:</strong> Existing SENTRA projects and scans will <strong>not</strong> be deleted.
       </p>
       <form method="POST" action="{% url 'github_disconnect' %}" style="display:inline;">
         {% csrf_token %}
@@ -98,7 +98,7 @@
 
     {% else %}
     <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px;">
-      Connect your GitHub account to import repositories directly into LicenseLens without needing to manually copy and paste repository URLs.
+      Connect your GitHub account to import repositories directly into SENTRA without needing to manually copy and paste repository URLs.
     </p>
     <a href="{% url 'github_connect' %}" class="btn btn-primary" style="background: #24292e; border-color: #24292e; display: inline-flex;">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">

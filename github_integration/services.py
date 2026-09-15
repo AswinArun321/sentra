@@ -84,7 +84,7 @@ class GitHubService:
         }
         headers = {
             'Accept': 'application/json',
-            'User-Agent': 'LicenseLens-Dependency-Auditor',
+            'User-Agent': 'SENTRA-Security-Auditor',
         }
 
         try:
@@ -111,7 +111,7 @@ class GitHubService:
             'Authorization': f'Bearer {access_token}',
             'Accept': 'application/vnd.github+json',
             'X-GitHub-Api-Version': '2022-11-28',
-            'User-Agent': 'LicenseLens-Dependency-Auditor',
+            'User-Agent': 'SENTRA-Security-Auditor',
         }
 
     def _handle_response(self, response):
@@ -195,7 +195,7 @@ class GitHubService:
     @staticmethod
     def normalize_repository(repo):
         """
-        Normalize repository data dictionary into standard LicenseLens schema.
+        Normalize repository data dictionary into standard SENTRA schema.
         """
         return {
             'id': repo.get('id'),
@@ -265,7 +265,7 @@ class GitHubService:
 
     def get_connection_for_user(self, user):
         """
-        Retrieve the active GitHubConnection for the given LicenseLens user.
+        Retrieve the active GitHubConnection for the given SENTRA user.
         """
         from .models import GitHubConnection
         return GitHubConnection.objects.filter(user=user).first()

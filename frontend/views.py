@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 @login_required
 def dashboard_view(request):
     """
-    Renders the LicenseLens Security & Compliance Dashboard.
+    Renders the SENTRA Security & Intelligence Dashboard.
     Provides initial baseline context from DashboardService for fast first paint,
     while dashboard.js enhances live state and interaction.
     """

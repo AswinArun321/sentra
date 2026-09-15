@@ -15,7 +15,7 @@ def download_report(request, scan_pk):
         json.dumps(report_data, indent=2, default=str),
         content_type='application/json',
     )
-    response['Content-Disposition'] = f'attachment; filename="licenselens-report-scan-{scan.pk}.json"'
+    response['Content-Disposition'] = f'attachment; filename="sentra-report-scan-{scan.pk}.json"'
     return response
 
 

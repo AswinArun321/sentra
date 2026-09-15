@@ -1,1 +1,1 @@
-"""LicenseLens config package."""
+"""SENTRA config package."""

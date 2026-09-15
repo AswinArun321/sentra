@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 class DashboardService:
     """
     Encapsulates all calculations and aggregations for the
-    LicenseLens Security & Compliance Dashboard.
+    SENTRA Security & Intelligence Dashboard.
     Ensures strict user data isolation.
     """
 

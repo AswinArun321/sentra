@@ -64,7 +64,7 @@ def generate_json_report(scan) -> dict:
         'top_risky_dependencies': top_risky,
         'vulnerabilities': vuln_list,
         'disclaimer': (
-            'LicenseLens provides automated software dependency risk and open-source compliance analysis. '
+            'SENTRA provides automated software dependency risk and open-source compliance analysis. '
             'Its findings are informational and should not be treated as legal or security guarantees. '
             'Final compliance decisions should be reviewed by qualified security or legal professionals.'
         ),
@@ -100,7 +100,7 @@ def generate_cyclonedx_sbom(scan) -> dict:
                 'type': 'application',
                 'name': scan.project.name,
             },
-            'tools': [{'name': 'LicenseLens', 'version': '1.0.0'}],
+            'tools': [{'name': 'SENTRA', 'version': '1.0.0'}],
         },
         'components': components,
     }

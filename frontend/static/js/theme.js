@@ -1,11 +1,12 @@
 /**
- * LicenseLens Theme Manager
+ * SENTRA Theme Manager
  * Handles Dark Mode and Light Mode switching, persistence, and event broadcasting.
  */
 (function () {
   'use strict';
 
-  const STORAGE_KEY = 'licenselens-theme';
+  const STORAGE_KEY = 'sentra-theme';
+  const LEGACY_STORAGE_KEY = 'licenselens-theme';
   const THEME_LIGHT = 'light';
   const THEME_DARK = 'dark';
 
@@ -13,7 +14,7 @@
    * Get the saved theme, or fallback to system preference.
    */
   function getPreferredTheme() {
-    const saved = localStorage.getItem(STORAGE_KEY);
+    const saved = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(LEGACY_STORAGE_KEY);
     if (saved === THEME_LIGHT || saved === THEME_DARK) {
       return saved;
     }
@@ -108,14 +109,14 @@
 
     // Sync theme across multiple tabs
     window.addEventListener('storage', function (e) {
-      if (e.key === STORAGE_KEY && e.newValue) {
+      if ((e.key === STORAGE_KEY || e.key === LEGACY_STORAGE_KEY) && e.newValue) {
         applyTheme(e.newValue, true);
       }
     });
   }
 
   // Expose helper globally
-  window.LicenseLensTheme = {
+  window.SentraTheme = {
     getTheme: function () {
       return document.documentElement.getAttribute('data-theme') || THEME_LIGHT;
     },
@@ -123,6 +124,8 @@
     toggleTheme: toggleTheme,
     applyTheme: applyTheme
   };
+  // Backward compatibility alias
+  window.LicenseLensTheme = window.SentraTheme;
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);

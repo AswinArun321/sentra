@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}LicenseLens{% endblock %} — Software Dependency Risk Auditor</title>
-  <meta name="description" content="LicenseLens — Analyze software dependencies for vulnerabilities, license risks, and maintenance issues.">
+  <title>{% block title %}SENTRA{% endblock %} — Repository Security & Intelligence Platform</title>
+  <meta name="description" content="SENTRA — Repository Security & Intelligence Platform. Know your code. Secure what you ship.">
   {% load static %}
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,7 +12,7 @@
   <script>
     (function() {
       try {
-        var saved = localStorage.getItem('licenselens-theme');
+        var saved = localStorage.getItem('sentra-theme') || localStorage.getItem('licenselens-theme');
         var theme = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
         document.documentElement.setAttribute('data-theme', theme);
         document.documentElement.style.colorScheme = theme;
@@ -52,8 +52,8 @@
     <!-- Brand -->
     <a href="{% url 'dashboard' %}" class="sidebar-brand" style="text-decoration:none;">
       <div class="sidebar-brand-text">
-        <span class="sidebar-brand-name">License<span>Lens</span></span>
-        <span class="sidebar-brand-tagline">Security Auditor</span>
+        <span class="sidebar-brand-name">SENTRA</span>
+        <span class="sidebar-brand-tagline">Security & Intelligence</span>
       </div>
     </a>
 
