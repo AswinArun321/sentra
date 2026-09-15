@@ -16,7 +16,7 @@
 {% endif %}
 {% if is_github %}
 <button type="button" id="refreshAnalysisBtn" class="btn btn-primary btn-sm" onclick="refreshAnalysis({{ project.pk }})">
-  <span id="refreshIcon">⟳</span> Refresh Analysis
+  Refresh Analysis
 </button>
 {% endif %}
 <a href="{% url 'project_delete' project.pk %}" class="btn btn-danger btn-sm">Delete</a>
@@ -79,7 +79,14 @@
     {% endfor %}
 
     {% if project.detected_files.readme.present %}
-      <span class="badge badge-low" style="font-size:11px;">✓ README ({{ project.detected_files.readme.filename }})</span>
+      <span class="badge badge-low" style="font-size:11px;">
+        ✓ README ({{ project.detected_files.readme.filename }}{% if project.detected_files.readme.score is not None %} • {{ project.detected_files.readme.score }}/100 {{ project.detected_files.readme.rating }}{% endif %})
+      </span>
+      {% if project.github_repo_id %}
+      <a href="{% url 'github_documentation' project.github_repo_id %}" class="btn btn-secondary btn-sm" style="font-size:10px; padding:2px 8px;" title="View README analysis and AI recommendations">
+        Doc Report ↗
+      </a>
+      {% endif %}
     {% elif project.detected_files %}
       <span class="badge badge-high" style="font-size:11px;">⚠ README Missing</span>
     {% endif %}
@@ -160,8 +167,8 @@
     </div>
     <div style="display:flex; gap:8px;">
       <a href="{% url 'scan_detail' latest_scan.pk %}" class="btn btn-primary btn-sm">View Details →</a>
-      <a href="{% url 'download_report' latest_scan.pk %}" class="btn btn-secondary btn-sm">📥 Report</a>
-      <a href="{% url 'download_sbom' latest_scan.pk %}" class="btn btn-secondary btn-sm">📋 SBOM</a>
+      <a href="{% url 'download_report' latest_scan.pk %}" class="btn btn-secondary btn-sm">Report</a>
+      <a href="{% url 'download_sbom' latest_scan.pk %}" class="btn btn-secondary btn-sm">SBOM</a>
     </div>
     {% else %}
     <div class="empty-state"><div class="empty-state-subtitle">{% if project.analysis_status == 'ANALYZING' %}Scanners are running automatically...{% else %}Run your first scan to populate metrics.{% endif %}</div></div>
@@ -180,7 +187,6 @@
   <form method="POST" action="{% url 'scan_upload' project.pk %}" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="upload-dropzone" onclick="document.getElementById('fileInput').click()">
-      <div style="font-size:32px; margin-bottom:8px;">📁</div>
       <div id="fileTitle" style="font-weight:700; color:var(--text-title); margin-bottom:4px;">Click or drag manifest file here</div>
       <div class="card-subtitle">package.json or requirements.txt (Max 5MB)</div>
       <input type="file" name="file" id="fileInput" accept=".json,.txt" style="display:none;" onchange="document.getElementById('fileTitle').innerText = this.files[0].name; document.getElementById('scanBtn').style.display='inline-flex';">
@@ -275,9 +281,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function refreshAnalysis(projectId) {
   const btn = document.getElementById('refreshAnalysisBtn');
-  if (btn) btn.disabled = true;
-  const icon = document.getElementById('refreshIcon');
-  if (icon) icon.textContent = '⏳';
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'Refreshing...';
+  }
 
   fetch(`/api/projects/${projectId}/refresh-analysis/`, {
     method: 'POST',

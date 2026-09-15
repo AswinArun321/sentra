@@ -357,16 +357,16 @@
         </a>
       `;
 
-      // Show temporary inline notification
+      // Show temporary inline notification and redirect to project page to track live analysis
       const toast = document.createElement('div');
       toast.style.cssText = 'position:fixed; bottom:24px; right:24px; background:#10b981; color:#fff; padding:12px 20px; border-radius:8px; font-weight:600; font-size:13px; box-shadow:0 6px 20px rgba(0,0,0,0.15); z-index:9999; display:flex; align-items:center; gap:8px;';
-      toast.innerHTML = `✓ Imported <strong>${escapeHtml(repo.name)}</strong>! Automatic analysis started...`;
+      toast.innerHTML = `✓ Imported <strong>${escapeHtml(repo.name)}</strong>! Redirecting to analysis...`;
       document.body.appendChild(toast);
+
+      const targetUrl = data.project_url || `/projects/${data.project_id}/`;
       setTimeout(() => {
-        toast.style.transition = 'opacity 0.4s';
-        toast.style.opacity = '0';
-        setTimeout(() => toast.remove(), 400);
-      }, 3500);
+        window.location.href = targetUrl;
+      }, 700);
 
     } catch (err) {
       console.error('Import failed:', err);

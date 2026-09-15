@@ -19,10 +19,15 @@
       } catch(e) {}
     })();
   </script>
-  <link rel="stylesheet" href="{% static 'css/main.css' %}?v=20">
+  <link rel="stylesheet" href="{% static 'css/main.css' %}?v=22">
   {% block extra_css %}{% endblock %}
   <style>
-    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 32px; background: var(--bg-topbar); border-bottom: 1px solid var(--border-color); gap: 20px; transition: background-color 0.25s ease, border-color 0.25s ease; }
+    html, body {
+      overflow-x: hidden;
+      width: 100%;
+      max-width: 100%;
+    }
+    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 32px; background: var(--bg-topbar); border-bottom: 1px solid var(--border-color); gap: 20px; transition: background-color 0.25s ease, border-color 0.25s ease; width: 100%; max-width: 100%; }
     .topbar-page-info { flex: 1; min-width: 0; }
     .topbar-title { font-size: 22px; font-weight: 800; color: var(--text-title); margin: 0 0 3px 0; line-height: 1.25; }
     .topbar-subtitle { font-size: 13px; color: var(--text-muted); margin: 0; line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

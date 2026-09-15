@@ -101,31 +101,7 @@ function renderSummary(summary) {
 }
 
 function renderSecurityOverview(vulns, health) {
-  if (vulns) {
-    const total = Math.max(1, vulns.total || (vulns.critical + vulns.high + vulns.medium + vulns.low));
-    
-    // Critical
-    setDistBar('distCritBar', 'distCritCount', vulns.critical, total);
-    // High
-    setDistBar('distHighBar', 'distHighCount', vulns.high, total);
-    // Medium
-    setDistBar('distMedBar', 'distMedCount', vulns.medium, total);
-    // Low
-    setDistBar('distLowBar', 'distLowCount', vulns.low, total);
-  }
-
-  if (health) {
-    const totalProjects = Math.max(1, health.total || (health.excellent + health.good + health.needs_attention + health.critical));
-    
-    // Excellent
-    setDistBar('distExcelBar', 'distExcelCount', health.excellent, totalProjects);
-    // Good
-    setDistBar('distGoodBar', 'distGoodCount', health.good, totalProjects);
-    // Needs Attention
-    setDistBar('distAttnBar', 'distAttnCount', health.needs_attention, totalProjects);
-    // Critical
-    setDistBar('distCritProjBar', 'distCritProjCount', health.critical, totalProjects);
-  }
+  // Vulnerability Severity and Project Health overview panels removed
 }
 
 function setDistBar(barId, countId, value, total) {
@@ -147,7 +123,6 @@ function renderAttentionItems(items) {
     if (badgeEl) badgeEl.style.display = 'none';
     container.innerHTML = `
       <div class="dash-empty-positive" style="grid-column: 1 / -1;">
-        <div class="dash-empty-icon">🛡️</div>
         <div class="dash-empty-title">Everything looks good</div>
         <div class="dash-empty-desc">No projects currently require immediate security or license attention.</div>
       </div>
@@ -175,7 +150,6 @@ function renderAttentionItems(items) {
         <div>
           <div class="attention-item-top">
             <div class="attention-project-name">
-              <span>${sevClass === 'critical' ? '🔴' : sevClass === 'high' ? '🟠' : '🟡'}</span>
               ${escapeHtml(item.project_name)}
             </div>
             <span class="kpi-badge ${sevClass}">${item.severity}</span>

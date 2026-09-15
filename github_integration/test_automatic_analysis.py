@@ -170,6 +170,90 @@ class RepositoryAnalysisServiceTests(TestCase):
         self.assertEqual(self.project.scans.count(), 0)
         self.assertTrue(self.project.detected_files['readme']['present'])
 
+    @patch.object(GitHubService, 'get_file_content')
+    @patch.object(GitHubService, 'get_latest_commit_sha')
+    @patch.object(GitHubService, 'get_repository_tree')
+    @patch.object(GitHubService, 'get_repository')
+    def test_readme_quality_analysis_integration(self, mock_get_repo, mock_get_tree, mock_get_sha, mock_get_file):
+        mock_get_repo.return_value = {
+            'id': 98765,
+            'name': 'TestRepo',
+            'default_branch': 'main',
+            'owner': {'login': 'octotester'},
+        }
+        mock_get_sha.return_value = 'commit_readme'
+        mock_get_tree.return_value = {
+            'sha': 'tree123',
+            'tree': [
+                {'path': 'README.md', 'type': 'blob'},
+                {'path': 'requirements.txt', 'type': 'blob'},
+            ]
+        }
+        readme_sample = "# My Awesome Project\n\n## Overview\nA great tool.\n\n## Installation\npip install mytool\n\n## Usage\npython main.py\n"
+        req_sample = "requests==2.28.1\n"
+        mock_get_file.side_effect = [
+            (readme_sample, 'sha_readme'),
+            (req_sample, 'sha_req'),
+        ]
+
+        service = RepositoryAnalysisService()
+        result = service.analyze_github_repository(self.user, self.project)
+
+        self.assertTrue(result)
+        self.project.refresh_from_db()
+        readme_info = self.project.detected_files.get('readme', {})
+        self.assertTrue(readme_info.get('present'))
+        self.assertIsNotNone(readme_info.get('score'))
+        self.assertGreater(readme_info.get('score'), 0)
+        self.assertIn('rating', readme_info)
+
+    @patch.object(GitHubService, 'get_latest_commit_sha')
+    @patch.object(GitHubService, 'get_repository_tree')
+    @patch.object(GitHubService, 'get_repository')
+    def test_large_repository_tree_protection(self, mock_get_repo, mock_get_tree, mock_get_sha):
+        from github_integration.analysis_service import MAX_TREE_ENTRIES
+        mock_get_repo.return_value = {
+            'id': 98765,
+            'name': 'HugeRepo',
+            'default_branch': 'main',
+            'owner': {'login': 'octotester'},
+        }
+        mock_get_sha.return_value = 'commit_huge'
+        # Create tree exceeding limit
+        huge_tree = [{'path': f'file_{i}.txt', 'type': 'blob'} for i in range(MAX_TREE_ENTRIES + 10)]
+        mock_get_tree.return_value = {'sha': 'huge_tree', 'tree': huge_tree}
+
+        service = RepositoryAnalysisService()
+        result = service.analyze_github_repository(self.user, self.project)
+
+        self.assertFalse(result)
+        self.project.refresh_from_db()
+        self.assertEqual(self.project.analysis_status, 'FAILED')
+        self.assertIn("Repository is too large for automatic analysis", self.project.analysis_error)
+
+    @patch.object(GitHubService, 'get_repository')
+    def test_github_403_forbidden_handling(self, mock_get_repo):
+        from github_integration.services import GitHubAPIError
+        mock_get_repo.side_effect = GitHubAPIError("Forbidden", status_code=403)
+
+        service = RepositoryAnalysisService()
+        result = service.analyze_github_repository(self.user, self.project)
+
+        self.assertFalse(result)
+        self.project.refresh_from_db()
+        self.assertEqual(self.project.analysis_status, 'FAILED')
+        self.assertEqual(self.project.analysis_error, "LicenseLens cannot access this repository. Please check GitHub permissions.")
+
+    def test_manual_project_remains_unaffected(self):
+        manual_proj = Project.objects.create(
+            owner=self.user,
+            name='ManualProject',
+            source='manual'
+        )
+        self.assertEqual(manual_proj.source, 'manual')
+        self.assertEqual(manual_proj.analysis_status, 'NONE')
+        self.assertIsNone(manual_proj.latest_scan)
+
 
 class AutomaticAnalysisAPITests(TestCase):
     """Test API endpoints for analysis status, refresh, and user isolation."""

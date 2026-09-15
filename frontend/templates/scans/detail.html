@@ -6,20 +6,20 @@
 {% block topbar_actions %}
 <a href="{% url 'project_detail' project.pk %}" class="btn btn-secondary btn-sm">← Project</a>
 {% if scan.status == 'COMPLETED' %}
-<a href="{% url 'download_report' scan.pk %}" class="btn btn-primary btn-sm">📥 Report</a>
-<a href="{% url 'download_sbom' scan.pk %}" class="btn btn-secondary btn-sm">📋 SBOM</a>
+<a href="{% url 'download_report' scan.pk %}" class="btn btn-primary btn-sm">Report</a>
+<a href="{% url 'download_sbom' scan.pk %}" class="btn btn-secondary btn-sm">SBOM</a>
 {% endif %}
 {% endblock %}
 
 {% block content %}
 <!-- Top Metrics -->
 <div class="stats-grid mb-28">
-  <div class="stat-card"><div class="stat-icon">🔴</div><div class="stat-value">{{ stats.critical }}</div><div class="stat-label">Critical</div></div>
-  <div class="stat-card"><div class="stat-icon">🟠</div><div class="stat-value">{{ stats.high }}</div><div class="stat-label">High</div></div>
-  <div class="stat-card"><div class="stat-icon">🟡</div><div class="stat-value">{{ stats.medium }}</div><div class="stat-label">Medium</div></div>
-  <div class="stat-card"><div class="stat-icon">🟢</div><div class="stat-value">{{ stats.low }}</div><div class="stat-label">Low</div></div>
-  <div class="stat-card"><div class="stat-icon">📦</div><div class="stat-value">{{ stats.total_deps }}</div><div class="stat-label">Dependencies</div></div>
-  <div class="stat-card"><div class="stat-icon">📜</div><div class="stat-value">{{ stats.license_issues }}</div><div class="stat-label">License Issues</div></div>
+  <div class="stat-card"><div class="stat-value">{{ stats.critical }}</div><div class="stat-label">Critical</div></div>
+  <div class="stat-card"><div class="stat-value">{{ stats.high }}</div><div class="stat-label">High</div></div>
+  <div class="stat-card"><div class="stat-value">{{ stats.medium }}</div><div class="stat-label">Medium</div></div>
+  <div class="stat-card"><div class="stat-value">{{ stats.low }}</div><div class="stat-label">Low</div></div>
+  <div class="stat-card"><div class="stat-value">{{ stats.total_deps }}</div><div class="stat-label">Dependencies</div></div>
+  <div class="stat-card"><div class="stat-value">{{ stats.license_issues }}</div><div class="stat-label">License Issues</div></div>
 </div>
 
 {% if scan.risk_score is not None %}

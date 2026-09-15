@@ -64,6 +64,7 @@ class GitHubService:
             'redirect_uri': self.redirect_uri,
             'scope': self.OAUTH_SCOPES,
             'state': state,
+            'prompt': 'select_account',
         }
         auth_url = f"{self.OAUTH_AUTHORIZE_URL}?{urlencode(params)}"
         return auth_url, state

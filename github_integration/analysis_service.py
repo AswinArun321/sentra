@@ -25,6 +25,11 @@ from .documentation import DocumentationAnalyzer
 logger = logging.getLogger(__name__)
 
 
+MAX_TREE_ENTRIES = 20000
+MAX_MANIFEST_SIZE_BYTES = 5 * 1024 * 1024  # 5 MB
+MAX_MANIFESTS = 15
+
+
 class RepositoryAnalysisService:
     """
     Orchestrates automatic inspection and scanning of imported GitHub repositories.
@@ -95,6 +100,15 @@ class RepositoryAnalysisService:
             tree_data = self.service.get_repository_tree(access_token, repo_id, branch_or_sha=tree_target)
             tree_entries = tree_data.get('tree', [])
 
+            # Large repository protection (Section 46)
+            if len(tree_entries) > MAX_TREE_ENTRIES:
+                logger.warning("Repository tree size (%s entries) exceeds max limit for project %s", len(tree_entries), project.id)
+                project.analysis_status = 'FAILED'
+                project.analysis_stage = 'failed'
+                project.analysis_error = "Repository is too large for automatic analysis. Please select or upload a supported manifest manually."
+                project.save(update_fields=['analysis_status', 'analysis_stage', 'analysis_error'])
+                return False
+
             # Stage 3: Detect manifests, READMEs, and Licenses
             project.analysis_stage = 'detecting_files'
             project.analysis_progress = 40
@@ -128,10 +142,29 @@ class RepositoryAnalysisService:
             project.detected_files = detected_files
             project.save(update_fields=['detected_manifests', 'detected_files'])
 
-            # Stage 4: Documentation check
+            # Stage 4: Documentation check (Sections 20, 25)
             project.analysis_stage = 'inspecting_documentation'
             project.analysis_progress = 55
             project.save(update_fields=['analysis_stage', 'analysis_progress'])
+
+            if readme_info and readme_info.get('path'):
+                try:
+                    readme_content, _ = self.service.get_file_content(
+                        access_token,
+                        repo_id,
+                        readme_info['path'],
+                        ref=commit_sha or default_branch
+                    )
+                    if readme_content:
+                        doc_analyzer = DocumentationAnalyzer(self.service)
+                        readme_analysis = doc_analyzer.analyze_readme_text(readme_content)
+                        detected_files['readme']['score'] = readme_analysis.get('score')
+                        detected_files['readme']['rating'] = readme_analysis.get('rating')
+                        detected_files['readme']['recommendations'] = readme_analysis.get('recommendations', [])
+                        project.detected_files = detected_files
+                        project.save(update_fields=['detected_files'])
+                except Exception as doc_err:
+                    logger.warning("Could not complete README quality analysis for project %s: %s", project.id, str(doc_err))
 
             # Stage 5: Manifest evaluation
             supported_manifests = detection.get('supported_manifests', [])
@@ -151,6 +184,10 @@ class RepositoryAnalysisService:
                 project.save(update_fields=['analysis_status', 'analysis_stage', 'analysis_progress', 'analysis_error'])
                 return True
 
+            # Limit manifests if excessive (Section 46)
+            if len(supported_manifests) > MAX_MANIFESTS:
+                supported_manifests = supported_manifests[:MAX_MANIFESTS]
+
             # Stage 6: Retrieve manifest contents and run scans
             project.analysis_stage = 'retrieving_manifests'
             project.analysis_progress = 70
@@ -168,6 +205,10 @@ class RepositoryAnalysisService:
                     )
                 except Exception as e:
                     logger.error("Failed to retrieve manifest %s from GitHub: %s", manifest_path, str(e))
+                    continue
+
+                if len(content.encode('utf-8')) > MAX_MANIFEST_SIZE_BYTES:
+                    logger.warning("Manifest %s in project %s exceeds max file size limit (%s bytes)", manifest_path, project.id, len(content))
                     continue
 
                 project.analysis_stage = 'analyzing_dependencies'
@@ -233,6 +274,17 @@ class RepositoryAnalysisService:
             project.analysis_status = 'FAILED'
             project.analysis_stage = 'failed'
             project.analysis_error = "Repository not found or no longer accessible on GitHub."
+            project.save(update_fields=['analysis_status', 'analysis_stage', 'analysis_error'])
+            return False
+
+        except GitHubAPIError as e:
+            logger.warning("GitHub API error during analysis for project %s: %s", project.id, str(e))
+            project.analysis_status = 'FAILED'
+            project.analysis_stage = 'failed'
+            if getattr(e, 'status_code', None) == 403:
+                project.analysis_error = "LicenseLens cannot access this repository. Please check GitHub permissions."
+            else:
+                project.analysis_error = f"GitHub API error: {str(e)[:200]}"
             project.save(update_fields=['analysis_status', 'analysis_stage', 'analysis_error'])
             return False
 

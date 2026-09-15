@@ -31,7 +31,6 @@
       </div>
       {% if project.risk_level != 'UNKNOWN' %}
       <span class="risk-level-badge {{ project.risk_level }}">
-        {% if project.risk_level == 'CRITICAL' %}🔴{% elif project.risk_level == 'HIGH' %}🟠{% elif project.risk_level == 'MEDIUM' %}🟡{% else %}🟢{% endif %}
         {{ project.risk_level }}
       </span>
       {% else %}
@@ -83,7 +82,6 @@
 
 {% else %}
 <div class="card empty-state">
-  <div class="empty-state-icon">📁</div>
   <div class="empty-state-title">No projects yet</div>
   <div class="empty-state-subtitle">
     Create your first project to start scanning dependencies for vulnerabilities, license risks, and maintenance issues.

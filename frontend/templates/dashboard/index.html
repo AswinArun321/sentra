@@ -119,115 +119,6 @@
 
   </div>
 
-  <!-- 3. Security Overview Section (2 Panels) -->
-  <div class="overview-grid">
-
-    <!-- Panel 1: Vulnerability Severity -->
-    <div class="overview-card">
-      <div class="overview-card-title">Vulnerability Severity</div>
-      <div class="overview-card-subtitle">Distribution of security advisories by risk tier</div>
-      
-      <div class="dist-list">
-        <!-- Critical -->
-        <div class="dist-item">
-          <div class="dist-name">
-            <span class="dist-dot critical"></span> Critical
-          </div>
-          <div class="dist-bar-track">
-            <div class="dist-bar-fill critical" id="distCritBar" style="width: {% if vulnerabilities.total > 0 %}{% widthratio vulnerabilities.critical vulnerabilities.total 100 %}{% else %}0{% endif %}%;"></div>
-          </div>
-          <div class="dist-count" id="distCritCount">{{ vulnerabilities.critical }}</div>
-        </div>
-
-        <!-- High -->
-        <div class="dist-item">
-          <div class="dist-name">
-            <span class="dist-dot high"></span> High
-          </div>
-          <div class="dist-bar-track">
-            <div class="dist-bar-fill high" id="distHighBar" style="width: {% if vulnerabilities.total > 0 %}{% widthratio vulnerabilities.high vulnerabilities.total 100 %}{% else %}0{% endif %}%;"></div>
-          </div>
-          <div class="dist-count" id="distHighCount">{{ vulnerabilities.high }}</div>
-        </div>
-
-        <!-- Medium -->
-        <div class="dist-item">
-          <div class="dist-name">
-            <span class="dist-dot medium"></span> Medium
-          </div>
-          <div class="dist-bar-track">
-            <div class="dist-bar-fill medium" id="distMedBar" style="width: {% if vulnerabilities.total > 0 %}{% widthratio vulnerabilities.medium vulnerabilities.total 100 %}{% else %}0{% endif %}%;"></div>
-          </div>
-          <div class="dist-count" id="distMedCount">{{ vulnerabilities.medium }}</div>
-        </div>
-
-        <!-- Low -->
-        <div class="dist-item">
-          <div class="dist-name">
-            <span class="dist-dot low"></span> Low
-          </div>
-          <div class="dist-bar-track">
-            <div class="dist-bar-fill low" id="distLowBar" style="width: {% if vulnerabilities.total > 0 %}{% widthratio vulnerabilities.low vulnerabilities.total 100 %}{% else %}0{% endif %}%;"></div>
-          </div>
-          <div class="dist-count" id="distLowCount">{{ vulnerabilities.low }}</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Panel 2: Project Health -->
-    <div class="overview-card">
-      <div class="overview-card-title">Project Health</div>
-      <div class="overview-card-subtitle">Classification based on compliance & vulnerability profiles</div>
-
-      <div class="dist-list">
-        <!-- Excellent -->
-        <div class="dist-item">
-          <div class="dist-name">
-            <span class="dist-dot excellent"></span> Excellent
-          </div>
-          <div class="dist-bar-track">
-            <div class="dist-bar-fill excellent" id="distExcelBar" style="width: {% if project_health.total > 0 %}{% widthratio project_health.excellent project_health.total 100 %}{% else %}0{% endif %}%;"></div>
-          </div>
-          <div class="dist-count" id="distExcelCount">{{ project_health.excellent }}</div>
-        </div>
-
-        <!-- Good -->
-        <div class="dist-item">
-          <div class="dist-name">
-            <span class="dist-dot good"></span> Good
-          </div>
-          <div class="dist-bar-track">
-            <div class="dist-bar-fill good" id="distGoodBar" style="width: {% if project_health.total > 0 %}{% widthratio project_health.good project_health.total 100 %}{% else %}0{% endif %}%;"></div>
-          </div>
-          <div class="dist-count" id="distGoodCount">{{ project_health.good }}</div>
-        </div>
-
-        <!-- Needs Attention -->
-        <div class="dist-item">
-          <div class="dist-name">
-            <span class="dist-dot attention"></span> Attention
-          </div>
-          <div class="dist-bar-track">
-            <div class="dist-bar-fill attention" id="distAttnBar" style="width: {% if project_health.total > 0 %}{% widthratio project_health.needs_attention project_health.total 100 %}{% else %}0{% endif %}%;"></div>
-          </div>
-          <div class="dist-count" id="distAttnCount">{{ project_health.needs_attention }}</div>
-        </div>
-
-        <!-- Critical -->
-        <div class="dist-item">
-          <div class="dist-name">
-            <span class="dist-dot critical"></span> Critical
-          </div>
-          <div class="dist-bar-track">
-            <div class="dist-bar-fill critical" id="distCritProjBar" style="width: {% if project_health.total > 0 %}{% widthratio project_health.critical project_health.total 100 %}{% else %}0{% endif %}%;"></div>
-          </div>
-          <div class="dist-count" id="distCritProjCount">{{ project_health.critical }}</div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
   <!-- 4. Attention Required Section -->
   <div class="attention-card-container">
     <div class="section-title-wrap">
@@ -249,7 +140,6 @@
           <div>
             <div class="attention-item-top">
               <div class="attention-project-name">
-                <span>{% if item.severity == 'CRITICAL' %}🔴{% elif item.severity == 'HIGH' %}🟠{% else %}🟡{% endif %}</span>
                 {{ item.project_name }}
               </div>
               <span class="kpi-badge {{ item.severity|lower }}">{{ item.severity }}</span>

@@ -30,7 +30,6 @@
 
   <!-- Error State -->
   <div id="doc-error" class="card empty-state" style="display: none; border-color: #fee2e2; background: #fffbfb;">
-    <div style="font-size: 32px; margin-bottom: 10px;">⚠️</div>
     <div class="empty-state-title" style="color: var(--risk-critical);" id="doc-error-title">Unable to analyze documentation</div>
     <div class="empty-state-subtitle" id="doc-error-msg">A connection error occurred while communicating with GitHub.</div>
     <button id="doc-retry-btn" class="btn btn-primary btn-sm">Try Again</button>
@@ -86,7 +85,7 @@
     </div>
 
     <!-- 2-Column Grid: Left (Audit & Recommendations), Right (README Generator/Editor) -->
-    <div style="display: grid; grid-template-columns: 1fr 1.35fr; gap: 24px; align-items: start;">
+    <div class="doc-layout-grid">
 
       <!-- Left Column: Section Breakdown & Recommendations -->
       <div style="display: flex; flex-direction: column; gap: 24px;">
@@ -143,10 +142,10 @@
             <!-- Tab Switcher (Editor vs Preview) -->
             <div style="display: flex; gap: 6px;">
               <button type="button" id="tab-btn-edit" class="btn btn-secondary btn-sm" style="background: var(--bg-base); font-weight: 700;">
-                ✏️ Edit
+                Edit
               </button>
               <button type="button" id="tab-btn-preview" class="btn btn-secondary btn-sm">
-                👁️ Preview
+                Preview
               </button>
             </div>
           </div>
@@ -155,10 +154,10 @@
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
             <div style="display: flex; gap: 8px;">
               <button type="button" id="btn-generate-readme" class="btn btn-secondary btn-sm">
-                ⚡ Generate Suggested README
+                Generate Suggested README
               </button>
               <button type="button" id="btn-load-existing-readme" class="btn btn-secondary btn-sm" style="display: none;">
-                📄 Load Existing README
+                Load Existing README
               </button>
             </div>
             <div id="char-count" style="font-size: 11px; color: var(--text-muted); font-family: monospace;">
@@ -167,12 +166,12 @@
           </div>
 
           <!-- Textarea Editor View -->
-          <div id="editor-view">
-            <textarea id="readme-editor" class="form-control" rows="22" style="font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.6; resize: vertical; padding: 14px; background: var(--bg-input); color: var(--text-primary);" placeholder="Click 'Generate Suggested README' or type markdown content here..."></textarea>
+          <div id="editor-view" style="width: 100%; max-width: 100%;">
+            <textarea id="readme-editor" class="form-control" rows="22" style="width: 100%; max-width: 100%; box-sizing: border-box; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.6; resize: vertical; padding: 14px; background: var(--bg-input); color: var(--text-primary);" placeholder="Click 'Generate Suggested README' or type markdown content here..."></textarea>
           </div>
 
           <!-- Markdown Styled Preview View -->
-          <div id="preview-view" style="display: none; min-height: 380px; max-height: 600px; overflow-y: auto; padding: 18px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); background: var(--bg-surface); color: var(--text-primary);">
+          <div id="preview-view" style="display: none; min-height: 380px; max-height: 600px; overflow-y: auto; overflow-x: auto; word-break: break-word; padding: 18px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); background: var(--bg-surface); color: var(--text-primary);">
             <!-- Rendered preview -->
           </div>
 

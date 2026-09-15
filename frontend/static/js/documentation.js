@@ -166,7 +166,6 @@
     if (recs.length === 0) {
       recsListEl.innerHTML = `
         <li class="rec-bullet-item" style="background: #f0fdf4; border-color: #bbf7d0; color: #166534;">
-          <span style="font-size: 16px;">🎉</span>
           <span>Outstanding documentation! All standard sections and best practices are present.</span>
         </li>
       `;
