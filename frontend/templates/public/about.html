@@ -1,118 +1,191 @@
 {% extends "public/base.html" %}
 {% load static %}
 
-{% block title %}SENTRA | About Us — Building Better Security Visibility{% endblock %}
-{% block meta_description %}Learn about SENTRA's mission, core principles, and the engineering behind the Repository Security & Intelligence Platform.{% endblock %}
+{% block title %}About SENTRA — Repository Security & Intelligence{% endblock %}
+{% block meta_description %}Learn how SENTRA helps developers understand repository security, dependencies, vulnerabilities, licenses and repository health.{% endblock %}
 
 {% block content %}
-<!-- About Header -->
-<section class="public-section" style="padding-bottom: 40px;">
+<!-- =========================================================================
+     1. ABOUT HERO
+     ========================================================================= -->
+<section class="public-section" style="padding-bottom: 50px;">
   <div class="public-container">
-    <div class="section-header" style="margin-bottom: 24px;">
-      <div class="section-tag">About SENTRA</div>
-      <h1 class="section-title">Building Better Visibility<br>Into Software Security</h1>
+    <div class="section-header" style="max-width: 800px; margin: 0 auto 36px;">
+      <div class="sentira-tag">
+        <span class="sentira-tag-dot"></span>
+        About SENTRA
+      </div>
+      <h1 class="sentira-display-title">
+        Repository security,<br>made understandable.
+      </h1>
+      <p class="section-subtitle" style="font-size: 18px; line-height: 1.65; max-width: 680px; margin: 0 auto 18px;">
+        SENTRA is a repository security and intelligence platform that helps developers understand their dependencies, vulnerabilities, licenses and repository health.
+      </p>
+      <div style="font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--accent-primary);">
+        Our Mission &middot; Know your code. Secure what you ship.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================================
+     2. WHAT SENTRA DOES
+     ========================================================================= -->
+<section class="public-section public-section-alt" id="what-we-do">
+  <div class="public-container">
+    <div class="section-header" style="margin-bottom: 44px;">
+      <div class="sentira-tag">
+        <span class="sentira-tag-dot"></span>
+        Capabilities
+      </div>
+      <h2 class="sentira-display-title">What SENTRA does</h2>
       <p class="section-subtitle">
-        SENTRA was created to bring software supply-chain signals—vulnerabilities, dependencies, licenses, documentation, and repository health—into one clear intelligence platform.
+        Four core pillars that transform complex repository data into clear, actionable security posture.
       </p>
     </div>
-  </div>
-</section>
 
-<!-- Problem Statement & Mission -->
-<section class="public-section public-section-alt">
-  <div class="public-container">
-    <div class="public-container-narrow" style="padding: 0;">
-      <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 40px; box-shadow: var(--shadow-card); margin-bottom: 40px;">
-        <h2 style="font-size: 24px; font-weight: 800; color: var(--text-title); margin-bottom: 16px;">The Problem</h2>
-        <p style="font-size: 15.5px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 24px;">
-          Modern applications build on top of dozens or hundreds of open-source packages. This introduces vulnerabilities buried in transitive dependencies, incompatible copyleft licenses, and abandoned projects that no longer receive security maintenance.
-        </p>
-        <p style="font-size: 15.5px; color: var(--text-secondary); line-height: 1.7; margin: 0;">
-          Existing security tools often focus solely on vulnerability alerts without context, overwhelming developers with noisy notifications while ignoring documentation health and license compliance obligations.
-        </p>
+    <div class="about-grid-2x2">
+      <!-- 01 -->
+      <div class="sentira-card-numbered" style="padding: 32px 28px;">
+        <div class="sentira-card-index">01</div>
+        <h3 style="font-size: 19px; font-weight: 700; color: var(--text-title); margin: 0 0 8px 0;">Repository Analysis</h3>
+        <p style="font-size: 15px; color: var(--text-secondary); line-height: 1.6; margin: 0;">Connect and analyze GitHub repositories.</p>
       </div>
 
-      <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 40px; box-shadow: var(--shadow-card);">
-        <h2 style="font-size: 24px; font-weight: 800; color: var(--text-title); margin-bottom: 16px;">Our Mission</h2>
-        <blockquote style="font-size: 18px; font-weight: 600; color: var(--accent-primary); line-height: 1.6; margin: 0 0 16px 0; border-left: 3px solid var(--accent-primary); padding-left: 20px;">
-          "To make repository security easier to understand by turning complex software supply-chain information into clear, actionable insights."
-        </blockquote>
-        <p style="font-size: 15px; color: var(--text-secondary); line-height: 1.65; margin: 0;">
-          SENTRA provides engineering teams, security auditors, and individual developers with an intuitive interface to understand what they are shipping before it reaches production.
-        </p>
+      <!-- 02 -->
+      <div class="sentira-card-numbered" style="padding: 32px 28px;">
+        <div class="sentira-card-index">02</div>
+        <h3 style="font-size: 19px; font-weight: 700; color: var(--text-title); margin: 0 0 8px 0;">Security Intelligence</h3>
+        <p style="font-size: 15px; color: var(--text-secondary); line-height: 1.6; margin: 0;">Identify dependency and vulnerability risks.</p>
+      </div>
+
+      <!-- 03 -->
+      <div class="sentira-card-numbered" style="padding: 32px 28px;">
+        <div class="sentira-card-index">03</div>
+        <h3 style="font-size: 19px; font-weight: 700; color: var(--text-title); margin: 0 0 8px 0;">Repository Health</h3>
+        <p style="font-size: 15px; color: var(--text-secondary); line-height: 1.6; margin: 0;">Understand documentation and repository health.</p>
+      </div>
+
+      <!-- 04 -->
+      <div class="sentira-card-numbered" style="padding: 32px 28px;">
+        <div class="sentira-card-index">04</div>
+        <h3 style="font-size: 19px; font-weight: 700; color: var(--text-title); margin: 0 0 8px 0;">Reports</h3>
+        <p style="font-size: 15px; color: var(--text-secondary); line-height: 1.6; margin: 0;">Generate structured security reports.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Architecture Values -->
-<section class="public-section">
+<!-- =========================================================================
+     3. HOW IT WORKS
+     ========================================================================= -->
+<section class="public-section" id="how-it-works">
   <div class="public-container">
-    <div class="section-header">
-      <div class="section-tag">Engineering Values</div>
-      <h2 class="section-title">Core Design Principles</h2>
+    <div class="section-header" style="margin-bottom: 44px;">
+      <div class="sentira-tag">
+        <span class="sentira-tag-dot"></span>
+        Process
+      </div>
+      <h2 class="sentira-display-title">How it works</h2>
       <p class="section-subtitle">
-        How SENTRA is built to ensure reliability, security, and developer clarity.
+        A seamless 4-step workflow from OAuth connection to clear risk remediation.
       </p>
     </div>
 
-    <div class="features-grid-3">
-      <div class="feature-box">
-        <div class="feature-icon-wrapper">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-          </svg>
-        </div>
-        <h3 class="feature-box-title">Account Isolation</h3>
-        <p class="feature-box-desc">
-          Strict security boundaries ensure user access tokens and connected repositories remain isolated per account. No shared state or leaking credentials.
-        </p>
+    <div class="about-steps-grid-4">
+      <!-- Step 01 -->
+      <div class="sentira-card-numbered" style="padding: 28px 22px;">
+        <div class="sentira-card-index" style="font-size: 30px; margin-bottom: 12px;">01</div>
+        <h3 style="font-size: 17px; font-weight: 700; color: var(--text-title); margin: 0 0 8px 0;">Connect</h3>
+        <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.55; margin: 0;">Connect your GitHub account.</p>
       </div>
 
-      <div class="feature-box">
-        <div class="feature-icon-wrapper">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-          </svg>
-        </div>
-        <h3 class="feature-box-title">Automated Workflows</h3>
-        <p class="feature-box-desc">
-          Zero-configuration repository inspection automatically discovers manifests and documentation directly from Git trees without requiring complex setup.
-        </p>
+      <!-- Step 02 -->
+      <div class="sentira-card-numbered" style="padding: 28px 22px;">
+        <div class="sentira-card-index" style="font-size: 30px; margin-bottom: 12px;">02</div>
+        <h3 style="font-size: 17px; font-weight: 700; color: var(--text-title); margin: 0 0 8px 0;">Analyze</h3>
+        <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.55; margin: 0;">SENTRA inspects your repository and dependencies.</p>
       </div>
 
-      <div class="feature-box">
-        <div class="feature-icon-wrapper">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="20" x2="18" y2="10"></line>
-            <line x1="12" y1="20" x2="12" y2="4"></line>
-            <line x1="6" y1="20" x2="6" y2="14"></line>
-          </svg>
-        </div>
-        <h3 class="feature-box-title">Actionable Transparency</h3>
-        <p class="feature-box-desc">
-          Every risk score and finding is explainable. We clearly present the methodology and recommendations so engineers understand what to fix and why.
-        </p>
+      <!-- Step 03 -->
+      <div class="sentira-card-numbered" style="padding: 28px 22px;">
+        <div class="sentira-card-index" style="font-size: 30px; margin-bottom: 12px;">03</div>
+        <h3 style="font-size: 17px; font-weight: 700; color: var(--text-title); margin: 0 0 8px 0;">Understand</h3>
+        <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.55; margin: 0;">Review vulnerabilities, licenses and risk insights.</p>
+      </div>
+
+      <!-- Step 04 -->
+      <div class="sentira-card-numbered" style="padding: 28px 22px;">
+        <div class="sentira-card-index" style="font-size: 30px; margin-bottom: 12px;">04</div>
+        <h3 style="font-size: 17px; font-weight: 700; color: var(--text-title); margin: 0 0 8px 0;">Secure</h3>
+        <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.55; margin: 0;">Use the findings to improve your repository.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Call to Action Banner -->
-<section class="public-section public-section-alt">
+<!-- =========================================================================
+     4. DOCUMENTATION CTA
+     ========================================================================= -->
+<section class="public-section public-section-alt" id="documentation-cta" style="padding: 64px 0;">
   <div class="public-container">
-    <div class="cta-banner">
-      <h2 class="cta-banner-title">Build With Confidence</h2>
-      <p class="cta-banner-desc">
-        Join developers securing their open-source dependencies and repositories with SENTRA.
+    <div style="max-width: 680px; margin: 0 auto; text-align: center;">
+      <div class="sentira-tag" style="margin-bottom: 16px;">
+        <span class="sentira-tag-dot"></span>
+        Documentation
+      </div>
+      <h2 class="sentira-display-title" style="font-size: clamp(2rem, 3.8vw, 3rem); margin-bottom: 14px;">
+        Documentation
+      </h2>
+      <p style="font-size: 16.5px; color: var(--text-secondary); line-height: 1.65; margin: 0 auto 28px; max-width: 540px;">
+        Everything you need to understand how SENTRA works and how to use its main features.
       </p>
+      <a href="{% url 'documentation' %}" class="btn btn-secondary btn-lg" style="border-radius: 9999px;">
+        <span>View Documentation</span>
+        <span class="btn-arrow-circle">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14"></path>
+            <path d="m12 5 7 7-7 7"></path>
+          </svg>
+        </span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================================
+     5. FINAL CTA
+     ========================================================================= -->
+<section class="public-section section-dark-cta" id="cta">
+  <div class="public-container">
+    <div class="sentira-tag" style="margin: 0 auto 20px;">
+      <span class="sentira-tag-dot"></span>
+      Get Started
+    </div>
+
+    <h2 class="sentira-display-title" style="margin-bottom: 14px;">
+      Ready to understand your repositories?
+    </h2>
+    <p class="cta-banner-desc" style="margin-bottom: 32px;">
+      Know your code. Secure what you ship.
+    </p>
+
+    <div class="hero-cta-group" style="justify-content: center;">
       {% if user.is_authenticated %}
-      <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg">
-        Go to Dashboard →
+      <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg" id="about-cta-btn-dashboard">
+        Open Dashboard
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14"></path>
+          <path d="m12 5 7 7-7 7"></path>
+        </svg>
       </a>
       {% else %}
-      <a href="{% url 'register' %}" class="btn btn-primary btn-lg">
-        Get Started →
+      <a href="{% url 'register' %}" class="btn btn-primary btn-lg" id="about-cta-btn-register">
+        Get Started
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14"></path>
+          <path d="m12 5 7 7-7 7"></path>
+        </svg>
       </a>
       {% endif %}
     </div>

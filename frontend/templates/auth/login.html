@@ -3,60 +3,98 @@
 
 {% block auth_content %}
 <div class="auth-page">
-  <div class="auth-card animate-fade-in">
-    <a href="{% url 'home' %}" class="auth-logo" style="text-decoration:none; display:block;" title="Back to SENTRA Home">
-      <div class="auth-logo-icon" style="margin: 0 auto 14px;">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"></circle>
-          <path d="m9 12 2 2 4-4"></path>
+  <div class="auth-split-wrapper animate-fade-in">
+    <!-- Left Column: Editorial Brand Statement -->
+    <div class="auth-brand-side">
+      <a href="{% url 'home' %}" class="auth-brand-badge" style="text-decoration: none;" title="SENTRA Security Platform">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
         </svg>
-      </div>
-      <div class="auth-title">Welcome back to SENTRA</div>
-      <div class="auth-subtitle">Repository Security & Intelligence Platform</div>
-    </a>
-
-    {% if messages %}
-    {% for message in messages %}
-    <div class="alert alert-{{ message.tags|default:'error' }} mb-16">{{ message }}</div>
-    {% endfor %}
-    {% endif %}
-
-    <form method="POST" action="{% url 'login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}" id="login-form">
-      {% csrf_token %}
-
-      <div class="form-group">
-        <label class="form-label" for="email">Email Address</label>
-        <input id="email" type="email" name="email" class="form-control"
-               required autocomplete="email"
-               value="{{ request.POST.email|default:'' }}">
-      </div>
-
-      <div class="form-group">
-        <label class="form-label" for="password">Password</label>
-        <input id="password" type="password" name="password" class="form-control"
-              required autocomplete="current-password">
-      </div>
-
-      <button type="submit" class="btn btn-primary btn-lg" style="width:100%; justify-content:center; margin-top:10px;" id="login-btn">
-        Sign In →
-      </button>
-    </form>
-
-    <div class="divider"></div>
-
-    <p class="text-center text-sm text-secondary">
-      Don't have an account?
-      <a href="{% url 'register' %}" class="text-accent" style="font-weight:700;">Create one free</a>
-    </p>
-
-    <div class="text-center" style="margin-top: 14px;">
-      <a href="{% url 'home' %}" class="text-secondary" style="font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: color 0.15s ease;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="19" y1="12" x2="5" y2="12"></line>
-          <polyline points="12 19 5 12 12 5"></polyline>
-        </svg>
-        <span>Back to Home</span>
+        <span>SENTRA &middot; SECURITY &amp; INTELLIGENCE</span>
       </a>
+
+      <h1 class="auth-editorial-title">
+        KNOW YOUR CODE.<br>
+        SECURE WHAT<br>
+        YOU SHIP.
+      </h1>
+
+      <p class="auth-editorial-desc">
+        Access your continuous repository security telemetry, vulnerability matches, copyleft compliance audits, and CycloneDX SBOM exports.
+      </p>
+
+      <div class="auth-feature-list">
+        <div class="auth-feature-item">
+          <div class="auth-feature-icon">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <span>Automated dependency tree inspection across branches</span>
+        </div>
+        <div class="auth-feature-item">
+          <div class="auth-feature-icon">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <span>OSV.dev real-time vulnerability &amp; CVE correlation</span>
+        </div>
+        <div class="auth-feature-item">
+          <div class="auth-feature-icon">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <span>Open-source license compliance &amp; copyleft isolation</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Authentication Card -->
+    <div class="auth-card">
+      <div class="auth-card-header">
+        <div class="auth-title">Welcome back</div>
+        <div class="auth-subtitle">Sign in to your SENTRA security workspace</div>
+      </div>
+
+      {% if messages %}
+      {% for message in messages %}
+      <div class="alert alert-{{ message.tags|default:'error' }} mb-16">{{ message }}</div>
+      {% endfor %}
+      {% endif %}
+
+      <form method="POST" action="{% url 'login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}" id="login-form">
+        {% csrf_token %}
+
+        <div class="form-group">
+          <label class="form-label" for="email">Email Address</label>
+          <input id="email" type="email" name="email" class="form-control"
+                 required autocomplete="email" placeholder="name@company.com"
+                 value="{{ request.POST.email|default:'' }}">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input id="password" type="password" name="password" class="form-control"
+                 required autocomplete="current-password" placeholder="••••••••">
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg" style="width:100%; justify-content:center; margin-top:12px;" id="login-btn">
+          Sign In &rarr;
+        </button>
+      </form>
+
+      <div class="divider"></div>
+
+      <p class="text-center text-sm text-secondary">
+        Don't have an account?
+        <a href="{% url 'register' %}" class="text-accent" style="font-weight:700;">Create one free</a>
+      </p>
+
+      <div class="text-center" style="margin-top: 14px;">
+        <a href="{% url 'home' %}" class="text-secondary" style="font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: color 0.15s ease;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          <span>Back to Home</span>
+        </a>
+      </div>
     </div>
   </div>
 </div>

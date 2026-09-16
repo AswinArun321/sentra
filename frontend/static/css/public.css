@@ -33,6 +33,10 @@
   position: relative;
 }
 
+.public-page main > section:first-of-type:not(.section-dark-hero) {
+  padding-top: 124px;
+}
+
 .public-section-alt {
   background-color: var(--bg-surface);
   border-top: 1px solid var(--border-color);
@@ -77,22 +81,47 @@
 }
 
 /* Public Top Navigation Bar */
+/* Sentira-Style Floating Glass Capsule Navbar */
 .public-navbar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: var(--bg-surface);
-  border-bottom: 1px solid var(--border-color);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  transition: all 0.2s ease;
+  position: fixed;
+  top: 18px;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  background: transparent;
+  border-bottom: none;
+  padding: 0 16px;
+  transition: all 0.25s ease;
+}
+
+.public-navbar .public-container {
+  max-width: 980px;
+  padding: 0;
+  pointer-events: auto;
 }
 
 .navbar-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 72px;
+  height: 56px;
+  padding: 6px 14px 6px 20px;
+  background: rgba(10, 10, 12, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 9999px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
+  transition: all 0.25s ease;
+}
+
+[data-theme="light"] .navbar-inner {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
 }
 
 .nav-brand {
@@ -103,93 +132,124 @@
 }
 
 .brand-icon-box {
-  width: 36px;
-  height: 36px;
-  border-radius: 9px;
-  background: linear-gradient(135deg, #1977f3, #0284c7);
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #1d5cff, #0284c7);
   display: flex;
   align-items: center;
   justify-content: center;
   color: #ffffff;
-  box-shadow: 0 4px 12px rgba(25, 119, 243, 0.25);
+  box-shadow: 0 4px 12px rgba(29, 92, 255, 0.3);
 }
 
 .brand-name {
-  font-size: 20px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-  color: var(--text-title);
+  font-size: 18px;
+  font-weight: 850;
+  letter-spacing: -0.4px;
+  color: #ffffff;
+}
+
+[data-theme="light"] .brand-name {
+  color: #0f172a;
 }
 
 .brand-dot {
-  color: var(--accent-primary);
+  color: #1d5cff;
 }
 
 .nav-menu {
   display: flex;
   align-items: center;
-  gap: 28px;
+  gap: 6px;
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
 .nav-link {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-secondary);
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #94a3b8;
   text-decoration: none;
-  transition: color 0.15s ease;
-  padding: 6px 2px;
+  transition: all 0.15s ease;
+  padding: 6px 14px;
+  border-radius: 9999px;
   position: relative;
+}
+
+[data-theme="light"] .nav-link {
+  color: #475569;
 }
 
 .nav-link:hover,
 .nav-link.active {
-  color: var(--accent-primary);
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="light"] .nav-link:hover,
+[data-theme="light"] .nav-link.active {
+  color: #0f172a;
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .nav-link.active::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: var(--accent-primary);
-  border-radius: 2px;
+  display: none;
 }
 
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+}
+
+.nav-actions .btn {
+  border-radius: 9999px;
 }
 
 .mobile-toggle {
   display: none;
-  background: none;
-  border: 1px solid var(--border-color);
-  padding: 8px;
-  border-radius: var(--radius-sm);
-  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 6px 8px;
+  border-radius: 8px;
+  color: #ffffff;
   cursor: pointer;
+}
+
+[data-theme="light"] .mobile-toggle {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #0f172a;
 }
 
 /* Mobile Drawer */
 .mobile-nav-drawer {
   display: none;
   position: fixed;
-  top: 72px;
-  left: 0;
-  right: 0;
-  background: var(--bg-surface);
-  border-bottom: 1px solid var(--border-color);
-  padding: 20px 24px;
+  top: 84px;
+  left: 16px;
+  right: 16px;
+  max-width: 480px;
+  margin: 0 auto;
+  background: rgba(14, 14, 16, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  padding: 24px;
   flex-direction: column;
-  gap: 16px;
-  z-index: 99;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+  gap: 14px;
+  z-index: 1001;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
+  pointer-events: auto;
+}
+
+[data-theme="light"] .mobile-nav-drawer {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(0, 0, 0, 0.1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
 }
 
 .mobile-nav-drawer.open {
@@ -197,17 +257,26 @@
 }
 
 .mobile-nav-link {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: #f8fafc;
   text-decoration: none;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--border-subtle);
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: background 0.15s ease;
+}
+
+[data-theme="light"] .mobile-nav-link {
+  color: #0f172a;
+}
+
+.mobile-nav-link:hover {
+  background: rgba(255, 255, 255, 0.06);
 }
 
 /* Hero Section */
 .hero-section {
-  padding: 90px 0 80px;
+  padding: 130px 0 80px;
 }
 
 .hero-grid {
@@ -744,47 +813,110 @@
 
 /* Dark Hero & Contrast Rhythm */
 .section-dark-hero {
-  background: radial-gradient(ellipse at 50% 0%, rgba(25, 119, 243, 0.18), transparent 75%), #060b16;
+  background: radial-gradient(ellipse at 50% 0%, rgba(29, 92, 255, 0.16) 0%, rgba(10, 10, 12, 0.6) 60%, transparent 100%), #060606;
   color: #f8fafc;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 96px 0 108px;
+  padding: 110px 0 110px;
   position: relative;
   overflow: hidden;
 }
 
+.section-dark-hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+}
+
 .section-dark-hero .hero-title {
   color: #ffffff;
-  font-size: 52px;
-  font-weight: 850;
-  line-height: 1.12;
-  letter-spacing: -1.2px;
-  margin-bottom: 22px;
+  font-family: var(--font-display, 'Instrument Serif', Georgia, serif);
+  font-size: clamp(3.2rem, 6.2vw, 5.2rem);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin-bottom: 24px;
 }
 
 .section-dark-hero .hero-description {
   color: #94a3b8;
-  font-size: 19px;
-  line-height: 1.6;
+  font-size: 18.5px;
+  line-height: 1.65;
   max-width: 580px;
-  margin-bottom: 34px;
+  margin-bottom: 36px;
+  font-weight: 400;
+}
+
+/* Sentira-Grade Pill Action Buttons */
+.section-dark-hero .btn-primary,
+.section-dark-cta .btn-primary {
+  background: #ffffff !important;
+  color: #000000 !important;
+  border: 1px solid #ffffff !important;
+  border-radius: 9999px !important;
+  font-weight: 600 !important;
+  font-size: 14.5px !important;
+  padding: 12px 28px !important;
+  box-shadow: 0 4px 20px rgba(255, 255, 255, 0.15) !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  text-decoration: none !important;
+}
+
+.section-dark-hero .btn-primary:hover,
+.section-dark-cta .btn-primary:hover {
+  background: #f1f5f9 !important;
+  transform: scale(1.03) !important;
+  box-shadow: 0 8px 30px rgba(255, 255, 255, 0.28) !important;
+  color: #000000 !important;
 }
 
 .section-dark-hero .btn-secondary,
 .section-dark-cta .btn-secondary {
-  background: rgba(255, 255, 255, 0.08) !important;
-  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  background: #141416 !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
   color: #ffffff !important;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  transition: all 0.2s ease;
+  border-radius: 9999px !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  padding: 10px 18px 10px 24px !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  text-decoration: none !important;
 }
 
 .section-dark-hero .btn-secondary:hover,
 .section-dark-cta .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.16) !important;
-  border-color: rgba(255, 255, 255, 0.4) !important;
+  background: #1f1f23 !important;
+  border-color: rgba(255, 255, 255, 0.28) !important;
   color: #ffffff !important;
-  transform: translateY(-1px);
+}
+
+.btn-arrow-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background 0.25s ease;
+}
+
+.section-dark-hero .btn-secondary:hover .btn-arrow-circle,
+.section-dark-cta .btn-secondary:hover .btn-arrow-circle {
+  transform: translateX(4px);
+  background: rgba(255, 255, 255, 0.22);
 }
 
 
@@ -1527,6 +1659,526 @@
     flex-direction: column;
     gap: 12px;
     text-align: center;
+  }
+}
+
+/* ==========================================================================
+   SENTIRA SIGNATURE DESIGN SYSTEM EXTENSIONS
+   Matches sentira.framer.website visual language
+   ========================================================================== */
+
+/* 1. Outer Viewport Atmospheric Glow */
+body.public-page::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 999;
+  box-shadow: inset 0 0 100px rgba(29, 92, 255, 0.07), inset 0 0 220px rgba(15, 98, 254, 0.04);
+}
+
+/* 2. Display Typography */
+.sentira-display-title {
+  font-family: var(--font-display, 'Instrument Serif', Georgia, serif);
+  font-size: clamp(2.4rem, 4.6vw, 4.2rem);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.018em;
+  color: var(--text-title);
+  margin-bottom: 16px;
+}
+
+.section-dark-intelligence .sentira-display-title,
+.section-dark-hero .sentira-display-title,
+.section-dark-cta .sentira-display-title,
+.section-dark .sentira-display-title {
+  color: #ffffff;
+}
+
+/* 3. Sentira Pill Badges */
+.sentira-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 18px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #f1f5f9;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  margin-bottom: 20px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.sentira-tag-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #8fa661;
+  box-shadow: 0 0 10px rgba(143, 166, 97, 0.9);
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* 4. Sentira "About Us" / Stats Section */
+.sentira-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  margin-top: 48px;
+  align-items: stretch;
+}
+
+.sentira-hero-stat-card {
+  border-radius: 24px;
+  background: #0d0d0f;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 44px 38px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
+}
+
+.sentira-hero-stat-card::before {
+  content: '';
+  position: absolute;
+  top: -30%;
+  left: -30%;
+  width: 160%;
+  height: 160%;
+  background: radial-gradient(circle at 30% 30%, rgba(143, 166, 97, 0.14) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.sentira-big-metric {
+  font-family: var(--font-display, 'Instrument Serif', Georgia, serif);
+  font-size: clamp(4.2rem, 7.5vw, 6.8rem);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  margin-bottom: 14px;
+}
+
+.sentira-metric-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: #a3c968;
+  margin-bottom: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.sentira-metric-desc {
+  font-size: 15.5px;
+  color: #94a3b8;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.sentira-stats-table {
+  border-radius: 24px;
+  background: #0d0d0f;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 16px 36px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
+}
+
+.sentira-stat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.sentira-stat-row:last-child {
+  border-bottom: none;
+}
+
+.sentira-stat-name {
+  font-size: 15.5px;
+  color: #cbd5e1;
+  font-weight: 500;
+}
+
+.sentira-stat-val {
+  font-family: var(--font-display, 'Instrument Serif', Georgia, serif);
+  font-size: 38px;
+  font-weight: 400;
+  color: #ffffff;
+  letter-spacing: -0.015em;
+}
+
+/* 5. Sentira VS Comparison Section ("What makes us actually different") */
+.sentira-vs-card {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 0;
+  border-radius: 24px;
+  background: #0b0b0d;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  position: relative;
+  margin-top: 48px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.vs-col-left {
+  padding: 44px 38px;
+  background: rgba(143, 166, 97, 0.04);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  position: relative;
+}
+
+.vs-col-right {
+  padding: 44px 38px;
+  background: rgba(255, 255, 255, 0.01);
+  position: relative;
+}
+
+.vs-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+  width: 0;
+}
+
+.vs-badge {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: #ffffff;
+  color: #000000;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  padding: 8px 14px;
+  border-radius: 9999px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+.vs-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.vs-col-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.vs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.vs-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.vs-item-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.vs-item-icon.icon-positive {
+  background: rgba(143, 166, 97, 0.18);
+  color: #a3c968;
+  border: 1px solid rgba(143, 166, 97, 0.35);
+}
+
+.vs-item-icon.icon-negative {
+  background: rgba(248, 113, 113, 0.12);
+  color: #f87171;
+  border: 1px solid rgba(248, 113, 113, 0.28);
+}
+
+.vs-item-content {
+  font-size: 15px;
+  line-height: 1.5;
+  color: #e2e8f0;
+}
+
+.vs-col-right .vs-item-content {
+  color: #94a3b8;
+}
+
+.vs-item-title {
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 2px;
+}
+
+.vs-col-right .vs-item-title {
+  color: #cbd5e1;
+}
+
+.vs-item-desc {
+  font-size: 13.5px;
+  color: #94a3b8;
+}
+
+/* 6. Sentira Numbered Cards */
+.sentira-card-numbered {
+  border-radius: 20px;
+  background: #0d0d0f;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 34px 30px;
+  transition: all 0.25s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sentira-card-numbered:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-3px);
+  background: #141417;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
+}
+
+.sentira-card-index {
+  font-family: var(--font-display, 'Instrument Serif', Georgia, serif);
+  font-size: 38px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.28);
+  margin-bottom: 18px;
+  line-height: 1;
+  transition: color 0.2s ease;
+}
+
+.sentira-card-numbered:hover .sentira-card-index {
+  color: #a3c968;
+}
+
+/* 7. Sentira FAQ Cards */
+.sentira-faq-accordion {
+  max-width: 860px;
+  margin: 48px auto 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sentira-faq-card {
+  border-radius: 16px;
+  background: #0d0d0f;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.sentira-faq-card:hover {
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.sentira-faq-card.active {
+  border-color: rgba(143, 166, 97, 0.4);
+  background: #131316;
+}
+
+.sentira-faq-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 28px;
+  background: none;
+  border: none;
+  font-size: 17px;
+  font-weight: 600;
+  color: #f1f5f9;
+  text-align: left;
+  cursor: pointer;
+  gap: 16px;
+}
+
+.sentira-faq-toggle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #ffffff;
+  transition: transform 0.25s ease, background 0.25s ease;
+}
+
+.sentira-faq-card.active .sentira-faq-toggle {
+  transform: rotate(45deg);
+  background: rgba(143, 166, 97, 0.2);
+  color: #a3c968;
+}
+
+.sentira-faq-body {
+  max-height: 0;
+  overflow: hidden;
+  padding: 0 28px;
+  transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1), padding 0.3s ease;
+}
+
+.sentira-faq-card.active .sentira-faq-body {
+  max-height: 400px;
+  padding-bottom: 24px;
+}
+
+.sentira-faq-body p {
+  font-size: 15px;
+  line-height: 1.65;
+  color: #94a3b8;
+  margin: 0;
+}
+
+/* 8. Sentira Wave Terrain Background Graphic */
+.sentira-wave-bg {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.28;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.sentira-wave-bg svg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Light Theme Adaptations */
+[data-theme="light"] .sentira-tag {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: #0f172a;
+}
+
+[data-theme="light"] .sentira-hero-stat-card,
+[data-theme="light"] .sentira-stats-table,
+[data-theme="light"] .sentira-card-numbered,
+[data-theme="light"] .sentira-faq-card {
+  background: #ffffff;
+  border-color: #deded8;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] .sentira-big-metric,
+[data-theme="light"] .sentira-stat-val,
+[data-theme="light"] .sentira-faq-btn {
+  color: #0f172a;
+}
+
+[data-theme="light"] .sentira-stat-name,
+[data-theme="light"] .sentira-metric-desc,
+[data-theme="light"] .sentira-faq-body p {
+  color: #475569;
+}
+
+[data-theme="light"] .sentira-stat-row {
+  border-bottom-color: #deded8;
+}
+
+[data-theme="light"] .sentira-vs-card {
+  background: #ffffff;
+  border-color: #deded8;
+}
+
+[data-theme="light"] .vs-col-left {
+  background: rgba(143, 166, 97, 0.06);
+}
+
+[data-theme="light"] .vs-col-right {
+  background: #fafafa;
+}
+
+[data-theme="light"] .vs-col-title,
+[data-theme="light"] .vs-item-title {
+  color: #0f172a;
+}
+
+[data-theme="light"] .vs-item-content,
+[data-theme="light"] .vs-item-desc {
+  color: #475569;
+}
+
+@media (max-width: 768px) {
+  .sentira-stats-grid {
+    grid-template-columns: 1fr;
+  }
+  .sentira-vs-card {
+    grid-template-columns: 1fr;
+  }
+  .vs-divider {
+    display: none;
+  }
+  .vs-col-left {
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* Simplified About Page Grids */
+.about-grid-2x2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.about-steps-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+@media (max-width: 860px) {
+  .about-steps-grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .about-grid-2x2,
+  .about-steps-grid-4 {
+    grid-template-columns: 1fr;
   }
 }
 

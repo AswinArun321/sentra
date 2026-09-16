@@ -8,19 +8,19 @@
   {% load static %}
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script>
     (function() {
       try {
-        var saved = localStorage.getItem('sentra-theme') || localStorage.getItem('licenselens-theme');
-        var theme = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-        document.documentElement.setAttribute('data-theme', theme);
-        document.documentElement.style.colorScheme = theme;
+        localStorage.setItem('sentra-theme', 'light');
+        localStorage.setItem('licenselens-theme', 'light');
+        document.documentElement.setAttribute('data-theme', 'light');
+        document.documentElement.style.colorScheme = 'light';
       } catch(e) {}
     })();
   </script>
-  <link rel="stylesheet" href="{% static 'css/main.css' %}?v=23">
-  <link rel="stylesheet" href="{% static 'css/public.css' %}?v=2">
+  <link rel="stylesheet" href="{% static 'css/main.css' %}?v=25">
+  <link rel="stylesheet" href="{% static 'css/public.css' %}?v=5">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%231977f3'/><path d='M35 50 L45 60 L65 40' stroke='white' stroke-width='8' fill='none' stroke-linecap='round'/></svg>">
   {% block extra_css %}{% endblock %}
 </head>
