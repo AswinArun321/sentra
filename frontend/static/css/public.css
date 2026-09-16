@@ -769,6 +769,25 @@
   margin-bottom: 34px;
 }
 
+.section-dark-hero .btn-secondary,
+.section-dark-cta .btn-secondary {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  color: #ffffff !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
+}
+
+.section-dark-hero .btn-secondary:hover,
+.section-dark-cta .btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.16) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+}
+
+
 .section-dark-intelligence {
   background: #090e1a;
   color: #f8fafc;
