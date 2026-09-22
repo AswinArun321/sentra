@@ -2,169 +2,370 @@
 
 > **Know your code. Secure what you ship.**
 
-SENTRA automatically analyzes software repositories to identify dependency, vulnerability, license, documentation, and repository health risks — delivering comprehensive security visibility in one unified platform.
+SENTRA is a Django-based repository security and intelligence platform that helps developers understand the security, dependency, licensing, documentation, and maintenance health of their software repositories.
 
-![SENTRA Dashboard](docs/screenshot.png)
-
----
-
-## Core Capabilities
-
-- 🔗 **GitHub Repository Integration** — Seamlessly connect GitHub accounts with strict per-user account isolation
-- ⚡ **Automatic Repository Inspection** — Automatic tree inspection, manifest discovery, and background analysis
-- 🔍 **Dependency Detection** — Automatically detects and parses `package.json`, `requirements.txt`, and more
-- 🛡️ **Vulnerability Analysis** — Real-time vulnerability lookup against OSV.dev and national databases
-- 📜 **Open-Source License Analysis** — Identifies, verifies, and categorizes licenses to flag compliance risks
-- 📖 **README Documentation Health** — Evaluates repository documentation completeness and generates recommendations
-- 🏥 **Repository Health Metrics** — Tracks maintenance health, commit activity, stale packages, and risk signals
-- 📊 **Intelligent Risk Scoring** — Multi-factor weighted risk engine (Security, License, Maintenance, Dependency)
-- 📋 **CycloneDX SBOM & Reports** — Export CycloneDX 1.4 standard SBOMs and downloadable JSON security audits
-- 🔐 **Secure Multi-User Platform** — Django session and JWT authentication with protected credential management
+It connects with GitHub, discovers repository manifests, analyzes dependencies and vulnerabilities, evaluates open-source licenses and repository health, calculates an overall risk profile, and provides security reports and SBOM exports through a unified interface.
 
 ---
 
-## Tech Stack
+## Overview
 
-| Layer | Technology |
+Modern software projects depend heavily on third-party packages and open-source components. As repositories grow, it becomes difficult to manually track:
+
+- What dependencies a project uses
+- Whether dependencies contain known vulnerabilities
+- Which open-source licenses are present
+- Whether repository documentation is complete
+- Which maintenance signals indicate potential risk
+- How different risk areas affect the overall repository security posture
+
+SENTRA brings these checks together into one repository-focused security workflow.
+
+### Analysis Flow
+
+```text
+GitHub Repository
+       │
+       ▼
+Repository Inspection
+       │
+       ▼
+Manifest Detection
+       │
+       ├── package.json
+       ├── requirements.txt
+       └── Supported manifests
+       │
+       ▼
+Dependency Analysis
+       │
+       ├── Vulnerability Analysis
+       ├── License Analysis
+       ├── Maintenance Analysis
+       └── Documentation / README Health
+       │
+       ▼
+Risk Engine
+       │
+       ▼
+Security Intelligence
+       │
+       ├── Dashboard
+       ├── Findings
+       ├── Reports
+       └── CycloneDX SBOM
+```
+
+---
+
+## Key Features
+
+### GitHub Integration
+
+- Secure GitHub OAuth integration
+- Per-user GitHub account association
+- Repository discovery and import
+- Repository ownership and access isolation
+- Repository metadata and source inspection
+
+### Repository Analysis
+
+- Automatic repository tree inspection
+- Manifest discovery
+- Dependency extraction
+- README/documentation health checks
+- Repository maintenance signals
+- Analysis status tracking
+
+### Dependency Intelligence
+
+- Dependency discovery from supported manifests
+- Package metadata lookup
+- Dependency-level security analysis
+- Dependency health visibility
+
+### Vulnerability Analysis
+
+- Known vulnerability lookup using OSV.dev
+- Vulnerability severity and affected-package information
+- Security findings linked to repository dependencies
+- Centralized vulnerability visibility
+
+### License Intelligence
+
+- Open-source license identification
+- License categorization
+- License risk visibility
+- Project-level license reporting
+
+### Repository Health
+
+SENTRA evaluates repository signals such as:
+
+- Documentation completeness
+- Maintenance activity
+- Dependency freshness
+- Repository-level risk indicators
+
+### Risk Scoring
+
+SENTRA combines multiple analysis areas into an overall repository risk profile, including:
+
+- Security
+- Dependencies
+- Licensing
+- Maintenance
+
+The goal is to turn individual findings into a clear, actionable view of repository risk.
+
+### Reports & SBOM
+
+- Security audit reports
+- CycloneDX 1.4 SBOM generation
+- Downloadable analysis results
+- Repository-level security summaries
+
+### Multi-User Security
+
+- Django authentication
+- JWT-protected API access
+- User-specific project isolation
+- GitHub connection isolation
+- Staff-only administrative access
+- Protected administrative operations
+
+---
+
+## Technology Stack
+
+| Area | Technology |
 |---|---|
-| Backend | Django 5.1 + Django REST Framework |
-| Database | SQLite (development) / PostgreSQL (production) |
+| Backend | Django 5.1.4 |
+| API | Django REST Framework 3.15.2 |
 | Authentication | Django Sessions + SimpleJWT |
-| Frontend | Django Templates + Vanilla JavaScript + Chart.js |
-| Styling | Custom CSS (Responsive Dark / Light Adaptive Theme) |
-| Vulnerability Data | OSV.dev API (open, no key required) + optional NVD |
+| Database | SQLite for development |
+| Frontend | Django Templates, HTML, CSS, Vanilla JavaScript |
+| Charts | Chart.js |
+| Vulnerability Intelligence | OSV.dev API |
 | Package Metadata | PyPI JSON API + npm Registry |
-| Standards | CycloneDX 1.4 JSON SBOM |
+| SBOM Standard | CycloneDX 1.4 |
+| Reports | JSON + PDF/report generation |
+| External Integration | GitHub OAuth / GitHub API |
+
+---
+
+## Application Areas
+
+SENTRA is organized around the following product areas:
+
+### Public Website
+
+- Home
+- About
+- Contact
+
+The public interface introduces SENTRA and explains its repository security workflow.
+
+### User Application
+
+- Dashboard
+- Projects / Repositories
+- Scans
+- Dependencies
+- Vulnerabilities
+- Licenses
+- Reports
+- Profile / GitHub connection
+- Account management
+
+### Admin Console
+
+A dedicated administrative console provides controlled platform-level management for authorized staff.
+
+---
+
+## Admin Console
+
+SENTRA includes a separate admin console for platform administration.
+
+### Administrative Areas
+
+```text
+Admin Console
+├── Dashboard
+├── Users
+├── Projects
+├── GitHub Connections
+├── Scans
+├── Vulnerabilities
+├── Dependencies
+├── Licenses
+├── Reports
+├── Audit Logs
+├── System Health
+└── Platform Settings
+```
+
+### Administration Capabilities
+
+- User management
+- Account activation and suspension
+- Project and repository monitoring
+- GitHub connection monitoring
+- Scan monitoring
+- Vulnerability and dependency oversight
+- License visibility
+- Report management
+- Administrative audit logging
+- System health checks
+- Safe runtime platform settings
+
+Sensitive credentials such as Django secret keys, OAuth client secrets, API tokens, and database passwords are kept outside the administrative interface and should be supplied through the deployment environment.
+
+---
+
+## Security & Access Model
+
+SENTRA follows a user-isolated application model.
+
+```text
+SENTRA User
+    │
+    ├── Projects
+    │     └── Scans
+    │           ├── Dependencies
+    │           ├── Vulnerabilities
+    │           └── Reports
+    │
+    └── GitHub Connection
+          └── Accessible Repositories
+```
+
+A standard user should only be able to access resources associated with their account.
+
+Administrative access is separated from normal user access through role-based authorization.
 
 ---
 
 ## Quick Start
 
-### 1. Clone and install dependencies
+### 1. Clone the repository
+
+Clone the SENTRA repository and move into the project directory.
 
 ```bash
-git clone https://github.com/yourname/SENTRA.git
+git clone <repository-url>
 cd SENTRA
+```
+
+### 2. Create a virtual environment
+
+```bash
+python -m venv venv
+```
+
+Activate it on Windows:
+
+```powershell
+venv\Scripts\activate
+```
+
+On macOS/Linux:
+
+```bash
+source venv/bin/activate
+```
+
+### 3. Install dependencies
+
+```bash
 pip install -r requirements.txt
 ```
 
-### 2. Configure environment
+### 4. Configure environment variables
 
-```bash
-cp .env.example .env
-# Edit .env with your settings (GitHub OAuth credentials, Secret Key, etc.)
+Create a `.env` file based on the project's environment configuration.
+
+Typical deployment values include:
+
+```env
+SECRET_KEY=your-secret-key
+DEBUG=True
+
+GITHUB_CLIENT_ID=your-github-client-id
+GITHUB_CLIENT_SECRET=your-github-client-secret
 ```
 
-### 3. Run migrations
+Do not commit `.env` or other files containing secrets to Git.
+
+### 5. Apply database migrations
 
 ```bash
 python manage.py migrate
 ```
 
-### 4. Create admin user
+### 6. Create an administrator
 
 ```bash
 python manage.py createsuperuser
 ```
 
-### 5. Start the development server
+### 7. Start the development server
 
 ```bash
 python manage.py runserver
 ```
 
-Visit [http://localhost:8000](http://localhost:8000)
-
----
-
-## Default Test Credentials
-
-After running migrations and fixtures, you can log in with:
+Open:
 
 ```text
-Email:    admin@sentra.dev
-Password: SentraPassword2026!
+http://127.0.0.1:8000/
 ```
 
 ---
 
-## Usage Workflow
-
-1. **Sign In** — Log into your SENTRA account or register a new workspace profile.
-2. **Connect GitHub (Optional)** — Link your GitHub account securely to import repositories with a single click.
-3. **Register / Import Repository** — Import directly from GitHub or create a workspace project and upload `package.json` / `requirements.txt`.
-4. **Automatic Analysis** — SENTRA analyzes repository tree, manifests, README documentation, licenses, and CVEs.
-5. **Review Risk & Compliance** — Inspect vulnerability severities, license categorization, README audit scores, and overall risk rating.
-6. **Export Security Assets** — Download standard JSON security audit reports and CycloneDX 1.4 SBOMs.
-
----
-
-## API Endpoints
-
-| Method | Endpoint | Description |
-|---|---|---|
-| POST | `/api/auth/register/` | Register a new user |
-| POST | `/api/auth/login/` | Login and get JWT tokens |
-| GET | `/api/auth/profile/` | Get user profile |
-| GET | `/api/dashboard/overview/` | Dashboard metrics & summary |
-| GET | `/api/projects/` | List user projects |
-| POST | `/api/projects/` | Create project |
-| POST | `/api/projects/{id}/scan/` | Upload manifest and execute scan |
-| GET | `/api/projects/{id}/analysis-status/` | Check automatic analysis progress |
-| GET | `/api/github/status/` | Check GitHub connection status |
-| GET | `/api/github/repositories/` | List user's GitHub repositories |
-| POST | `/api/github/import/` | Import GitHub repository as project |
-| GET | `/api/scans/{id}/` | Get scan details |
-| GET | `/api/scans/{id}/dependencies/` | List detected dependencies |
-| GET | `/api/scans/{id}/vulnerabilities/` | List detected vulnerabilities |
-| GET | `/api/scans/{id}/report/` | Get JSON report |
-| GET | `/api/admin/dashboard/` | Platform-wide admin telemetry & KPIs (Staff only) |
-| GET | `/api/admin/users/` | List and search all platform users (Staff only) |
-| POST | `/api/admin/users/{id}/suspend/` | Suspend user account with reason (Staff only) |
-| POST | `/api/admin/users/{id}/activate/` | Activate user account (Staff only) |
-| GET | `/api/admin/audit-logs/` | Query administrative audit logs (Staff only) |
-| GET | `/api/admin/system/` | System diagnostic & health checks (Staff only) |
-
----
-
-## SENTRA Admin Console
-
-SENTRA includes a dedicated, secure **Admin Console** accessible at:
+## Typical User Workflow
 
 ```text
-Web Console:  /admin-console/
-REST API:     /api/admin/
+Create Account
+      │
+      ▼
+Sign In
+      │
+      ▼
+Connect GitHub
+      │
+      ▼
+Select Repository
+      │
+      ▼
+Import Repository
+      │
+      ▼
+Inspect Repository
+      │
+      ▼
+Detect Manifests
+      │
+      ▼
+Analyze Dependencies
+      │
+      ├── Vulnerabilities
+      ├── Licenses
+      ├── README Health
+      └── Maintenance Signals
+      │
+      ▼
+Calculate Risk
+      │
+      ▼
+Review Findings
+      │
+      ▼
+Generate Report / SBOM
 ```
 
-Django's built-in administrative interface remains available at `/admin/`.
-
-### Administrative Capabilities
-
-1. **Platform Overview & Telemetry** — Real-time KPI cards and Chart.js graphs tracking user growth, scan execution velocity, vulnerability severity distribution, and open-source license usage.
-2. **User Account Governance** — Search, filter, and paginate users; inspect individual profiles, scan history, and project risk; safely activate, deactivate, suspend, or reactivate accounts with audit records.
-3. **Repository & Project Monitoring** — Inspect all software projects across user workspaces with risk scoring, analysis statuses, and GitHub sources.
-4. **Scan Execution Monitoring** — Live monitoring of running, completed, pending, and failed scans with duration metrics and error diagnostics.
-5. **Vulnerability & Supply-Chain Intelligence** — Global aggregation of CVEs, GHSAs, CVSS severity ratings, and affected packages across all repositories.
-6. **Dependency & License Governance** — Cross-project package frequency tracking and open-source license compliance categorization (Permissive, Copyleft, Unknown).
-7. **Reports & SBOM Management** — Controlled inspection and audited downloads of CycloneDX 1.4 SBOMs and JSON security assessments.
-8. **GitHub Connection Monitoring** — Connection status telemetry without ever exposing OAuth access tokens, client secrets, or refresh tokens.
-9. **Administrative Audit Trail** — Immutable `AdminAuditLog` logging every status adjustment, privilege modification, report download, and configuration change with actor, IP address, and timestamp.
-10. **System Health Diagnostics** — Live health probes verifying database latency, Django runtime, media storage, OSV.dev API connectivity, and GitHub API status.
-11. **Safe Runtime Platform Settings** — Administrative UI controls for platform name, maintenance mode, upload limits, scan timeouts, and report retention windows without exposing environment secrets.
-
-### Role-Based Access Control
-
-- **Standard User (`USER`)**: Strict isolation limited solely to their personal workspaces, repositories, and scan findings. Non-staff attempts to access the admin console are rejected with `403 Forbidden`.
-- **Administrator (`STAFF`)**: Authorized platform operators with access to the SENTRA Admin Console and administrative APIs.
-- **Superuser (`SUPERADMIN`)**: Full platform control and administrative delegation.
-
-### Creating Administrators
-
-To grant administrative access, create or promote a user with Django's management commands:
-
-```bash
-python manage.py createsuperuser
-```
+Manual manifest-based scanning can also be used where repository import or automatic analysis is not available.
 
 ---
 
@@ -172,35 +373,157 @@ python manage.py createsuperuser
 
 ```text
 SENTRA/
-├── config/              # Django project settings & URLs
-├── accounts/            # User authentication & profile management
-├── admin_panel/         # Dedicated SENTRA Admin Console & API
-│   ├── models.py        # AdminAuditLog, PlatformSetting, UserAccountStatus
-│   ├── permissions.py   # IsSENTRAAdminUser & @admin_required
-│   ├── services.py      # Telemetry, User governance, Audit, and Health services
-│   ├── serializers.py   # Safe REST API serializers (zero secret leakage)
-│   ├── views.py         # Admin console template views (/admin-console/)
-│   ├── api_views.py     # Admin REST API views (/api/admin/)
-│   ├── templates/       # Dark-first admin operational templates
-│   └── static/          # Dedicated admin CSS & JavaScript
-├── projects/            # Repository project workspaces
-├── scans/               # Scan lifecycle & tracking
-├── dependencies/        # Dependency models & catalog
-├── vulnerabilities/     # Vulnerability & RiskFinding models
-├── github_integration/  # GitHub OAuth, repository sync & auto-analysis
-├── reports/             # Report generation (JSON + CycloneDX SBOM)
-├── scanner/             # Core scanning engine & parsers
-└── frontend/            # Adaptive UI templates & static assets
+│
+├── config/                  # Django project configuration and URLs
+├── accounts/                # Authentication, users and profiles
+├── admin_panel/             # SENTRA Admin Console and administration APIs
+├── projects/                # Repository projects and workspaces
+├── scans/                   # Scan lifecycle and scan records
+├── dependencies/            # Dependency models and analysis data
+├── vulnerabilities/         # Vulnerability and risk finding models
+├── github_integration/      # GitHub OAuth, repository import and analysis
+├── reports/                 # Security reports and SBOM generation
+├── scanner/                 # Scanning engine, parsers and risk analysis
+├── frontend/                # User-facing templates and static assets
+├── manage.py
+├── requirements.txt
+└── README.md
 ```
 
 ---
 
-## Disclaimer
+## API
 
-> SENTRA provides automated software dependency risk, repository health, and open-source compliance analysis. Its findings are informational and should not be treated as legal or security guarantees. Final compliance decisions should be reviewed by qualified security or legal professionals.
+SENTRA exposes REST APIs for authentication, projects, repository analysis, findings, reports, GitHub integration, and administration.
+
+### Main API Groups
+
+| Area | Purpose |
+|---|---|
+| Authentication | Registration, login and profile management |
+| Projects | Repository/project management |
+| GitHub | Connection, repository discovery and import |
+| Scans | Scan execution and analysis status |
+| Dependencies | Detected dependency information |
+| Vulnerabilities | Security findings |
+| Licenses | License intelligence |
+| Reports | Security reports and SBOM-related outputs |
+| Administration | Staff-only platform management |
+
+API endpoints are protected according to their authentication and authorization requirements.
+
+---
+
+## Security Considerations
+
+SENTRA is designed with security and account isolation as core requirements.
+
+Key considerations include:
+
+- Never expose GitHub OAuth access tokens through the UI or API responses.
+- Keep secrets in environment variables or a secure deployment secret store.
+- Enforce ownership checks on user resources.
+- Restrict administrative APIs to authorized staff.
+- Validate OAuth state during GitHub authentication.
+- Avoid committing `.env` files or credentials to source control.
+- Apply appropriate production security settings before deployment.
+- Review automated findings before making security or compliance decisions.
+
+---
+
+## Development
+
+### Run Django checks
+
+```bash
+python manage.py check
+```
+
+### Create migrations
+
+```bash
+python manage.py makemigrations
+```
+
+### Apply migrations
+
+```bash
+python manage.py migrate
+```
+
+### Run the development server
+
+```bash
+python manage.py runserver
+```
+
+### Run tests
+
+```bash
+python manage.py test
+```
+
+---
+
+## Deployment Notes
+
+The default project setup is intended for development.
+
+For production deployment, configure:
+
+- PostgreSQL or another production-ready database
+- Secure environment variables
+- HTTPS
+- Secure Django settings
+- Proper `ALLOWED_HOSTS`
+- Static file serving
+- Production WSGI/ASGI configuration
+- Database backups
+- Logging and monitoring
+- Secure GitHub OAuth configuration
+
+SQLite is suitable for local development but should not be treated as the default choice for a production deployment of a multi-user platform.
+
+---
+
+## Limitations
+
+SENTRA provides automated repository security and open-source intelligence based on the data and analysis sources available to it.
+
+Automated analysis can produce incomplete or context-dependent findings. Results should therefore be reviewed before making security, licensing, or compliance decisions.
+
+SENTRA is not a replacement for a complete enterprise security program, professional security assessment, or legal review.
+
+---
+
+## Roadmap
+
+Potential future improvements include:
+
+- Expanded manifest and ecosystem support
+- Deeper dependency relationship analysis
+- Improved repository health intelligence
+- More detailed security trends
+- CI/CD integration
+- Pull-request security checks
+- Expanded SBOM capabilities
+- Additional reporting formats
+- Advanced organization-level security policies
+- Broader repository security integrations
 
 ---
 
 ## License
 
-MIT
+This project is licensed under the **MIT License**.
+
+See the `LICENSE` file for the full license text.
+
+---
+
+## Project Identity
+
+**SENTRA**  
+Repository Security & Intelligence Platform
+
+> **Know your code. Secure what you ship.**
