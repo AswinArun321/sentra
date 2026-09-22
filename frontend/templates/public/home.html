@@ -1,186 +1,91 @@
 {% extends "public/base.html" %}
 {% load static %}
 
-{% block title %}SENTRA — Repository Security & Intelligence Platform{% endblock %}
-{% block meta_description %}SENTRA scans GitHub repositories for vulnerable packages, copyleft licenses, missing documentation, and software supply chain risks.{% endblock %}
+{% block title %}SENTRA — Repository Security & Intelligence{% endblock %}
+{% block meta_description %}SENTRA analyzes repositories, maps dependencies, detects vulnerabilities, and audits open-source licenses into actionable security intelligence.{% endblock %}
 
 {% block content %}
 <!-- =========================================================================
-     SECTION 01 — HERO (Editorial Hero with Live Scanner Simulation)
+     01. HERO SECTION
      ========================================================================= -->
-<section class="public-section section-dark-hero" id="hero">
-  <div class="public-container">
-    <div class="hero-grid">
-      <!-- Left Column: Direct Copy & Primary Actions -->
-      <div class="hero-content">
-        <div class="sentira-tag">
-          <span class="sentira-tag-dot"></span>
-          Repository Security &amp; Intelligence
-        </div>
-
-        <h1 class="hero-title">
+<section class="alta-section alta-hero" id="hero">
+  <div class="alta-container">
+    <div class="alta-hero-grid">
+      <!-- Left Column: Editorial Headline & Actions -->
+      <div>
+        <div class="alta-eyebrow">Repository Security &amp; Intelligence</div>
+        <h1 class="alta-hero-title">
           KNOW YOUR CODE.<br>
           SECURE WHAT<br>
           YOU SHIP.
         </h1>
-
-        <p class="hero-description">
-          SENTRA continuously scans GitHub repositories for vulnerable dependencies, copyleft licenses, missing documentation, and unmaintained upstream packages.
+        <p class="alta-hero-desc">
+          SENTRA analyzes your repositories, maps dependencies, identifies vulnerabilities and license risks, and turns your codebase into actionable security intelligence.
         </p>
 
-        <div class="hero-cta-group">
+        <div class="alta-hero-cta-group">
           {% if user.is_authenticated %}
           <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg" id="hero-btn-dashboard">
-            Open Dashboard
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M5 12h14"></path>
-              <path d="m12 5 7 7-7 7"></path>
-            </svg>
+            Open Dashboard &rarr;
           </a>
           {% else %}
           <a href="{% url 'register' %}" class="btn btn-primary btn-lg" id="hero-btn-register">
-            Get Started
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M5 12h14"></path>
-              <path d="m12 5 7 7-7 7"></path>
-            </svg>
+            Get Started &rarr;
           </a>
           {% endif %}
-          <a href="#intelligence" class="btn btn-secondary btn-lg" id="hero-btn-explore">
-            <span>Explore Capabilities</span>
-            <span class="btn-arrow-circle">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 12h14"></path>
-                <path d="m12 5 7 7-7 7"></path>
-              </svg>
-            </span>
+          <a href="#capabilities" class="btn btn-secondary btn-lg" id="hero-btn-explore">
+            Explore Capabilities &darr;
           </a>
         </div>
-
-        <div class="hero-meta" style="border-top-color: rgba(255,255,255,0.08); margin-top: 36px; padding-top: 24px;">
-          <div class="hero-meta-item" style="color: #94a3b8;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-            <span>Automated Manifest Discovery</span>
-          </div>
-          <div class="hero-meta-item" style="color: #94a3b8;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-            <span>OSV.dev Vulnerability Matching</span>
-          </div>
-          <div class="hero-meta-item" style="color: #94a3b8;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-            <span>CycloneDX 1.4 SBOM Exports</span>
-          </div>
-        </div>
       </div>
 
-      <!-- Right Column: Interactive Repository Analysis Visual -->
-      <div class="hero-visual">
-        <div class="live-scanner-box" id="scannerDemoBox">
-          <div class="scanner-topbar">
-            <div class="scanner-badge-chip">
-              <span class="chip-dot"></span>
-              <span>BRANCH / MAIN</span>
+      <!-- Right Column: Abstract Repository Intelligence Visual -->
+      <div>
+        <div class="alta-showcase-panel" style="margin-top: 0; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.05);">
+          <div class="alta-showcase-header">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981; display: inline-block;"></span>
+              <span style="font-family: var(--font-mono, monospace); font-size: 12px; font-weight: 700; color: var(--text-title);">repo: sentra-core</span>
             </div>
-            <div class="scanner-header-title">SENTRA AUDIT &middot; repository: api-core</div>
-            <button type="button" class="scanner-replay-btn" id="scannerReplayBtn" title="Replay Analysis Demo">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="1 4 1 10 7 10"></polyline>
-                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
-              </svg>
-              <span>Replay</span>
-            </button>
+            <span style="font-family: var(--font-mono, monospace); font-size: 11px; padding: 3px 8px; border-radius: 4px; background: var(--bg-base); border: 1px solid var(--border-color); color: var(--text-secondary);">branch: main</span>
           </div>
 
-          <div class="scanner-body">
-            <div class="scanner-status-line">
-              <div class="scanner-pulse-box">
-                <span class="scanner-pulse" id="scannerPulseIndicator"></span>
-                <span id="scannerStatusText">Scan complete &middot; 48 packages checked</span>
+          <div style="padding: 24px;">
+            <!-- Telemetry summary cards -->
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px;">
+              <div style="padding: 14px; background: var(--bg-base); border: 1px solid var(--border-color); border-radius: 8px;">
+                <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Security Score</div>
+                <div style="font-size: 24px; font-weight: 850; color: var(--text-title); margin-top: 2px;">87<span style="font-size: 13px; color: var(--text-muted); font-weight: 500;">/100</span></div>
               </div>
-              <span style="color: #94a3b8; font-size: 11px;">SHA: 7e2f18a</span>
-            </div>
-
-            <div class="scanner-check-list" id="scannerChecklist">
-              <div class="scanner-check-row" data-step="1">
-                <div class="scanner-check-label">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                  </svg>
-                  <span>Dependencies</span>
-                </div>
-                <span class="scanner-check-badge badge-clean">
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-                  48 Resolved
-                </span>
-              </div>
-
-              <div class="scanner-check-row" data-step="2">
-                <div class="scanner-check-label">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                  </svg>
-                  <span>Vulnerabilities</span>
-                </div>
-                <span class="scanner-check-badge badge-flag">
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>
-                  2 Low Severity
-                </span>
-              </div>
-
-              <div class="scanner-check-row" data-step="3">
-                <div class="scanner-check-label">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                  </svg>
-                  <span>Licenses</span>
-                </div>
-                <span class="scanner-check-badge badge-clean">
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-                  MIT / Permissive
-                </span>
-              </div>
-
-              <div class="scanner-check-row" data-step="4">
-                <div class="scanner-check-label">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                    <polyline points="14 2 14 8 20 8"></polyline>
-                  </svg>
-                  <span>README Structure</span>
-                </div>
-                <span class="scanner-check-badge badge-clean">
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-                  7 Sections Complete
-                </span>
-              </div>
-
-              <div class="scanner-check-row" data-step="5">
-                <div class="scanner-check-label">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-                  </svg>
-                  <span>Maintainer Activity</span>
-                </div>
-                <span class="scanner-check-badge badge-clean">
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-                  Active &middot; Recent Commits
-                </span>
+              <div style="padding: 14px; background: var(--bg-base); border: 1px solid var(--border-color); border-radius: 8px;">
+                <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Dependencies</div>
+                <div style="font-size: 24px; font-weight: 850; color: var(--text-title); margin-top: 2px;">42 <span style="font-size: 12px; color: #10b981; font-weight: 600;">Resolved</span></div>
               </div>
             </div>
 
-            <div class="scanner-score-box">
-              <div>
-                <div style="font-size: 11px; text-transform: uppercase; color: #94a3b8; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 2px;">Security Score</div>
-                <div class="scanner-score-val" id="scannerScoreNum">87<span>/100</span></div>
+            <!-- Findings stream -->
+            <div style="border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; background: #ffffff;">
+              <div style="padding: 10px 14px; background: #fafaf8; border-bottom: 1px solid var(--border-color); font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">
+                Intelligence Stream
               </div>
-              <span class="scanner-risk-tag" id="scannerRiskBadge">LOW RISK</span>
+              <div style="padding: 12px 14px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-family: var(--font-mono, monospace); font-size: 12px; font-weight: 600;">requirements.txt</span>
+                </div>
+                <span style="font-size: 11px; padding: 2px 8px; border-radius: 4px; background: rgba(16, 185, 129, 0.1); color: #10b981; font-weight: 700;">MANIFEST DETECTED</span>
+              </div>
+              <div style="padding: 12px 14px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-family: var(--font-mono, monospace); font-size: 12px; font-weight: 600;">axios &middot; v1.5.0</span>
+                </div>
+                <span style="font-size: 11px; padding: 2px 8px; border-radius: 4px; background: rgba(234, 179, 8, 0.12); color: #b45309; font-weight: 700;">MEDIUM VULNERABILITY</span>
+              </div>
+              <div style="padding: 12px 14px; display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-family: var(--font-mono, monospace); font-size: 12px; font-weight: 600;">GPL-3.0 License Risk</span>
+                </div>
+                <span style="font-size: 11px; padding: 2px 8px; border-radius: 4px; background: rgba(239, 68, 68, 0.1); color: #dc2626; font-weight: 700;">COPYLEFT DETECTED</span>
+              </div>
             </div>
           </div>
         </div>
@@ -190,917 +95,404 @@
 </section>
 
 <!-- =========================================================================
-     SECTION 02 — SECURITY SIGNALS STRIP
+     02. PRODUCT STATEMENT SECTION
      ========================================================================= -->
-<div class="public-container">
-  <div class="signals-strip" aria-label="SENTRA Security Signals">
-    <div class="signal-item">
-      <span class="signal-dot"></span>
-      <span>Dependency Inspection</span>
-    </div>
-    <div class="signal-item">
-      <span class="signal-dot"></span>
-      <span>Vulnerability Detection</span>
-    </div>
-    <div class="signal-item">
-      <span class="signal-dot"></span>
-      <span>License Compliance</span>
-    </div>
-    <div class="signal-item">
-      <span class="signal-dot"></span>
-      <span>Repository Vitality</span>
-    </div>
-  </div>
-</div>
-
-<!-- =========================================================================
-     SECTION — BUILT TO MAKE SECURITY WORK FOR YOU (Sentira Stats & About)
-     ========================================================================= -->
-<section class="public-section" id="about-us" style="padding-top: 60px; padding-bottom: 70px;">
-  <div class="public-container">
-    <div class="section-header">
-      <div class="sentira-tag">
-        <span class="sentira-tag-dot"></span>
-        About Us
-      </div>
-      <h2 class="sentira-display-title">Built to make repository security work for you.</h2>
-      <p class="section-subtitle">
-        We replace manual pull-request audits, invisible transitive CVE risks, and copyleft licensing confusion with real-time automated intelligence.
-      </p>
-    </div>
-
-    <div class="sentira-stats-grid">
-      <div class="sentira-hero-stat-card">
-        <div>
-          <div class="sentira-big-metric">100%</div>
-          <div class="sentira-metric-label">Automated Multi-Signal Audit</div>
-        </div>
-        <p class="sentira-metric-desc">
-          Comprehensive telemetry designed around your team's real codebase. Discover vulnerabilities, verify license compliance, audit README documentation, and evaluate maintainer activity without CI/CD configuration.
-        </p>
-      </div>
-
-      <div class="sentira-stats-table">
-        <div class="sentira-stat-row">
-          <span class="sentira-stat-name">Repositories Protected</span>
-          <span class="sentira-stat-val">1,450+</span>
-        </div>
-        <div class="sentira-stat-row">
-          <span class="sentira-stat-name">Dependencies Cataloged</span>
-          <span class="sentira-stat-val">48,000+</span>
-        </div>
-        <div class="sentira-stat-row">
-          <span class="sentira-stat-name">Known Flaws Detected</span>
-          <span class="sentira-stat-val">8,600+</span>
-        </div>
-        <div class="sentira-stat-row">
-          <span class="sentira-stat-name">Average Audit Speed</span>
-          <span class="sentira-stat-val">&lt; 45s</span>
-        </div>
-      </div>
-    </div>
+<section class="alta-statement-section" id="statement">
+  <div class="alta-container">
+    <div class="alta-eyebrow">What SENTRA Does</div>
+    <h2 class="alta-statement-title">
+      Repository security should be understood as a system.
+    </h2>
+    <p class="alta-statement-desc">
+      SENTRA connects repository structure, dependencies, vulnerabilities, licenses, and repository health into one focused, intelligible security intelligence workflow.
+    </p>
   </div>
 </section>
 
 <!-- =========================================================================
-     SECTION 03 — PROBLEM (Direct Concrete Breakdown)
+     03. SECURITY INTELLIGENCE AREAS (Numbered Editorial Rows)
      ========================================================================= -->
-<section class="public-section" id="problem">
-  <div class="public-container">
-    <div class="section-header">
-      <div class="sentira-tag">
-        <span class="sentira-tag-dot"></span>
-        The Challenge
-      </div>
-      <h2 class="sentira-display-title">Software supply chains carry hidden risks.</h2>
-      <p class="section-subtitle">
-        Repositories rely on third-party code. Direct dependencies pull in transitive trees that code reviews rarely inspect. A single unpatched flaw or restrictive copyleft license can put production workloads and compliance at risk.
-      </p>
-    </div>
+<section class="alta-section" id="capabilities">
+  <div class="alta-container">
+    <div class="alta-eyebrow">Core Intelligence Areas</div>
+    <h2 class="alta-section-title">Comprehensive security posture, mapped clearly.</h2>
+    <p class="alta-section-desc">
+      Six targeted capabilities designed to give engineering leaders and developers actionable clarity over their codebases.
+    </p>
 
-    <div class="features-grid-3">
-      <div class="feature-box">
-        <div class="feature-icon-wrapper">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="12" y1="8" x2="12" y2="12"></line>
-            <line x1="12" y1="16" x2="12.01" y2="16"></line>
-          </svg>
-        </div>
-        <h3 class="feature-box-title">Transitive Vulnerabilities</h3>
-        <p class="feature-box-desc">
-          Packages often install nested sub-dependencies with known CVEs. These flaws bypass standard pull-request reviews and lockfile checks.
-        </p>
-      </div>
-
-      <div class="feature-box">
-        <div class="feature-icon-wrapper">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-            <polyline points="14 2 14 8 20 8"></polyline>
-          </svg>
-        </div>
-        <h3 class="feature-box-title">License Incompatibilities</h3>
-        <p class="feature-box-desc">
-          Copyleft licenses such as GPL or AGPL in utility libraries can obligate teams to release proprietary application source code.
-        </p>
-      </div>
-
-      <div class="feature-box">
-        <div class="feature-icon-wrapper">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-          </svg>
-        </div>
-        <h3 class="feature-box-title">Abandoned Packages</h3>
-        <p class="feature-box-desc">
-          Packages without active maintainer commits accumulate unpatched bugs, lack security responses, and block runtime upgrades.
-        </p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- =========================================================================
-     SECTION 04 — SENTRA INTELLIGENCE (Concrete Telemetry Capabilities)
-     ========================================================================= -->
-<section class="public-section section-dark-intelligence" id="intelligence">
-  <div class="public-container">
-    <div class="section-header">
-      <div class="sentira-tag">
-        <span class="sentira-tag-dot"></span>
-        Capabilities
-      </div>
-      <h2 class="sentira-display-title">Six repository signals. One unified audit.</h2>
-      <p class="section-subtitle">
-        SENTRA evaluates your codebase across six distinct security and operational dimensions without requiring CI/CD agents.
-      </p>
-    </div>
-
-    <div class="intelligence-grid">
+    <div class="alta-cap-list">
       <!-- 01 -->
-      <div class="sentira-card-numbered">
-        <div class="sentira-card-index">01</div>
-        <h3 class="intelligence-title">Dependency Inspection</h3>
-        <p class="intelligence-desc">
-          Extracts and catalogs direct and transitive packages from requirements.txt, package.json, and lockfiles across repository branches.
-        </p>
+      <div class="alta-cap-row">
+        <div class="alta-cap-num">01</div>
+        <div class="alta-cap-title">Repository Analysis</div>
+        <p class="alta-cap-desc">Inspect manifests, project structure, commits, and branch-level telemetry directly through GitHub OAuth.</p>
+        <div class="alta-cap-arrow">&rarr;</div>
       </div>
 
       <!-- 02 -->
-      <div class="sentira-card-numbered">
-        <div class="sentira-card-index">02</div>
-        <h3 class="intelligence-title">Vulnerability Detection</h3>
-        <p class="intelligence-desc">
-          Queries every discovered package version against the OSV.dev open-source database to report exact CVE IDs, severity levels, and patch targets.
-        </p>
+      <div class="alta-cap-row">
+        <div class="alta-cap-num">02</div>
+        <div class="alta-cap-title">Dependency Intelligence</div>
+        <p class="alta-cap-desc">Discover direct and transitive package dependencies across requirements.txt, package.json, pom.xml, and go.mod.</p>
+        <div class="alta-cap-arrow">&rarr;</div>
       </div>
 
       <!-- 03 -->
-      <div class="sentira-card-numbered">
-        <div class="sentira-card-index">03</div>
-        <h3 class="intelligence-title">License Classification</h3>
-        <p class="intelligence-desc">
-          Categorizes dependency licenses into Permissive (MIT, Apache, BSD), Copyleft (GPL, AGPL), and Unknown categories to keep your distribution compliant.
-        </p>
+      <div class="alta-cap-row">
+        <div class="alta-cap-num">03</div>
+        <div class="alta-cap-title">Vulnerability Detection</div>
+        <p class="alta-cap-desc">Continuously correlate resolved packages against real-time OSV.dev and known CVE security advisory databases.</p>
+        <div class="alta-cap-arrow">&rarr;</div>
       </div>
 
       <!-- 04 -->
-      <div class="sentira-card-numbered">
-        <div class="sentira-card-index">04</div>
-        <h3 class="intelligence-title">README Quality Audit</h3>
-        <p class="intelligence-desc">
-          Audits repository documentation completeness across project description, installation instructions, usage guidelines, and license references.
-        </p>
+      <div class="alta-cap-row">
+        <div class="alta-cap-num">04</div>
+        <div class="alta-cap-title">License Intelligence</div>
+        <p class="alta-cap-desc">Detect open-source software licenses, isolate restrictive copyleft exposure, and verify commercial deployment compliance.</p>
+        <div class="alta-cap-arrow">&rarr;</div>
       </div>
 
       <!-- 05 -->
-      <div class="sentira-card-numbered">
-        <div class="sentira-card-index">05</div>
-        <h3 class="intelligence-title">Repository Vitality</h3>
-        <p class="intelligence-desc">
-          Measures commit recency, maintainer count, and package release activity to flag unmaintained third-party dependencies early.
-        </p>
+      <div class="alta-cap-row">
+        <div class="alta-cap-num">05</div>
+        <div class="alta-cap-title">Repository Health</div>
+        <p class="alta-cap-desc">Quantitatively evaluate documentation completeness, structure, branch configurations, and ongoing maintainer hygiene.</p>
+        <div class="alta-cap-arrow">&rarr;</div>
       </div>
 
       <!-- 06 -->
-      <div class="sentira-card-numbered">
-        <div class="sentira-card-index">06</div>
-        <h3 class="intelligence-title">Risk Scoring &amp; SBOM</h3>
-        <p class="intelligence-desc">
-          Calculates a weighted 0-100 risk score and exports standard CycloneDX 1.4 JSON Software Bill of Materials for compliance records.
-        </p>
+      <div class="alta-cap-row">
+        <div class="alta-cap-num">06</div>
+        <div class="alta-cap-title">Security Reports &amp; SBOM</div>
+        <p class="alta-cap-desc">Generate audit-ready CycloneDX JSON/XML Software Bill of Materials and export comprehensive security posture summaries.</p>
+        <div class="alta-cap-arrow">&rarr;</div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- =========================================================================
-     SECTION 05 — REPOSITORY ANALYSIS FLOW VISUALIZATION
+     04. FROM REPOSITORY TO INTELLIGENCE FLOW
      ========================================================================= -->
-<section class="public-section" id="pipeline">
-  <div class="public-container">
-    <div class="section-header">
-      <div class="editorial-label">
-        <span class="editorial-label-num">04</span>
-        <span class="editorial-label-sep">/</span>
-        <span class="editorial-label-text">Analysis Architecture</span>
-      </div>
-      <h2 class="section-title">HOW SENTRA AUDITS A REPOSITORY</h2>
-      <p class="section-subtitle">
-        From GitHub tree discovery to multi-dimensional security telemetry in seconds.
-      </p>
-    </div>
-
-    <div class="pipeline-container">
-      <div class="pipeline-diagram">
-        <!-- Input -->
-        <div class="pipeline-node">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
-          </svg>
-          <span>GITHUB REPOSITORY</span>
-        </div>
-
-        <div class="pipeline-arrow">
-          <svg width="20" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="7 13 12 18 17 13"/><line x1="12" y1="6" x2="12" y2="18"/></svg>
-        </div>
-
-        <!-- Engine -->
-        <div class="pipeline-node pipeline-node-main">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-          </svg>
-          <span>SENTRA INSPECTION ENGINE</span>
-        </div>
-
-        <div class="pipeline-arrow">
-          <svg width="20" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="7 13 12 18 17 13"/><line x1="12" y1="6" x2="12" y2="18"/></svg>
-        </div>
-
-        <!-- Pillars -->
-        <div class="pipeline-pillars-grid">
-          <div class="pipeline-pillar-box">
-            <div class="pipeline-pillar-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-            </div>
-            <span class="pipeline-pillar-name">Dependencies</span>
-          </div>
-
-          <div class="pipeline-pillar-box">
-            <div class="pipeline-pillar-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            </div>
-            <span class="pipeline-pillar-name">CVE Detection</span>
-          </div>
-
-          <div class="pipeline-pillar-box">
-            <div class="pipeline-pillar-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-            </div>
-            <span class="pipeline-pillar-name">Licenses</span>
-          </div>
-
-          <div class="pipeline-pillar-box">
-            <div class="pipeline-pillar-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            </div>
-            <span class="pipeline-pillar-name">README Audit</span>
-          </div>
-
-          <div class="pipeline-pillar-box">
-            <div class="pipeline-pillar-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-            </div>
-            <span class="pipeline-pillar-name">Repo Vitality</span>
-          </div>
-        </div>
-
-        <div class="pipeline-arrow">
-          <svg width="20" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="7 13 12 18 17 13"/><line x1="12" y1="6" x2="12" y2="18"/></svg>
-        </div>
-
-        <!-- Risk Engine -->
-        <div class="pipeline-node" style="border-color: var(--accent-primary);">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-          <span>WEIGHTED RISK ENGINE</span>
-        </div>
-
-        <div class="pipeline-arrow">
-          <svg width="20" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="7 13 12 18 17 13"/><line x1="12" y1="6" x2="12" y2="18"/></svg>
-        </div>
-
-        <!-- Result -->
-        <div class="pipeline-node" style="background: rgba(16, 185, 129, 0.08); border-color: rgba(16, 185, 129, 0.35); color: #059669;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-          <span style="font-family: 'JetBrains Mono', monospace; font-weight: 800;">87 / 100 SECURITY SCORE &middot; LOW RISK</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- =========================================================================
-     SECTION 06 — WORKFLOW (5 Step Concrete Process)
-     ========================================================================= -->
-<section class="public-section public-section-alt" id="how-it-works">
-  <div class="public-container">
-    <div class="section-header">
-      <div class="editorial-label">
-        <span class="editorial-label-num">05</span>
-        <span class="editorial-label-sep">/</span>
-        <span class="editorial-label-text">Workflow</span>
-      </div>
-      <h2 class="section-title">FIVE STEPS TO COMPLETE VISIBILITY</h2>
-      <p class="section-subtitle">
-        How SENTRA moves from OAuth connection to clear risk ratings.
-      </p>
-    </div>
-
-    <div class="steps-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
-      <div class="step-card">
-        <span class="step-badge">01</span>
-        <h3 class="step-title">Connect</h3>
-        <p class="step-desc">
-          Authorize your GitHub account via OAuth 2.0. Credentials stay encrypted on the server with user account isolation.
-        </p>
-      </div>
-
-      <div class="step-card">
-        <span class="step-badge">02</span>
-        <h3 class="step-title">Select</h3>
-        <p class="step-desc">
-          Choose public or private repositories from your personal account or organizations with one click.
-        </p>
-      </div>
-
-      <div class="step-card">
-        <span class="step-badge">03</span>
-        <h3 class="step-title">Inspect</h3>
-        <p class="step-desc">
-          SENTRA traverses the Git tree to find requirements.txt, package.json, and documentation files.
-        </p>
-      </div>
-
-      <div class="step-card">
-        <span class="step-badge">04</span>
-        <h3 class="step-title">Analyze</h3>
-        <p class="step-desc">
-          Dependencies are matched against OSV.dev for CVEs, licenses are checked for copyleft exposure, and READMEs are audited.
-        </p>
-      </div>
-
-      <div class="step-card">
-        <span class="step-badge">05</span>
-        <h3 class="step-title">Remediate</h3>
-        <p class="step-desc">
-          Review exact package version upgrade suggestions and export standard CycloneDX SBOMs for audit records.
-        </p>
-      </div>
-    </div>
-
-    <div style="text-align: center; margin-top: 40px;">
-      <a href="{% url 'how_it_works' %}" class="btn btn-secondary">
-        Read Pipeline Documentation &rarr;
-      </a>
-    </div>
-  </div>
-</section>
-
-<!-- =========================================================================
-     SECTION 07 — EXAMPLE SECURITY REPORT
-     ========================================================================= -->
-<section class="public-section" id="report-example">
-  <div class="public-container">
-    <div class="section-header">
-      <div class="editorial-label">
-        <span class="editorial-label-num">06</span>
-        <span class="editorial-label-sep">/</span>
-        <span class="editorial-label-text">Audit Telemetry</span>
-      </div>
-      <h2 class="section-title">SAMPLE AUDIT REPORT</h2>
-      <p class="section-subtitle">
-        What developers see on the dashboard immediately after a repository scan completes.
-      </p>
-    </div>
-
-    <div class="report-card-showcase">
-      <div class="report-header-banner">
-        <div class="report-repo-info">
-          <div class="report-repo-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-            </svg>
-          </div>
-          <div>
-            <div style="font-size: 18px; font-weight: 800; color: var(--text-title); font-family: 'JetBrains Mono', monospace;">example-api</div>
-            <div style="font-size: 13px; color: var(--text-muted);">Demonstration Repository Scan</div>
-          </div>
-        </div>
-        <div class="report-score-box">
-          <div class="report-score-num">87 / 100</div>
-          <div class="report-score-sub">Low Risk</div>
-        </div>
-      </div>
-
-      <div class="demo-checklist">
-        <div class="checklist-row">
-          <span class="checklist-label">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-            Dependencies
-          </span>
-          <span class="checklist-status status-clean">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-            48 Packages Scanned
-          </span>
-        </div>
-
-        <div class="checklist-row">
-          <span class="checklist-label">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            Vulnerabilities
-          </span>
-          <span class="checklist-status status-warning">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>
-            2 Low Severity Advisories
-          </span>
-        </div>
-
-        <div class="checklist-row">
-          <span class="checklist-label">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-            Licenses
-          </span>
-          <span class="checklist-status status-clean">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-            Permissive (MIT, BSD-3)
-          </span>
-        </div>
-
-        <div class="checklist-row">
-          <span class="checklist-label">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            README Documentation
-          </span>
-          <span class="checklist-status status-clean">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-            7 Sections Complete
-          </span>
-        </div>
-
-        <div class="checklist-row">
-          <span class="checklist-label">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-            Repository Health
-          </span>
-          <span class="checklist-status status-clean">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-            Active Commits
-          </span>
-        </div>
-      </div>
-
-      <div class="report-rec-list">
-        <div style="font-size: 13px; font-weight: 700; color: var(--text-title); text-transform: uppercase; letter-spacing: 0.5px;">Recommended Upgrades</div>
-        <div class="report-rec-item">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-          <span>Upgrade certifi to >= 2023.7.22 to address GHSA-x345-XXXX.</span>
-        </div>
-        <div class="report-rec-item">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-          <span>Pin urllib3 to >= 1.26.17 to remediate GHSA-v845-YYYY.</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- =========================================================================
-     SECTION 08 — WHY SENTRA (Sentira VS Comparison)
-     ========================================================================= -->
-<section class="public-section public-section-alt" id="why-sentra">
-  <div class="public-container">
-    <div class="section-header">
-      <div class="sentira-tag">
-        <span class="sentira-tag-dot"></span>
-        Why Choose Us
-      </div>
-      <h2 class="sentira-display-title">This is what makes us actually different.</h2>
-      <p class="section-subtitle">
-        Traditional software supply chain audits are manual, slow, and full of blind spots. SENTRA replaces guesswork with automated, deterministic telemetry.
-      </p>
-    </div>
-
-    <div class="sentira-vs-card">
-      <!-- With SENTRA -->
-      <div class="vs-col-left">
-        <div class="vs-header">
-          <div class="vs-item-icon icon-positive">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-          <h3 class="vs-col-title">With SENTRA</h3>
-        </div>
-
-        <div class="vs-list">
-          <div class="vs-item">
-            <div class="vs-item-icon icon-positive">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-            <div class="vs-item-content">
-              <div class="vs-item-title">Automated Manifest Discovery</div>
-              <div class="vs-item-desc">Parses requirements.txt, package.json, and lockfiles directly from GitHub trees with zero configuration or CI scripts.</div>
-            </div>
-          </div>
-
-          <div class="vs-item">
-            <div class="vs-item-icon icon-positive">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-            <div class="vs-item-content">
-              <div class="vs-item-title">OSV.dev Vulnerability Intelligence</div>
-              <div class="vs-item-desc">Real-time matching against published CVSS severity advisories with exact minimum safe upgrade targets.</div>
-            </div>
-          </div>
-
-          <div class="vs-item">
-            <div class="vs-item-icon icon-positive">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-            <div class="vs-item-content">
-              <div class="vs-item-title">Copyleft &amp; Compliance Shield</div>
-              <div class="vs-item-desc">Categorizes licenses into Permissive, Copyleft (GPL/AGPL), and Unknown to eliminate legal distribution risk.</div>
-            </div>
-          </div>
-
-          <div class="vs-item">
-            <div class="vs-item-icon icon-positive">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-            <div class="vs-item-content">
-              <div class="vs-item-title">CycloneDX 1.4 SBOM Generation</div>
-              <div class="vs-item-desc">Instant export of standard enterprise-grade Software Bill of Materials for compliance records and customer audits.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Center VS Badge -->
-      <div class="vs-divider">
-        <div class="vs-badge">VS</div>
-      </div>
-
-      <!-- Without SENTRA -->
-      <div class="vs-col-right">
-        <div class="vs-header">
-          <div class="vs-item-icon icon-negative">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          </div>
-          <h3 class="vs-col-title">Without SENTRA</h3>
-        </div>
-
-        <div class="vs-list">
-          <div class="vs-item">
-            <div class="vs-item-icon icon-negative">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </div>
-            <div class="vs-item-content">
-              <div class="vs-item-title">Manual, Slow Code Reviews</div>
-              <div class="vs-item-desc">Developers miss nested transitive dependencies during pull requests until production alarms fire.</div>
-            </div>
-          </div>
-
-          <div class="vs-item">
-            <div class="vs-item-icon icon-negative">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </div>
-            <div class="vs-item-content">
-              <div class="vs-item-title">Unpatched Transitive CVEs</div>
-              <div class="vs-item-desc">Packages pull in obsolete utilities with public exploits that stay unmonitored in deployed containers.</div>
-            </div>
-          </div>
-
-          <div class="vs-item">
-            <div class="vs-item-icon icon-negative">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </div>
-            <div class="vs-item-content">
-              <div class="vs-item-title">Accidental Viral Licensing</div>
-              <div class="vs-item-desc">Inadvertently bundling copyleft GPL/AGPL packages forces proprietary software code disclosure.</div>
-            </div>
-          </div>
-
-          <div class="vs-item">
-            <div class="vs-item-icon icon-negative">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </div>
-            <div class="vs-item-content">
-              <div class="vs-item-title">Fragmented Spreadsheets</div>
-              <div class="vs-item-desc">Security audits require weeks of manual spreadsheet compilation without verifiable telemetry.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- =========================================================================
-     SECTION 09 — PRODUCT TRUST (Security Architecture Guarantees)
-     ========================================================================= -->
-<section class="public-section" id="trust">
-  <div class="public-container">
-    <div class="section-header">
-      <div class="sentira-tag">
-        <span class="sentira-tag-dot"></span>
-        Security Architecture
-      </div>
-      <h2 class="sentira-display-title">Built for developer trust.</h2>
-      <p class="section-subtitle">
-        Strict security controls protect your authentication tokens and repository source code.
-      </p>
-    </div>
-
-    <div class="trust-grid">
-      <div class="trust-item">
-        <span class="trust-tag">ACCOUNT-AWARE</span>
-        <h3 class="trust-title">Strict Isolation</h3>
-        <p class="trust-desc">
-          GitHub access tokens are scoped exclusively to the authenticated SENTRA user. No data sharing across accounts.
-        </p>
-      </div>
-
-      <div class="trust-item">
-        <span class="trust-tag">SAFE DISCOVERY</span>
-        <h3 class="trust-title">Zero Code Cloning</h3>
-        <p class="trust-desc">
-          Inspects package manifests and documentation via GitHub Git Tree APIs without cloning complete proprietary codebases.
-        </p>
-      </div>
-
-      <div class="trust-item">
-        <span class="trust-tag">TRANSPARENT</span>
-        <h3 class="trust-title">Open Scoring</h3>
-        <p class="trust-desc">
-          Every risk score is backed by published CVSS severity metrics and deterministic license rules.
-        </p>
-      </div>
-
-      <div class="trust-item">
-        <span class="trust-tag">STANDARDS-BASED</span>
-        <h3 class="trust-title">CycloneDX SBOMs</h3>
-        <p class="trust-desc">
-          Exports standard CycloneDX 1.4 JSON format compatible with enterprise supply-chain audit tools.
-        </p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- =========================================================================
-     SECTION 10 — FAQ ACCORDION (Sentira-Style Interactive Cards)
-     ========================================================================= -->
-<section class="public-section public-section-alt" id="faq">
-  <div class="public-container">
-    <div class="section-header">
-      <div class="sentira-tag">
-        <span class="sentira-tag-dot"></span>
-        FAQ's
-      </div>
-      <h2 class="sentira-display-title">Answers to what you're wondering about.</h2>
-      <p class="section-subtitle">
-        Everything you need to know about SENTRA, repository scanning, and risk intelligence.
-      </p>
-    </div>
-
-    <div class="sentira-faq-accordion" id="faqAccordion">
-      <!-- Q1 -->
-      <div class="sentira-faq-card active">
-        <button type="button" class="sentira-faq-btn" aria-expanded="true">
-          <span>What is SENTRA?</span>
-          <span class="sentira-faq-toggle">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-          </span>
-        </button>
-        <div class="sentira-faq-body">
-          <p>
-            SENTRA is a repository security platform that scans GitHub repositories for vulnerable packages, open-source license compliance risks, missing documentation, and maintenance signals.
-          </p>
-        </div>
-      </div>
-
-      <!-- Q2 -->
-      <div class="sentira-faq-card">
-        <button type="button" class="sentira-faq-btn" aria-expanded="false">
-          <span>What package ecosystems does SENTRA support?</span>
-          <span class="sentira-faq-toggle">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-          </span>
-        </button>
-        <div class="sentira-faq-body">
-          <p>
-            SENTRA inspects Python manifests (requirements.txt, pyproject.toml) and JavaScript/Node.js manifests (package.json, package-lock.json), querying OSV.dev for CVE entries matching PyPI and npm ecosystems.
-          </p>
-        </div>
-      </div>
-
-      <!-- Q3 -->
-      <div class="sentira-faq-card">
-        <button type="button" class="sentira-faq-btn" aria-expanded="false">
-          <span>Does SENTRA require manual manifest uploads?</span>
-          <span class="sentira-faq-toggle">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-          </span>
-        </button>
-        <div class="sentira-faq-body">
-          <p>
-            No. When you import a repository from GitHub, SENTRA automatically discovers and retrieves supported dependency files across the directory tree. Manual file upload is also provided for offline analysis.
-          </p>
-        </div>
-      </div>
-
-      <!-- Q4 -->
-      <div class="sentira-faq-card">
-        <button type="button" class="sentira-faq-btn" aria-expanded="false">
-          <span>Does SENTRA store my GitHub password?</span>
-          <span class="sentira-faq-toggle">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-          </span>
-        </button>
-        <div class="sentira-faq-body">
-          <p>
-            No. SENTRA authenticates via GitHub OAuth 2.0. We never request or store your GitHub password.
-          </p>
-        </div>
-      </div>
-
-      <!-- Q5 -->
-      <div class="sentira-faq-card">
-        <button type="button" class="sentira-faq-btn" aria-expanded="false">
-          <span>Can multiple team members connect different GitHub accounts?</span>
-          <span class="sentira-faq-toggle">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-          </span>
-        </button>
-        <div class="sentira-faq-body">
-          <p>
-            Yes. Every SENTRA account maintains its own isolated GitHub connection and project list. User accounts cannot view another user's projects or tokens.
-          </p>
-        </div>
-      </div>
-
-      <!-- Q6 -->
-      <div class="sentira-faq-card">
-        <button type="button" class="sentira-faq-btn" aria-expanded="false">
-          <span>How is the 0–100 risk score calculated?</span>
-          <span class="sentira-faq-toggle">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-          </span>
-        </button>
-        <div class="sentira-faq-body">
-          <p>
-            The score starts at 100 and applies weighted deductions based on vulnerability severity counts (Critical, High, Medium, Low), copyleft license restrictions, missing documentation sections, and stale repository commits.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- =========================================================================
-     SECTION 11 — FINAL COMMAND CTA BANNER
-     ========================================================================= -->
-<section class="public-section section-dark-cta" id="cta">
-  <div class="public-container">
-    <div class="sentira-tag" style="margin: 0 auto 24px;">
-      <span class="sentira-tag-dot"></span>
-      Get Started
-    </div>
-
-    <h2 class="sentira-display-title" style="margin-bottom: 20px;">Let's secure your first repository together.</h2>
-    <p class="cta-banner-desc">
-      Connect your GitHub account to scan your dependencies, catch unpatched CVEs, and verify open-source license compliance.
+<section class="alta-section alta-section-alt" id="flow">
+  <div class="alta-container">
+    <div class="alta-eyebrow">From Repository to Intelligence</div>
+    <h2 class="alta-section-title">One repository. Multiple layers of intelligence.</h2>
+    <p class="alta-section-desc">
+      A deliberate five-stage analysis pipeline that extracts deep security telemetry without requiring complex CI/CD build agents.
     </p>
 
-    <div class="hero-cta-group" style="justify-content: center;">
-      {% if user.is_authenticated %}
-      <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg" id="cta-btn-dashboard">
-        Open Dashboard
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M5 12h14"></path>
-          <path d="m12 5 7 7-7 7"></path>
-        </svg>
-      </a>
-      {% else %}
-      <a href="{% url 'register' %}" class="btn btn-primary btn-lg" id="cta-btn-register">
-        Get Started
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M5 12h14"></path>
-          <path d="m12 5 7 7-7 7"></path>
-        </svg>
-      </a>
-      {% endif %}
-      <a href="{% url 'how_it_works' %}" class="btn btn-secondary btn-lg">
-        <span>Explore How It Works</span>
-        <span class="btn-arrow-circle">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M5 12h14"></path>
-            <path d="m12 5 7 7-7 7"></path>
-          </svg>
-        </span>
-      </a>
+    <div class="alta-process-grid">
+      <!-- 01 -->
+      <div class="alta-process-card">
+        <div class="alta-process-num">01</div>
+        <div>
+          <h3 class="alta-process-title">Connect</h3>
+          <p class="alta-process-desc">Link your GitHub account via secure OAuth with isolated token permissions.</p>
+        </div>
+      </div>
+
+      <!-- 02 -->
+      <div class="alta-process-card">
+        <div class="alta-process-num">02</div>
+        <div>
+          <h3 class="alta-process-title">Inspect</h3>
+          <p class="alta-process-desc">SENTRA parses repository file trees and automatically identifies dependency manifests.</p>
+        </div>
+      </div>
+
+      <!-- 03 -->
+      <div class="alta-process-card">
+        <div class="alta-process-num">03</div>
+        <div>
+          <h3 class="alta-process-title">Analyze</h3>
+          <p class="alta-process-desc">Dependencies, vulnerabilities, licenses, and maintainer signals are thoroughly evaluated.</p>
+        </div>
+      </div>
+
+      <!-- 04 -->
+      <div class="alta-process-card">
+        <div class="alta-process-num">04</div>
+        <div>
+          <h3 class="alta-process-title">Understand</h3>
+          <p class="alta-process-desc">Multi-dimensional risk scores, severity breakdowns, and actionable paths are synthesized.</p>
+        </div>
+      </div>
+
+      <!-- 05 -->
+      <div class="alta-process-card">
+        <div class="alta-process-num">05</div>
+        <div>
+          <h3 class="alta-process-title">Secure</h3>
+          <p class="alta-process-desc">Export standardized CycloneDX SBOM artifacts and track remediation over time.</p>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
 <!-- =========================================================================
-     VANILLA JS FOR SCANNER DEMO & FAQ ACCORDION
+     05. PRODUCT SHOWCASE SECTION
      ========================================================================= -->
+<section class="alta-section" id="showcase">
+  <div class="alta-container">
+    <div style="text-align: center; max-width: 760px; margin: 0 auto 36px auto;">
+      <div class="alta-eyebrow" style="justify-content: center;">Inside SENTRA</div>
+      <h2 class="alta-section-title">Security intelligence, without the noise.</h2>
+      <p class="alta-section-desc" style="margin: 0 auto;">
+        A purpose-built interface designed for clarity, actionable signal, and developer productivity.
+      </p>
+    </div>
+
+    <div class="alta-showcase-panel">
+      <div class="alta-showcase-header">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span style="font-weight: 800; font-size: 15px; color: var(--text-title);">Telemetry Console</span>
+          <span style="font-size: 12px; color: var(--text-muted); font-family: var(--font-mono, monospace);">audit_run #1084</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 12px; padding: 4px 10px; border-radius: 20px; background: rgba(16, 185, 129, 0.1); color: #10b981; font-weight: 700;">Active Inspection</span>
+        </div>
+      </div>
+
+      <div class="alta-showcase-body">
+        <div class="alta-telemetry-grid">
+          <div class="alta-telemetry-card">
+            <div class="alta-telemetry-val">87<span style="font-size: 15px; color: var(--text-muted); font-weight: 500;">/100</span></div>
+            <div class="alta-telemetry-label">Security Score</div>
+          </div>
+          <div class="alta-telemetry-card">
+            <div class="alta-telemetry-val" style="color: #b45309;">1</div>
+            <div class="alta-telemetry-label">Active CVE Risk</div>
+          </div>
+          <div class="alta-telemetry-card">
+            <div class="alta-telemetry-val">48</div>
+            <div class="alta-telemetry-label">Cataloged Packages</div>
+          </div>
+          <div class="alta-telemetry-card">
+            <div class="alta-telemetry-val" style="color: #10b981;">100%</div>
+            <div class="alta-telemetry-label">License Compliance</div>
+          </div>
+        </div>
+
+        <div style="border: 1px solid var(--border-color); border-radius: 10px; padding: 24px; background: #fafaf8;">
+          <div style="font-size: 13px; font-weight: 800; color: var(--text-title); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">
+            Actionable Vulnerability Telemetry
+          </div>
+          <p style="font-size: 14.5px; color: var(--text-secondary); line-height: 1.6; margin: 0;">
+            SENTRA surfaces exact vulnerable function references, fixed upstream versions, and severity vectors so you can patch dependencies confidently without breaking production builds.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================================
+     06. WHY SENTRA / PRINCIPLES
+     ========================================================================= -->
+<section class="alta-section alta-section-alt" id="principles">
+  <div class="alta-container">
+    <div class="alta-eyebrow">Philosophy</div>
+    <h2 class="alta-section-title">Security data is useful only when it is understandable.</h2>
+    <p class="alta-section-desc">
+      We built SENTRA around three core architectural tenets that prioritize clarity over alert exhaustion.
+    </p>
+
+    <div class="alta-principles-grid">
+      <!-- Principle 1 -->
+      <div class="alta-principle-card">
+        <div class="alta-principle-num">01</div>
+        <h3 class="alta-principle-title">Repository-First</h3>
+        <p class="alta-principle-desc">
+          Security starts where your software is engineered. We analyze the actual package manifests, commits, and configurations you deploy.
+        </p>
+      </div>
+
+      <!-- Principle 2 -->
+      <div class="alta-principle-card">
+        <div class="alta-principle-num">02</div>
+        <h3 class="alta-principle-title">Actionable Signal</h3>
+        <p class="alta-principle-desc">
+          Raw vulnerability scanners drown developers in noise. SENTRA correlates risks into clear severity tiers and remediation guidance.
+        </p>
+      </div>
+
+      <!-- Principle 3 -->
+      <div class="alta-principle-card">
+        <div class="alta-principle-num">03</div>
+        <h3 class="alta-principle-title">Unified Workflow</h3>
+        <p class="alta-principle-desc">
+          Dependencies, security vulnerabilities, open-source licenses, and repository health belong in one single consolidated audit interface.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================================
+     07. FAQ ACCORDION SECTION
+     ========================================================================= -->
+<section class="alta-section" id="faq">
+  <div class="alta-container">
+    <div style="text-align: center; max-width: 700px; margin: 0 auto;">
+      <div class="alta-eyebrow" style="justify-content: center;">Frequently Asked Questions</div>
+      <h2 class="alta-section-title">Everything you need to know.</h2>
+      <p class="alta-section-desc" style="margin: 0 auto;">
+        Clear answers about how SENTRA inspects repositories, detects risks, and protects your credentials.
+      </p>
+    </div>
+
+    <div class="alta-faq-list">
+      <!-- Item 1 -->
+      <div class="alta-faq-item">
+        <button type="button" class="alta-faq-btn" aria-expanded="false">
+          <span>What does SENTRA analyze?</span>
+          <span class="alta-faq-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </span>
+        </button>
+        <div class="alta-faq-content">
+          SENTRA analyzes repository dependency manifests (such as requirements.txt, package.json, pom.xml, and go.mod), correlates third-party packages against real-time vulnerability databases, inspects open-source license compliance, and scores documentation and repository vitality.
+        </div>
+      </div>
+
+      <!-- Item 2 -->
+      <div class="alta-faq-item">
+        <button type="button" class="alta-faq-btn" aria-expanded="false">
+          <span>How does GitHub integration work?</span>
+          <span class="alta-faq-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </span>
+        </button>
+        <div class="alta-faq-content">
+          You connect your GitHub account using OAuth. SENTRA accesses your authorized repositories via the GitHub REST API without requiring custom CI/CD runner installations or build agent configurations.
+        </div>
+      </div>
+
+      <!-- Item 3 -->
+      <div class="alta-faq-item">
+        <button type="button" class="alta-faq-btn" aria-expanded="false">
+          <span>What dependencies and manifests can SENTRA detect?</span>
+          <span class="alta-faq-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </span>
+        </button>
+        <div class="alta-faq-content">
+          SENTRA natively inspects Python requirements.txt, Node.js package.json, Java pom.xml, and Go go.mod manifests, identifying both direct packages and their pinned version constraints.
+        </div>
+      </div>
+
+      <!-- Item 4 -->
+      <div class="alta-faq-item">
+        <button type="button" class="alta-faq-btn" aria-expanded="false">
+          <span>How are vulnerabilities identified?</span>
+          <span class="alta-faq-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </span>
+        </button>
+        <div class="alta-faq-content">
+          Resolved package names and versions are automatically queried against OSV.dev and national CVE feeds, returning standardized CVSS severity ratings, vulnerability descriptions, and affected version ranges.
+        </div>
+      </div>
+
+      <!-- Item 5 -->
+      <div class="alta-faq-item">
+        <button type="button" class="alta-faq-btn" aria-expanded="false">
+          <span>What is license intelligence?</span>
+          <span class="alta-faq-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </span>
+        </button>
+        <div class="alta-faq-content">
+          License intelligence classifies the licenses of every dependency in your codebase (e.g. MIT, Apache-2.0, BSD, GPL, AGPL) and alerts you to restrictive copyleft requirements that could force open-sourcing of proprietary software.
+        </div>
+      </div>
+
+      <!-- Item 6 -->
+      <div class="alta-faq-item">
+        <button type="button" class="alta-faq-btn" aria-expanded="false">
+          <span>Can SENTRA generate CycloneDX SBOM reports?</span>
+          <span class="alta-faq-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </span>
+        </button>
+        <div class="alta-faq-content">
+          Yes. SENTRA exports comprehensive Software Bill of Materials (SBOM) in the industry-standard CycloneDX 1.4 JSON and XML formats for compliance audits and procurement review.
+        </div>
+      </div>
+
+      <!-- Item 7 -->
+      <div class="alta-faq-item">
+        <button type="button" class="alta-faq-btn" aria-expanded="false">
+          <span>Does SENTRA store my GitHub credentials?</span>
+          <span class="alta-faq-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </span>
+        </button>
+        <div class="alta-faq-content">
+          No. SENTRA never sees or stores your GitHub password. It communicates strictly via scoped OAuth access tokens stored securely in encrypted sessions per user.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================================
+     08. FINAL EDITORIAL CTA
+     ========================================================================= -->
+<section class="alta-cta-section" id="cta">
+  <div class="alta-container">
+    <div class="alta-eyebrow" style="justify-content: center;">Get Started</div>
+    <h2 class="alta-cta-title">
+      READY TO UNDERSTAND<br>YOUR REPOSITORIES?
+    </h2>
+    <p class="alta-cta-desc">
+      Connect your repository. See what your code is carrying. Experience automated security intelligence without the friction.
+    </p>
+
+    <div>
+      {% if user.is_authenticated %}
+      <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg" style="padding: 14px 32px; font-size: 15px;">
+        Open Dashboard &rarr;
+      </a>
+      {% else %}
+      <a href="{% url 'register' %}" class="btn btn-primary btn-lg" style="padding: 14px 32px; font-size: 15px;">
+        Get Started with SENTRA &rarr;
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
 <script>
-(function() {
-  // ── FAQ Accordion ──────────────────────────────────────────
-  const accordion = document.getElementById('faqAccordion');
-  if (accordion) {
-    const triggers = accordion.querySelectorAll('.sentira-faq-btn, .faq-trigger');
-    triggers.forEach(trigger => {
-      trigger.addEventListener('click', function() {
-        const item = this.closest('.sentira-faq-card, .faq-item');
-        const isActive = item.classList.contains('active');
-
-        accordion.querySelectorAll('.sentira-faq-card, .faq-item').forEach(i => {
-          i.classList.remove('active');
-          const t = i.querySelector('.sentira-faq-btn, .faq-trigger');
-          if (t) t.setAttribute('aria-expanded', 'false');
-        });
-
-        if (!isActive) {
-          item.classList.add('active');
-          this.setAttribute('aria-expanded', 'true');
-        }
-      });
-    });
-  }
-
-
-  // ── Live Scanner Simulation ────────────────────────────────
-  const replayBtn = document.getElementById('scannerReplayBtn');
-  const checklist = document.getElementById('scannerChecklist');
-  const statusText = document.getElementById('scannerStatusText');
-  const scoreNum = document.getElementById('scannerScoreNum');
-  const riskBadge = document.getElementById('scannerRiskBadge');
-
-  function runScannerAnimation() {
-    if (!checklist || !statusText) return;
-
-    const rows = checklist.querySelectorAll('.scanner-check-row');
-    const stages = [
-      'Scanning manifest tree...',
-      'Matching packages against OSV.dev...',
-      'Checking license categories...',
-      'Evaluating README documentation...',
-      'Calculating weighted risk score...',
-      'Scan complete &middot; 48 packages checked'
-    ];
-
-    rows.forEach(r => {
-      r.style.opacity = '0.35';
-      r.style.transform = 'translateX(-4px)';
-    });
-    if (scoreNum) scoreNum.textContent = '--/100';
-    if (riskBadge) {
-      riskBadge.textContent = 'SCANNING';
-      riskBadge.style.color = '#38bdf8';
-      riskBadge.style.borderColor = 'rgba(56, 189, 248, 0.4)';
-      riskBadge.style.background = 'rgba(56, 189, 248, 0.15)';
-    }
-
-    let currentStep = 0;
-    statusText.innerHTML = stages[0];
-
-    const interval = setInterval(() => {
-      if (currentStep < rows.length) {
-        rows[currentStep].style.opacity = '1';
-        rows[currentStep].style.transform = 'translateX(0)';
-        currentStep++;
-        if (currentStep < stages.length) {
-          statusText.innerHTML = stages[currentStep];
-        }
-      } else {
-        clearInterval(interval);
-        statusText.innerHTML = 'Scan complete &middot; 48 packages checked';
-        if (scoreNum) scoreNum.innerHTML = '87<span>/100</span>';
-        if (riskBadge) {
-          riskBadge.textContent = 'LOW RISK';
-          riskBadge.style.color = '#34d399';
-          riskBadge.style.borderColor = 'rgba(16, 185, 129, 0.4)';
-          riskBadge.style.background = 'rgba(16, 185, 129, 0.2)';
-        }
+// Alta FAQ Accordion Toggle
+document.querySelectorAll('.alta-faq-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var item = this.closest('.alta-faq-item');
+    var isExpanded = this.getAttribute('aria-expanded') === 'true';
+    
+    // Close other items
+    document.querySelectorAll('.alta-faq-item').forEach(function(other) {
+      if (other !== item) {
+        other.classList.remove('active');
+        var otherBtn = other.querySelector('.alta-faq-btn');
+        if (otherBtn) otherBtn.setAttribute('aria-expanded', 'false');
       }
-    }, 400);
-  }
+    });
 
-  if (replayBtn) {
-    replayBtn.addEventListener('click', runScannerAnimation);
-  }
-})();
+    // Toggle current
+    if (isExpanded) {
+      item.classList.remove('active');
+      this.setAttribute('aria-expanded', 'false');
+    } else {
+      item.classList.add('active');
+      this.setAttribute('aria-expanded', 'true');
+    }
+  });
+});
 </script>
 {% endblock %}

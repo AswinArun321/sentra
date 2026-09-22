@@ -1,0 +1,166 @@
+{% extends "admin_panel/base.html" %}
+
+{% block title %}System Health — SENTRA Admin{% endblock %}
+
+{% block content %}
+<div class="admin-page-header">
+  <div>
+    <h1 class="admin-page-title">System Health &amp; Infrastructure Telemetry</h1>
+    <p class="admin-page-subtitle">Real-time status diagnostics for core services, database connections, and external vulnerability feeds.</p>
+  </div>
+  <div>
+    {% if health.status == 'HEALTHY' %}
+      <span class="admin-badge badge-healthy" style="font-size:13px; padding:6px 14px;">SYSTEM OPERATIONAL</span>
+    {% elif health.status == 'DEGRADED' %}
+      <span class="admin-badge badge-degraded" style="font-size:13px; padding:6px 14px;">SYSTEM DEGRADED</span>
+    {% else %}
+      <span class="admin-badge badge-down" style="font-size:13px; padding:6px 14px;">SYSTEM DOWN</span>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Component Checks Grid -->
+<div class="admin-kpi-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); margin-bottom: 24px;">
+  <!-- Database -->
+  <div class="admin-kpi-card">
+    <div class="admin-kpi-header">
+      <span class="admin-kpi-label">Primary Database</span>
+      <span class="admin-badge {% if health.components.database.status == 'HEALTHY' %}badge-healthy{% else %}badge-down{% endif %}">
+        {{ health.components.database.status }}
+      </span>
+    </div>
+    <div style="font-size:18px; font-weight:700; color:#fff; margin-bottom:4px;">
+      {{ health.components.database.engine|upper }}
+    </div>
+    <div class="admin-kpi-subtext">
+      Latency: <span class="font-mono">{{ health.components.database.latency_ms }}ms</span> &bull; {{ health.components.database.message }}
+    </div>
+  </div>
+
+  <!-- Django -->
+  <div class="admin-kpi-card">
+    <div class="admin-kpi-header">
+      <span class="admin-kpi-label">Django Runtime</span>
+      <span class="admin-badge badge-healthy">OPERATIONAL</span>
+    </div>
+    <div style="font-size:18px; font-weight:700; color:#fff; margin-bottom:4px;">
+      DEBUG = {{ health.components.django.debug_mode }}
+    </div>
+    <div class="admin-kpi-subtext">
+      {{ health.components.django.installed_apps_count }} Installed Apps &bull; TZ: {{ health.components.django.timezone }}
+    </div>
+  </div>
+
+  <!-- Storage -->
+  <div class="admin-kpi-card">
+    <div class="admin-kpi-header">
+      <span class="admin-kpi-label">Storage Subsystem</span>
+      <span class="admin-badge {% if health.components.storage.status == 'HEALTHY' %}badge-healthy{% else %}badge-warning{% endif %}">
+        {{ health.components.storage.status }}
+      </span>
+    </div>
+    <div style="font-size:18px; font-weight:700; color:#fff; margin-bottom:4px;">
+      Local Media Volume
+    </div>
+    <div class="admin-kpi-subtext">
+      {{ health.components.storage.message }}
+    </div>
+  </div>
+
+  <!-- OSV API -->
+  <div class="admin-kpi-card">
+    <div class="admin-kpi-header">
+      <span class="admin-kpi-label">OSV Vulnerability API</span>
+      <span class="admin-badge {% if health.components.osv_api.status == 'HEALTHY' %}badge-healthy{% else %}badge-degraded{% endif %}">
+        {{ health.components.osv_api.status }}
+      </span>
+    </div>
+    <div style="font-size:18px; font-weight:700; color:#fff; margin-bottom:4px;">
+      api.osv.dev/v1
+    </div>
+    <div class="admin-kpi-subtext">
+      {{ health.components.osv_api.message }}
+    </div>
+  </div>
+
+  <!-- GitHub API -->
+  <div class="admin-kpi-card">
+    <div class="admin-kpi-header">
+      <span class="admin-kpi-label">GitHub API Telemetry</span>
+      <span class="admin-badge {% if health.components.github_api.status == 'HEALTHY' %}badge-healthy{% else %}badge-degraded{% endif %}">
+        {{ health.components.github_api.status }}
+      </span>
+    </div>
+    <div style="font-size:18px; font-weight:700; color:#fff; margin-bottom:4px;">
+      api.github.com
+    </div>
+    <div class="admin-kpi-subtext">
+      {{ health.components.github_api.message }}
+    </div>
+  </div>
+</div>
+
+<!-- Database Metrics Table -->
+<div class="admin-card">
+  <div class="admin-card-header">
+    <h3 class="admin-card-title">Database Storage &amp; Entity Volume</h3>
+    <span class="admin-badge badge-neutral">Table Row Counts</span>
+  </div>
+  <div class="admin-table-container">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Entity Domain</th>
+          <th>Underlying Model</th>
+          <th>Total Records Stored</th>
+          <th>State</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:700; color:#fff;">User Accounts</td>
+          <td class="font-mono">accounts.User</td>
+          <td style="font-weight:600;">{{ health.database_metrics.users_count }}</td>
+          <td><span class="admin-badge badge-active">Synchronized</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:700; color:#fff;">Repositories &amp; Projects</td>
+          <td class="font-mono">projects.Project</td>
+          <td style="font-weight:600;">{{ health.database_metrics.projects_count }}</td>
+          <td><span class="admin-badge badge-active">Synchronized</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:700; color:#fff;">Scan Runs</td>
+          <td class="font-mono">scans.Scan</td>
+          <td style="font-weight:600;">{{ health.database_metrics.scans_count }}</td>
+          <td><span class="admin-badge badge-active">Synchronized</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:700; color:#fff;">Dependencies Scanned</td>
+          <td class="font-mono">dependencies.Dependency</td>
+          <td style="font-weight:600;">{{ health.database_metrics.dependencies_count }}</td>
+          <td><span class="admin-badge badge-active">Synchronized</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:700; color:#fff;">Vulnerability Findings</td>
+          <td class="font-mono">vulnerabilities.Vulnerability</td>
+          <td style="font-weight:600;">{{ health.database_metrics.vulnerabilities_count }}</td>
+          <td><span class="admin-badge badge-active">Synchronized</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:700; color:#fff;">Generated Reports</td>
+          <td class="font-mono">reports.Report</td>
+          <td style="font-weight:600;">{{ health.database_metrics.reports_count }}</td>
+          <td><span class="admin-badge badge-active">Synchronized</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight:700; color:#fff;">Administrative Audit Logs</td>
+          <td class="font-mono">admin_panel.AdminAuditLog</td>
+          <td style="font-weight:600;">{{ health.database_metrics.audit_logs_count }}</td>
+          <td><span class="admin-badge badge-active">Synchronized</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

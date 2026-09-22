@@ -1,0 +1,299 @@
+{% extends "admin_panel/base.html" %}
+
+{% block title %}{{ target_user.username }} — User Details — SENTRA Admin{% endblock %}
+
+{% block content %}
+<div class="admin-page-header">
+  <div>
+    <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+      <a href="{% url 'admin_users' %}" style="color:var(--admin-text-muted); font-size:13px;">&larr; Users</a>
+      <span style="color:var(--admin-text-muted); font-size:13px;">/</span>
+      <span style="color:var(--admin-text-secondary); font-size:13px;">{{ target_user.username }}</span>
+    </div>
+    <h1 class="admin-page-title">{{ target_user.username }}</h1>
+    <p class="admin-page-subtitle">{{ target_user.email }} &bull; Joined {{ target_user.date_joined|date:"F d, Y" }}</p>
+  </div>
+  <div style="display:flex; gap:10px;">
+    {% if user_status.status == 'SUSPENDED' %}
+      <button type="button" class="admin-btn admin-btn-primary admin-btn-sm" onclick="confirmUserReactivate({{ target_user.id }}, '{{ target_user.username }}')">Reactivate User</button>
+    {% elif target_user.is_active %}
+      <button type="button" class="admin-btn admin-btn-danger admin-btn-sm" onclick="confirmUserSuspend({{ target_user.id }}, '{{ target_user.username }}')">Suspend User</button>
+    {% else %}
+      <button type="button" class="admin-btn admin-btn-primary admin-btn-sm" onclick="confirmUserActivate({{ target_user.id }}, '{{ target_user.username }}')">Activate User</button>
+    {% endif %}
+
+    <button type="button" class="admin-btn admin-btn-secondary admin-btn-sm" onclick="toggleStaffPrivilege({{ target_user.id }}, '{{ target_user.username }}', {{ target_user.is_staff|lower }})">
+      {% if target_user.is_staff %}Revoke Staff{% else %}Grant Staff{% endif %}
+    </button>
+  </div>
+</div>
+
+<!-- Overview Row -->
+<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:20px; margin-bottom: 24px;">
+  <!-- Account Details Card -->
+  <div class="admin-card" style="margin-bottom:0;">
+    <div class="admin-card-header">
+      <h3 class="admin-card-title">Account Information</h3>
+    </div>
+    <div style="padding:20px;">
+      <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--admin-border-subtle);">
+        <span style="color:var(--admin-text-muted);">Account Status</span>
+        <span>
+          {% if user_status.status == 'SUSPENDED' %}
+            <span class="admin-badge badge-suspended">SUSPENDED</span>
+          {% elif target_user.is_active %}
+            <span class="admin-badge badge-active">ACTIVE</span>
+          {% else %}
+            <span class="admin-badge badge-inactive">INACTIVE</span>
+          {% endif %}
+        </span>
+      </div>
+      {% if user_status.reason %}
+      <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--admin-border-subtle);">
+        <span style="color:var(--admin-text-muted);">Status Reason</span>
+        <span style="color:#f87171; font-weight:500;">{{ user_status.reason }}</span>
+      </div>
+      {% endif %}
+      <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--admin-border-subtle);">
+        <span style="color:var(--admin-text-muted);">Staff / Admin Role</span>
+        <span>
+          {% if target_user.is_superuser %}
+            <span class="admin-badge badge-high">SUPERADMIN</span>
+          {% elif target_user.is_staff %}
+            <span class="admin-badge badge-info">STAFF</span>
+          {% else %}
+            <span class="admin-badge badge-neutral">STANDARD USER</span>
+          {% endif %}
+        </span>
+      </div>
+      <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--admin-border-subtle);">
+        <span style="color:var(--admin-text-muted);">Last Login</span>
+        <span style="color:#fff;">{{ target_user.last_login|date:"Y-m-d H:i"|default:"Never logged in" }}</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; padding:8px 0;">
+        <span style="color:var(--admin-text-muted);">Total Projects Owned</span>
+        <span style="font-weight:700; color:#fff;">{{ user_projects.count }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- GitHub Connection Metadata (Safe) -->
+  <div class="admin-card" style="margin-bottom:0;">
+    <div class="admin-card-header">
+      <h3 class="admin-card-title">GitHub Integration Metadata</h3>
+      <span class="admin-badge badge-neutral">OAuth Secure</span>
+    </div>
+    <div style="padding:20px;">
+      {% if target_user.github_connection %}
+        <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--admin-border-subtle);">
+          <span style="color:var(--admin-text-muted);">Connection Status</span>
+          <span class="admin-badge badge-active">Connected</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--admin-border-subtle);">
+          <span style="color:var(--admin-text-muted);">GitHub Username</span>
+          <span style="font-weight:700; color:#fff;">@{{ target_user.github_connection.github_username }}</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--admin-border-subtle);">
+          <span style="color:var(--admin-text-muted);">GitHub User ID</span>
+          <span class="font-mono" style="color:var(--admin-text-secondary);">{{ target_user.github_connection.github_user_id }}</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:8px 0;">
+          <span style="color:var(--admin-text-muted);">Connected Since</span>
+          <span style="color:#fff;">{{ target_user.github_connection.connected_at|date:"M d, Y" }}</span>
+        </div>
+      {% else %}
+        <div style="text-align:center; padding:32px 16px; color:var(--admin-text-muted);">
+          <p style="margin:0 0 8px;">User has not connected a GitHub account.</p>
+          <span class="admin-badge badge-neutral">No GitHub OAuth Linked</span>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Security Findings for User -->
+  <div class="admin-card" style="margin-bottom:0;">
+    <div class="admin-card-header">
+      <h3 class="admin-card-title">User Security Posture</h3>
+    </div>
+    <div style="padding:20px;">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
+        <div style="background:rgba(239, 68, 68, 0.1); border:1px solid rgba(239, 68, 68, 0.25); border-radius:8px; padding:12px; text-align:center;">
+          <div style="font-size:22px; font-weight:800; color:#f87171;">{{ vuln_stats.critical|default:0 }}</div>
+          <div style="font-size:11px; color:#fca5a5; text-transform:uppercase;">Critical</div>
+        </div>
+        <div style="background:rgba(249, 115, 22, 0.1); border:1px solid rgba(249, 115, 22, 0.25); border-radius:8px; padding:12px; text-align:center;">
+          <div style="font-size:22px; font-weight:800; color:#fb923c;">{{ vuln_stats.high|default:0 }}</div>
+          <div style="font-size:11px; color:#fdba74; text-transform:uppercase;">High</div>
+        </div>
+      </div>
+      <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--admin-border-subtle); font-size:12px;">
+        <span style="color:var(--admin-text-muted);">Medium Findings</span>
+        <span style="color:#facc15; font-weight:600;">{{ vuln_stats.medium|default:0 }}</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; padding:6px 0; font-size:12px;">
+        <span style="color:var(--admin-text-muted);">Low Findings</span>
+        <span style="color:#34d399; font-weight:600;">{{ vuln_stats.low|default:0 }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Projects Table -->
+<div class="admin-card">
+  <div class="admin-card-header">
+    <h3 class="admin-card-title">Projects Owned ({{ user_projects.count }})</h3>
+  </div>
+  <div class="admin-table-container">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Project Name</th>
+          <th>Source</th>
+          <th>Repository URL</th>
+          <th>Analysis Status</th>
+          <th>Risk Score</th>
+          <th>Dependencies</th>
+          <th>Created</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in user_projects %}
+        <tr>
+          <td style="font-weight:700; color:#fff;">{{ p.name }}</td>
+          <td>
+            {% if p.source == 'github' %}
+              <span class="admin-badge badge-active">GitHub</span>
+            {% else %}
+              <span class="admin-badge badge-neutral">Manual</span>
+            {% endif %}
+          </td>
+          <td style="font-size:12px; color:var(--admin-text-secondary); max-width:240px; overflow:hidden; text-overflow:ellipsis;">
+            {% if p.repository_url %}<a href="{{ p.repository_url }}" target="_blank" style="color:#60a5fa;">{{ p.repository_url }}</a>{% else %}&mdash;{% endif %}
+          </td>
+          <td>
+            {% if p.analysis_status == 'COMPLETED' %}
+              <span class="admin-badge badge-completed">COMPLETED</span>
+            {% elif p.analysis_status == 'ANALYZING' or p.analysis_status == 'IMPORTING' %}
+              <span class="admin-badge badge-running">{{ p.analysis_status }}</span>
+            {% elif p.analysis_status == 'FAILED' %}
+              <span class="admin-badge badge-failed">FAILED</span>
+            {% else %}
+              <span class="admin-badge badge-neutral">{{ p.analysis_status }}</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if p.risk_score is not None %}
+              <span class="font-mono" style="font-weight:700;">{{ p.risk_score|floatformat:1 }}</span>
+            {% else %}
+              <span style="color:var(--admin-text-muted);">&mdash;</span>
+            {% endif %}
+          </td>
+          <td>{{ p.dependency_count }}</td>
+          <td style="font-size:11px; color:var(--admin-text-muted);">{{ p.created_at|date:"M d, Y" }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" style="text-align:center; color:var(--admin-text-muted); padding:24px;">No projects created by this user.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Recent Scans for User -->
+<div class="admin-card">
+  <div class="admin-card-header">
+    <h3 class="admin-card-title">Recent Scan Activity</h3>
+  </div>
+  <div class="admin-table-container">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Scan ID</th>
+          <th>Project</th>
+          <th>Status</th>
+          <th>Risk Level</th>
+          <th>Vulnerabilities</th>
+          <th>Duration</th>
+          <th>Completed</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in user_scans %}
+        <tr>
+          <td class="font-mono">#{{ s.id }}</td>
+          <td style="font-weight:600; color:#fff;">{{ s.project.name }}</td>
+          <td>
+            {% if s.status == 'COMPLETED' %}
+              <span class="admin-badge badge-completed">COMPLETED</span>
+            {% elif s.status == 'RUNNING' %}
+              <span class="admin-badge badge-running">RUNNING</span>
+            {% elif s.status == 'FAILED' %}
+              <span class="admin-badge badge-failed">FAILED</span>
+            {% else %}
+              <span class="admin-badge badge-pending">{{ s.status }}</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if s.risk_level == 'CRITICAL' %}
+              <span class="admin-badge badge-critical">CRITICAL</span>
+            {% elif s.risk_level == 'HIGH' %}
+              <span class="admin-badge badge-high">HIGH</span>
+            {% elif s.risk_level == 'MEDIUM' %}
+              <span class="admin-badge badge-medium">MEDIUM</span>
+            {% elif s.risk_level == 'LOW' %}
+              <span class="admin-badge badge-low">LOW</span>
+            {% else %}
+              <span class="admin-badge badge-neutral">{{ s.risk_level }}</span>
+            {% endif %}
+          </td>
+          <td>{{ s.vulnerability_count }} findings</td>
+          <td>{% if s.duration_seconds %}{{ s.duration_seconds|floatformat:1 }}s{% else %}&mdash;{% endif %}</td>
+          <td style="font-size:11px; color:var(--admin-text-muted);">{{ s.created_at|date:"Y-m-d H:i" }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" style="text-align:center; color:var(--admin-text-muted); padding:24px;">No scan history found for this user.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Audit Trail for User -->
+<div class="admin-card">
+  <div class="admin-card-header">
+    <h3 class="admin-card-title">Administrative Audit Trail For User</h3>
+  </div>
+  <div class="admin-table-container">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Admin Actor</th>
+          <th>Action</th>
+          <th>IP Address</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in user_audit_logs %}
+        <tr>
+          <td style="font-size:11px; color:var(--admin-text-muted); white-space:nowrap;">{{ log.created_at|date:"Y-m-d H:i" }}</td>
+          <td>{{ log.admin_user.username|default:"System" }}</td>
+          <td class="font-mono" style="font-size:11px; font-weight:700;">{{ log.action }}</td>
+          <td class="font-mono" style="font-size:11px; color:var(--admin-text-muted);">{{ log.ip_address|default:"&mdash;" }}</td>
+          <td style="color:var(--admin-text-secondary);">{{ log.description }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" style="text-align:center; color:var(--admin-text-muted); padding:24px;">No audit events recorded for this user.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

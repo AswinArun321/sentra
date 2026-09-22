@@ -21,6 +21,10 @@ urlpatterns = [
     path('api/scans/', include('scans.urls')),
     path('api/github/', include('github_integration.api_urls')),
     path('api/dashboard/', include('frontend.api_urls')),
+    path('api/admin/', include('admin_panel.api_urls')),
+
+    # SENTRA Admin Console
+    path('admin-console/', include('admin_panel.urls')),
 
     # Public Pages (accessible prior to authentication)
     path('', views_public.home_view, name='home'),

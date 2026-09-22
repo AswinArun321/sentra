@@ -1,0 +1,81 @@
+{% extends "admin_panel/base.html" %}
+
+{% block title %}Licenses — SENTRA Admin{% endblock %}
+
+{% block content %}
+<div class="admin-page-header">
+  <div>
+    <h1 class="admin-page-title">License Compliance &amp; Governance</h1>
+    <p class="admin-page-subtitle">Inspect software licensing distribution, identify copyleft legal risks, and monitor unknown licenses.</p>
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="admin-kpi-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 20px;">
+  <div class="admin-kpi-card" style="padding:14px;">
+    <div class="admin-kpi-label">Total Dependencies</div>
+    <div class="admin-kpi-value" style="font-size:24px;">{{ total_packages }}</div>
+  </div>
+  <div class="admin-kpi-card" style="padding:14px;">
+    <div class="admin-kpi-label">Distinct Licenses</div>
+    <div class="admin-kpi-value" style="font-size:24px; color:#3b82f6;">{{ licenses|length }}</div>
+  </div>
+  <div class="admin-kpi-card" style="padding:14px;">
+    <div class="admin-kpi-label">Unknown / Missing Licenses</div>
+    <div class="admin-kpi-value" style="font-size:24px; color:#f59e0b;">{{ unknown_count }}</div>
+  </div>
+</div>
+
+<div class="admin-card">
+  <div class="admin-card-header">
+    <h3 class="admin-card-title">Observed License Distribution</h3>
+    <span class="admin-badge badge-neutral">Top 50 Licenses</span>
+  </div>
+  <div class="admin-table-container">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>License</th>
+          <th>Category</th>
+          <th>Packages Using License</th>
+          <th>Compliance Implication</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for lic in licenses %}
+        <tr>
+          <td style="font-weight:700; color:#fff;">{{ lic.license }}</td>
+          <td>
+            {% if lic.license_category == 'PERMISSIVE' %}
+              <span class="admin-badge badge-active">PERMISSIVE</span>
+            {% elif lic.license_category == 'STRONG_COPYLEFT' or lic.license_category == 'NETWORK_COPYLEFT' %}
+              <span class="admin-badge badge-suspended">{{ lic.license_category }}</span>
+            {% elif lic.license_category == 'WEAK_COPYLEFT' %}
+              <span class="admin-badge badge-high">WEAK_COPYLEFT</span>
+            {% else %}
+              <span class="admin-badge badge-neutral">{{ lic.license_category|default:"UNKNOWN" }}</span>
+            {% endif %}
+          </td>
+          <td style="font-weight:600;">{{ lic.package_count }} packages</td>
+          <td style="font-size:12px; color:var(--admin-text-secondary);">
+            {% if lic.license_category == 'PERMISSIVE' %}
+              Minimal risk for commercial redistribution.
+            {% elif lic.license_category == 'STRONG_COPYLEFT' %}
+              Source disclosure required if distributed. High compliance risk.
+            {% elif lic.license_category == 'NETWORK_COPYLEFT' %}
+              Network use triggers source disclosure (e.g. AGPL).
+            {% else %}
+              Review recommended to establish legal obligations.
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="4" style="text-align:center; color:var(--admin-text-muted); padding:32px;">No license records identified yet.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

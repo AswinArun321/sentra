@@ -1,0 +1,76 @@
+{% extends "admin_panel/base.html" %}
+
+{% block title %}Settings — SENTRA Admin{% endblock %}
+
+{% block content %}
+<div class="admin-page-header">
+  <div>
+    <h1 class="admin-page-title">Safe Platform Settings</h1>
+    <p class="admin-page-subtitle">Configure non-sensitive runtime platform controls. All configuration updates are audited.</p>
+  </div>
+</div>
+
+<!-- Security Architecture Notice -->
+<div style="background:rgba(245, 158, 11, 0.08); border:1px solid rgba(245, 158, 11, 0.25); border-radius:10px; padding:16px 20px; margin-bottom:24px; display:flex; align-items:flex-start; gap:14px;">
+  <div style="color:#d97706; font-size:20px; line-height:1;">&#9888;</div>
+  <div style="font-size:13px; color:var(--admin-text-secondary); line-height:1.5;">
+    <strong style="color:#b45309;">Immutable Security Secrets:</strong>
+    Sensitive credentials such as Django <code>SECRET_KEY</code>, GitHub OAuth client secrets, API tokens, and database passwords are intentionally omitted from UI management. They must strictly remain configured in your deployment environment (<code>.env</code>) and cannot be modified or leaked through the admin console.
+  </div>
+</div>
+
+<div class="admin-card">
+  <div class="admin-card-header">
+    <h3 class="admin-card-title">Runtime Operational Controls</h3>
+  </div>
+  <form method="POST" style="padding: 28px;">
+    {% csrf_token %}
+    
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); row-gap:32px; column-gap:32px; margin-bottom:32px;">
+      <!-- Platform Name -->
+      <div>
+        <label style="display:block; font-size:13px; font-weight:700; color:var(--admin-text-title); margin-bottom:8px;">Platform Name</label>
+        <input type="text" name="platform_name" value="{{ settings.platform_name|default:'SENTRA' }}" class="admin-input" style="width:100%;">
+        <div style="font-size:12px; color:var(--admin-text-muted); margin-top:6px; line-height:1.4;">Application display branding across the console.</div>
+      </div>
+
+      <!-- Maintenance Mode -->
+      <div>
+        <label style="display:block; font-size:13px; font-weight:700; color:var(--admin-text-title); margin-bottom:8px;">Maintenance Mode</label>
+        <select name="maintenance_mode" class="admin-select" style="width:100%;">
+          <option value="False" {% if settings.maintenance_mode == 'False' %}selected{% endif %}>Disabled (Normal Operations)</option>
+          <option value="True" {% if settings.maintenance_mode == 'True' %}selected{% endif %}>Enabled (Admin Access Only)</option>
+        </select>
+        <div style="font-size:12px; color:var(--admin-text-muted); margin-top:6px; line-height:1.4;">When active, normal users are notified of maintenance.</div>
+      </div>
+
+      <!-- Max Upload Size -->
+      <div>
+        <label style="display:block; font-size:13px; font-weight:700; color:var(--admin-text-title); margin-bottom:8px;">Max Manifest Upload Size (MB)</label>
+        <input type="number" name="max_upload_size_mb" value="{{ settings.max_upload_size_mb|default:'5' }}" class="admin-input" style="width:100%;">
+        <div style="font-size:12px; color:var(--admin-text-muted); margin-top:6px; line-height:1.4;">Memory limit for uploaded package manifests.</div>
+      </div>
+
+      <!-- Scan Timeout -->
+      <div>
+        <label style="display:block; font-size:13px; font-weight:700; color:var(--admin-text-title); margin-bottom:8px;">Scan Timeout (Seconds)</label>
+        <input type="number" name="scan_timeout_seconds" value="{{ settings.scan_timeout_seconds|default:'300' }}" class="admin-input" style="width:100%;">
+        <div style="font-size:12px; color:var(--admin-text-muted); margin-top:6px; line-height:1.4;">Maximum permissible execution duration per repository scan.</div>
+      </div>
+
+      <!-- Report Retention -->
+      <div>
+        <label style="display:block; font-size:13px; font-weight:700; color:var(--admin-text-title); margin-bottom:8px;">Report Retention Window (Days)</label>
+        <input type="number" name="report_retention_days" value="{{ settings.report_retention_days|default:'90' }}" class="admin-input" style="width:100%;">
+        <div style="font-size:12px; color:var(--admin-text-muted); margin-top:6px; line-height:1.4;">Number of days generated reports and SBOM artifacts are retained.</div>
+      </div>
+    </div>
+
+    <div style="border-top:1px solid var(--admin-border); padding-top:18px; display:flex; justify-content:flex-end;">
+      <button type="submit" class="admin-btn admin-btn-primary">
+        Save Runtime Settings
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}

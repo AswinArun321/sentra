@@ -55,6 +55,15 @@ def contact_view(request):
     """
     Renders the project contact and inquiry page.
     """
+    submitted = False
+    if request.method == 'POST':
+        name = request.POST.get('name', '').strip()
+        email = request.POST.get('email', '').strip()
+        message = request.POST.get('message', '').strip()
+        if name and email and message:
+            submitted = True
+
     return render(request, 'public/contact.html', {
         'active_page': 'contact',
+        'submitted': submitted,
     })

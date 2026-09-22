@@ -1,0 +1,142 @@
+{% extends "admin_panel/base.html" %}
+
+{% block title %}GitHub Connections — SENTRA Admin{% endblock %}
+
+{% block content %}
+<div class="admin-page-header">
+  <div>
+    <h1 class="admin-page-title">GitHub Connection Monitoring</h1>
+    <p class="admin-page-subtitle">Inspect connected developer accounts and OAuth link statuses without ever exposing tokens or credentials.</p>
+  </div>
+</div>
+
+<!-- Security Alert -->
+<div style="background:rgba(59, 130, 246, 0.08); border:1px solid rgba(59, 130, 246, 0.25); border-radius:10px; padding:14px 18px; margin-bottom:20px; display:flex; align-items:center; gap:12px;">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+  <div style="font-size:13px; color:#cbd5e1;">
+    <strong>Credential Protection Guarantee:</strong> Per SENTRA security architecture, OAuth access tokens, refresh tokens, and client secrets are strictly isolated in secure storage and never rendered in the console, API payloads, or audit logs.
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="admin-kpi-grid" style="grid-template-columns: repeat(2, 1fr); margin-bottom: 20px;">
+  <div class="admin-kpi-card" style="padding:14px;">
+    <div class="admin-kpi-label">Connected Users</div>
+    <div class="admin-kpi-value" style="font-size:24px; color:#34d399;">{{ connected_count }}</div>
+    <div class="admin-kpi-subtext">Active GitHub OAuth links</div>
+  </div>
+  <div class="admin-kpi-card" style="padding:14px;">
+    <div class="admin-kpi-label">Disconnected Users</div>
+    <div class="admin-kpi-value" style="font-size:24px; color:var(--admin-text-muted);">{{ disconnected_count }}</div>
+    <div class="admin-kpi-subtext">Local accounts without GitHub OAuth</div>
+  </div>
+</div>
+
+<div class="admin-card">
+  <!-- Filters Bar -->
+  <form method="GET" class="admin-filters-bar">
+    <input type="text" name="q" value="{{ query_params.q|default:'' }}" class="admin-input" placeholder="Search by SENTRA user or GitHub username..." style="min-width: 280px;">
+    <button type="submit" class="admin-btn admin-btn-secondary admin-btn-sm">Filter</button>
+    {% if query_params.q %}
+      <a href="{% url 'admin_github' %}" class="admin-btn admin-btn-secondary admin-btn-sm" style="color:var(--admin-text-muted);">Clear</a>
+    {% endif %}
+  </form>
+
+  <div class="admin-table-container">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>SENTRA User</th>
+          <th>GitHub Account</th>
+          <th>GitHub User ID</th>
+          <th>Connection Status</th>
+          <th>Connected Since</th>
+          <th>Last Sync / Update</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for conn in connections_page %}
+        <tr>
+          <td>
+            <a href="{% url 'admin_user_detail' conn.user.id %}" style="font-weight:700; color:#fff;">
+              {{ conn.user.username }}
+            </a>
+            <div style="font-size:11px; color:var(--admin-text-muted);">{{ conn.user.email }}</div>
+          </td>
+          <td>
+            <div style="font-weight:600; color:#60a5fa;">@{{ conn.github_username }}</div>
+          </td>
+          <td class="font-mono" style="font-size:12px; color:var(--admin-text-secondary);">
+            {{ conn.github_user_id }}
+          </td>
+          <td>
+            <span class="admin-badge badge-active">Connected</span>
+          </td>
+          <td style="font-size:11px; color:var(--admin-text-muted);">
+            {{ conn.connected_at|date:"M d, Y" }}
+          </td>
+          <td style="font-size:11px; color:var(--admin-text-muted);">
+            {{ conn.updated_at|timesince }} ago
+          </td>
+          <td>
+            <button type="button" class="admin-btn admin-btn-danger admin-btn-sm" onclick="confirmDisconnectGitHub({{ conn.id }}, '{{ conn.user.username }}', '{{ conn.github_username }}')">
+              Disconnect
+            </button>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" style="text-align:center; color:var(--admin-text-muted); padding:32px;">No active GitHub connections found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  {% if connections_page.has_other_pages %}
+  <div class="admin-pagination">
+    <div>
+      Showing page {{ connections_page.number }} of {{ connections_page.paginator.num_pages }}
+    </div>
+    <div class="admin-pagination-links">
+      {% if connections_page.has_previous %}
+        <a href="?page={{ connections_page.previous_page_number }}{% for key, val in query_params.items %}{% if key != 'page' %}&{{ key }}={{ val }}{% endif %}{% endfor %}" class="admin-btn admin-btn-secondary admin-btn-sm">&larr; Prev</a>
+      {% endif %}
+      {% if connections_page.has_next %}
+        <a href="?page={{ connections_page.next_page_number }}{% for key, val in query_params.items %}{% if key != 'page' %}&{{ key }}={{ val }}{% endif %}{% endfor %}" class="admin-btn admin-btn-secondary admin-btn-sm">Next &rarr;</a>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  function confirmDisconnectGitHub(connectionId, username, githubUser) {
+    openConfirmModal(
+      `Disconnect GitHub @${githubUser}?`,
+      `<p>Are you sure you want to disconnect GitHub account <strong>@${githubUser}</strong> from SENTRA user <strong>${username}</strong>?</p>
+       <p style="font-size:12px; color:#f87171;">This will immediately revoke their repository import session until re-authorized.</p>`,
+      'Disconnect OAuth',
+      true,
+      () => {
+        fetch(`/api/admin/github/${connectionId}/disconnect/`, {
+          method: 'DELETE',
+          headers: {
+            'X-CSRFToken': csrftoken,
+          }
+        })
+        .then(res => {
+          if (!res.ok) return res.json().then(data => { throw new Error(data.error || 'Failed.'); });
+          return res.json();
+        })
+        .then(data => window.location.reload())
+        .catch(err => alert('Disconnect failed: ' + err.message));
+      }
+    );
+  }
+</script>
+{% endblock %}

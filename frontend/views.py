@@ -1,5 +1,5 @@
 import logging
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -18,6 +18,9 @@ def dashboard_view(request):
     Provides initial baseline context from DashboardService for fast first paint,
     while dashboard.js enhances live state and interaction.
     """
+    if request.user.is_staff or request.user.is_superuser:
+        return redirect('admin_dashboard')
+
     service = DashboardService()
     dashboard_data = service.get_overview(request.user)
 

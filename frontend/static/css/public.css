@@ -2182,3 +2182,505 @@ body.public-page::before {
   }
 }
 
+/* ==========================================================================
+   ALTA-INSPIRED EDITORIAL PUBLIC SITE SUITE
+   Editorial, minimal, security-focused product presentation.
+   Oversized typography, numbered sections, generous whitespace.
+   ========================================================================== */
+
+.alta-container {
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+.alta-container-narrow {
+  width: 100%;
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.alta-section {
+  padding: 120px 0;
+  position: relative;
+}
+
+.alta-section-alt {
+  background-color: #ffffff;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.alta-eyebrow {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.6px;
+  color: var(--accent-primary);
+  margin-bottom: 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.alta-eyebrow::before {
+  content: "//";
+  opacity: 0.7;
+}
+
+.alta-hero {
+  padding-top: 140px;
+  padding-bottom: 110px;
+  background: var(--bg-base);
+}
+
+.alta-hero-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.95fr;
+  gap: 64px;
+  align-items: center;
+}
+
+.alta-hero-title {
+  font-size: clamp(3rem, 6.2vw, 5.6rem);
+  font-weight: 900;
+  line-height: 1.02;
+  letter-spacing: -2px;
+  color: var(--text-title);
+  text-transform: uppercase;
+  margin: 0 0 24px 0;
+}
+
+.alta-hero-desc {
+  font-size: clamp(1.05rem, 1.8vw, 1.25rem);
+  line-height: 1.65;
+  color: var(--text-secondary);
+  max-width: 580px;
+  margin: 0 0 36px 0;
+}
+
+.alta-hero-cta-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* Statement Section */
+.alta-statement-section {
+  padding: 100px 0;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  background: #ffffff;
+}
+
+.alta-statement-title {
+  font-size: clamp(2.2rem, 4.4vw, 4rem);
+  font-weight: 850;
+  line-height: 1.1;
+  letter-spacing: -1.2px;
+  color: var(--text-title);
+  max-width: 980px;
+  margin: 0 0 20px 0;
+}
+
+.alta-statement-desc {
+  font-size: 18px;
+  line-height: 1.65;
+  color: var(--text-secondary);
+  max-width: 720px;
+  margin: 0;
+}
+
+/* Numbered Capability Rows (Editorial Service List) */
+.alta-cap-list {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--border-color);
+  margin-top: 48px;
+}
+
+.alta-cap-row {
+  display: grid;
+  grid-template-columns: 80px 1.4fr 2fr 60px;
+  align-items: baseline;
+  padding: 32px 16px;
+  border-bottom: 1px solid var(--border-color);
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s ease;
+  border-radius: 8px;
+}
+
+.alta-cap-row:hover {
+  background: #ffffff;
+  padding-left: 24px;
+  padding-right: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.alta-cap-num {
+  font-family: var(--font-mono, monospace);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-muted);
+  transition: color 0.2s ease;
+}
+
+.alta-cap-row:hover .alta-cap-num {
+  color: var(--accent-primary);
+}
+
+.alta-cap-title {
+  font-size: 21px;
+  font-weight: 800;
+  color: var(--text-title);
+  letter-spacing: -0.3px;
+}
+
+.alta-cap-desc {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.alta-cap-arrow {
+  display: flex;
+  justify-content: flex-end;
+  color: var(--text-muted);
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.alta-cap-row:hover .alta-cap-arrow {
+  transform: translateX(6px);
+  color: var(--accent-primary);
+}
+
+/* Process Timeline (5 Steps) */
+.alta-process-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 18px;
+  margin-top: 48px;
+}
+
+.alta-process-card {
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 28px 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 230px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.alta-process-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.06);
+  border-color: #c7c7c0;
+}
+
+.alta-process-num {
+  font-family: var(--font-mono, monospace);
+  font-size: 26px;
+  font-weight: 850;
+  color: var(--accent-primary);
+  margin-bottom: 14px;
+}
+
+.alta-process-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--text-title);
+  margin: 0 0 8px 0;
+  letter-spacing: -0.2px;
+}
+
+.alta-process-desc {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Showcase / Interface Panel */
+.alta-showcase-panel {
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  margin-top: 48px;
+}
+
+.alta-showcase-header {
+  padding: 20px 28px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fafaf8;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.alta-showcase-body {
+  padding: 32px 28px;
+}
+
+.alta-telemetry-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+.alta-telemetry-card {
+  padding: 20px;
+  border-radius: 10px;
+  background: var(--bg-base);
+  border: 1px solid var(--border-color);
+}
+
+.alta-telemetry-val {
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--text-title);
+  line-height: 1.1;
+  margin-bottom: 4px;
+}
+
+.alta-telemetry-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Principles (Why SENTRA) */
+.alta-principles-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  margin-top: 48px;
+}
+
+.alta-principle-card {
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 36px 30px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.alta-principle-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.05);
+}
+
+.alta-principle-num {
+  font-family: var(--font-mono, monospace);
+  font-size: 32px;
+  font-weight: 850;
+  color: var(--accent-primary);
+  margin-bottom: 16px;
+}
+
+.alta-principle-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-title);
+  margin: 0 0 12px 0;
+  letter-spacing: -0.3px;
+}
+
+.alta-principle-desc {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* FAQ Accordion */
+.alta-faq-list {
+  max-width: 900px;
+  margin: 48px auto 0;
+  border-top: 1px solid var(--border-color);
+}
+
+.alta-faq-item {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.alta-faq-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 8px;
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  font-weight: 750;
+  color: var(--text-title);
+  text-align: left;
+  cursor: pointer;
+  transition: color 0.15s ease;
+  font-family: inherit;
+}
+
+.alta-faq-btn:hover {
+  color: var(--accent-primary);
+}
+
+.alta-faq-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.25s ease;
+  color: var(--text-muted);
+}
+
+.alta-faq-item.active .alta-faq-icon {
+  transform: rotate(45deg);
+  color: var(--accent-primary);
+}
+
+.alta-faq-content {
+  padding: 0 8px 24px;
+  font-size: 15.5px;
+  line-height: 1.65;
+  color: var(--text-secondary);
+  display: none;
+}
+
+.alta-faq-item.active .alta-faq-content {
+  display: block;
+}
+
+/* Final Editorial CTA */
+.alta-cta-section {
+  padding: 120px 0;
+  background: #ffffff;
+  border-top: 1px solid var(--border-color);
+  text-align: center;
+}
+
+.alta-cta-title {
+  font-size: clamp(2.4rem, 5.2vw, 4.4rem);
+  font-weight: 900;
+  letter-spacing: -1.2px;
+  text-transform: uppercase;
+  line-height: 1.05;
+  color: var(--text-title);
+  margin: 0 0 20px 0;
+}
+
+.alta-cta-desc {
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin: 0 auto 36px auto;
+  max-width: 580px;
+}
+
+/* Contact Page Grid & Form */
+.alta-contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.25fr;
+  gap: 64px;
+  align-items: start;
+  margin-top: 48px;
+}
+
+.alta-contact-card {
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 40px 36px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+}
+
+.alta-contact-item {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 32px;
+}
+
+.alta-contact-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: rgba(29, 92, 255, 0.08);
+  color: var(--accent-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Responsive Media Queries */
+@media (max-width: 1080px) {
+  .alta-hero-grid {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+  .alta-process-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .alta-telemetry-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .alta-contact-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+}
+
+@media (max-width: 860px) {
+  .alta-section {
+    padding: 80px 0;
+  }
+  .alta-cap-row {
+    grid-template-columns: 50px 1fr;
+    gap: 12px;
+    padding: 24px 12px;
+  }
+  .alta-cap-desc {
+    grid-column: 2 / -1;
+  }
+  .alta-cap-arrow {
+    display: none;
+  }
+  .alta-principles-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .alta-container {
+    padding: 0 20px;
+  }
+  .alta-process-grid {
+    grid-template-columns: 1fr;
+  }
+  .alta-telemetry-grid {
+    grid-template-columns: 1fr;
+  }
+  .alta-contact-card {
+    padding: 28px 20px;
+  }
+}
+
+

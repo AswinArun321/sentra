@@ -1,0 +1,126 @@
+{% extends "admin_panel/base.html" %}
+
+{% block title %}Projects — SENTRA Admin{% endblock %}
+
+{% block content %}
+<div class="admin-page-header">
+  <div>
+    <h1 class="admin-page-title">Project Repositories</h1>
+    <p class="admin-page-subtitle">Platform-wide overview of all code repositories, analysis statuses, and security scores.</p>
+  </div>
+  <div>
+    <span class="admin-badge badge-neutral" style="font-size:13px; padding:6px 12px;">Total: {{ total_projects_count }} Projects</span>
+  </div>
+</div>
+
+<div class="admin-card">
+  <!-- Filters Bar -->
+  <form method="GET" class="admin-filters-bar">
+    <input type="text" name="q" value="{{ query_params.q|default:'' }}" class="admin-input" placeholder="Search project name, repo, owner..." style="min-width: 260px;">
+    
+    <select name="source" class="admin-select">
+      <option value="">Source: All</option>
+      <option value="github" {% if query_params.source == 'github' %}selected{% endif %}>GitHub</option>
+      <option value="manual" {% if query_params.source == 'manual' %}selected{% endif %}>Manual Manifest</option>
+    </select>
+
+    <select name="status" class="admin-select">
+      <option value="">Analysis Status: All</option>
+      <option value="COMPLETED" {% if query_params.status == 'COMPLETED' %}selected{% endif %}>Completed</option>
+      <option value="ANALYZING" {% if query_params.status == 'ANALYZING' %}selected{% endif %}>Analyzing</option>
+      <option value="IMPORTING" {% if query_params.status == 'IMPORTING' %}selected{% endif %}>Importing</option>
+      <option value="FAILED" {% if query_params.status == 'FAILED' %}selected{% endif %}>Failed</option>
+    </select>
+
+    <button type="submit" class="admin-btn admin-btn-secondary admin-btn-sm">Filter</button>
+    {% if query_params.q or query_params.source or query_params.status %}
+      <a href="{% url 'admin_projects' %}" class="admin-btn admin-btn-secondary admin-btn-sm" style="color:var(--admin-text-muted);">Clear</a>
+    {% endif %}
+  </form>
+
+  <!-- Projects Table -->
+  <div class="admin-table-container">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Project Name</th>
+          <th>Owner</th>
+          <th>Source</th>
+          <th>Analysis Status</th>
+          <th>Risk Score</th>
+          <th>Dependencies</th>
+          <th>Created</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in projects_page %}
+        <tr>
+          <td>
+            <div style="font-weight:700; color:#fff;">{{ p.name }}</div>
+            {% if p.repository_url %}
+              <div style="font-size:11px; color:var(--admin-text-muted); max-width:280px; overflow:hidden; text-overflow:ellipsis;">
+                <a href="{{ p.repository_url }}" target="_blank" style="color:#60a5fa;">{{ p.repository_url }}</a>
+              </div>
+            {% endif %}
+          </td>
+          <td>
+            <a href="{% url 'admin_user_detail' p.owner.id %}" style="color:#fff; font-weight:600;">
+              {{ p.owner.username }}
+            </a>
+            <div style="font-size:11px; color:var(--admin-text-muted);">{{ p.owner.email }}</div>
+          </td>
+          <td>
+            {% if p.source == 'github' %}
+              <span class="admin-badge badge-active">GitHub</span>
+            {% else %}
+              <span class="admin-badge badge-neutral">Manual</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if p.analysis_status == 'COMPLETED' %}
+              <span class="admin-badge badge-completed">COMPLETED</span>
+            {% elif p.analysis_status == 'ANALYZING' or p.analysis_status == 'IMPORTING' %}
+              <span class="admin-badge badge-running">{{ p.analysis_status }}</span>
+            {% elif p.analysis_status == 'FAILED' %}
+              <span class="admin-badge badge-failed">FAILED</span>
+            {% else %}
+              <span class="admin-badge badge-neutral">{{ p.analysis_status }}</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if p.risk_score is not None %}
+              <span class="font-mono" style="font-weight:700;">{{ p.risk_score|floatformat:1 }}</span>
+            {% else %}
+              <span style="color:var(--admin-text-muted);">&mdash;</span>
+            {% endif %}
+          </td>
+          <td style="font-weight:600;">{{ p.dependency_count }}</td>
+          <td style="font-size:11px; color:var(--admin-text-muted);">{{ p.created_at|date:"M d, Y" }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" style="text-align:center; color:var(--admin-text-muted); padding:32px;">No matching projects found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  {% if projects_page.has_other_pages %}
+  <div class="admin-pagination">
+    <div>
+      Showing page {{ projects_page.number }} of {{ projects_page.paginator.num_pages }}
+    </div>
+    <div class="admin-pagination-links">
+      {% if projects_page.has_previous %}
+        <a href="?page={{ projects_page.previous_page_number }}{% for key, val in query_params.items %}{% if key != 'page' %}&{{ key }}={{ val }}{% endif %}{% endfor %}" class="admin-btn admin-btn-secondary admin-btn-sm">&larr; Prev</a>
+      {% endif %}
+      {% if projects_page.has_next %}
+        <a href="?page={{ projects_page.next_page_number }}{% for key, val in query_params.items %}{% if key != 'page' %}&{{ key }}={{ val }}{% endif %}{% endfor %}" class="admin-btn admin-btn-secondary admin-btn-sm">Next &rarr;</a>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

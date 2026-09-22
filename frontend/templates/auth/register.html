@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block auth_content %}
 <div class="auth-page">
@@ -47,59 +48,139 @@
     <!-- Right Column: Registration Card -->
     <div class="auth-card" style="max-width: 460px;">
       <div class="auth-card-header">
-        <div class="auth-title">Get started free</div>
-        <div class="auth-subtitle">Create your developer intelligence workspace</div>
+        <div class="auth-title">Create your SENTRA account</div>
+        <div class="auth-subtitle">Start your repository security workspace.</div>
       </div>
 
       {% if messages %}
       {% for message in messages %}
-      <div class="alert alert-{{ message.tags|default:'error' }} mb-16">{{ message }}</div>
+      <div class="alert alert-{{ message.tags|default:'error' }} mb-16">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
+          {% if message.tags == 'success' %}
+          <polyline points="20 6 9 17 4 12"></polyline>
+          {% else %}
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="15" y1="9" x2="9" y2="15"></line>
+          <line x1="9" y1="9" x2="15" y2="15"></line>
+          {% endif %}
+        </svg>
+        <span>{{ message }}</span>
+      </div>
       {% endfor %}
       {% endif %}
 
-      <form method="POST" action="{% url 'register' %}" id="register-form">
+      <form method="POST" action="{% url 'register' %}" id="register-form" novalidate>
         {% csrf_token %}
 
-        <div class="grid-2" style="gap:14px;">
-          <div class="form-group">
-            <label class="form-label" for="username">Username</label>
-            <input id="username" type="text" name="username" class="form-control"
-                   required autocomplete="username" placeholder="alex_dev"
+        <div class="form-group">
+          <label class="form-label" for="username">Username</label>
+          <div class="auth-input-wrapper">
+            <span class="auth-input-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </span>
+            <input id="username" type="text" name="username" class="form-control auth-input"
+                   required autocomplete="username"
                    value="{{ request.POST.username|default:'' }}">
           </div>
-          <div class="form-group">
-            <label class="form-label" for="email">Email</label>
-            <input id="email" type="email" name="email" class="form-control"
-                   required autocomplete="email" placeholder="alex@company.com"
+          <div class="auth-field-error" id="username-error" style="display:none;"></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="email">Email address</label>
+          <div class="auth-input-wrapper">
+            <span class="auth-input-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+              </svg>
+            </span>
+            <input id="email" type="email" name="email" class="form-control auth-input"
+                   required autocomplete="email"
                    value="{{ request.POST.email|default:'' }}">
           </div>
+          <div class="auth-field-error" id="email-error" style="display:none;"></div>
         </div>
 
         <div class="form-group">
           <label class="form-label" for="password">Password</label>
-          <input id="password" type="password" name="password" class="form-control"
-                 required autocomplete="new-password" placeholder="Minimum 8 characters">
+          <div class="auth-input-wrapper">
+            <span class="auth-input-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+            </span>
+            <input id="password" type="password" name="password" class="form-control auth-input has-toggle"
+                   required autocomplete="new-password">
+            <button type="button" class="auth-password-toggle" aria-label="Show password" data-target="password" tabindex="0">
+              <svg class="icon-eye" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              <svg class="icon-eye-off" style="display:none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
+                <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
+                <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
+                <line x1="2" y1="2" x2="22" y2="22"></line>
+              </svg>
+            </button>
+          </div>
+          <!-- Password Strength Indicator -->
+          <div class="auth-strength-container" id="password-strength-container" style="display:none;">
+            <span class="auth-strength-text" id="strength-text">Password strength</span>
+            <div class="auth-strength-meter" aria-hidden="true">
+              <div class="auth-strength-bar" id="strength-bar-1"></div>
+              <div class="auth-strength-bar" id="strength-bar-2"></div>
+              <div class="auth-strength-bar" id="strength-bar-3"></div>
+              <div class="auth-strength-bar" id="strength-bar-4"></div>
+            </div>
+          </div>
+          <div class="auth-field-error" id="password-error" style="display:none;"></div>
         </div>
 
         <div class="form-group">
-          <label class="form-label" for="password2">Confirm Password</label>
-          <input id="password2" type="password" name="password2" class="form-control"
-                 required autocomplete="new-password" placeholder="Repeat your password">
+          <label class="form-label" for="password2">Confirm password</label>
+          <div class="auth-input-wrapper">
+            <span class="auth-input-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+            </span>
+            <input id="password2" type="password" name="password2" class="form-control auth-input has-toggle"
+                   required autocomplete="new-password">
+            <button type="button" class="auth-password-toggle" aria-label="Show password" data-target="password2" tabindex="0">
+              <svg class="icon-eye" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              <svg class="icon-eye-off" style="display:none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
+                <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
+                <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
+                <line x1="2" y1="2" x2="22" y2="22"></line>
+              </svg>
+            </button>
+          </div>
+          <div class="auth-field-error" id="password2-error" style="display:none;"></div>
         </div>
 
-        <button type="submit" class="btn btn-primary btn-lg" style="width:100%; justify-content:center; margin-top:10px;" id="register-btn">
+        <button type="submit" class="btn btn-primary btn-lg" style="width:100%; justify-content:center; margin-top:14px;" id="register-btn">
           Create Account &rarr;
         </button>
       </form>
 
       <div class="divider"></div>
 
-      <p class="text-center text-sm text-secondary">
+      <p class="text-center text-sm text-secondary" style="margin: 0;">
         Already have an account?
-        <a href="{% url 'login' %}" class="text-accent" style="font-weight:700;">Sign in</a>
+        <a href="{% url 'login' %}" class="text-accent" style="font-weight:700;">Sign in &rarr;</a>
       </p>
 
-      <div class="text-center" style="margin-top: 14px;">
+      <div class="text-center" style="margin-top: 18px;">
         <a href="{% url 'home' %}" class="text-secondary" style="font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: color 0.15s ease;">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="19" y1="12" x2="5" y2="12"></line>
@@ -113,10 +194,179 @@
 </div>
 
 <script>
-document.getElementById('register-form').addEventListener('submit', function() {
-  const btn = document.getElementById('register-btn');
-  btn.innerHTML = '<span class="spinner"></span> Creating account...';
-  btn.disabled = true;
+// Password Visibility Toggle
+document.querySelectorAll('.auth-password-toggle').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var targetId = this.getAttribute('data-target');
+    var input = document.getElementById(targetId);
+    if (!input) return;
+    var isPassword = input.type === 'password';
+    input.type = isPassword ? 'text' : 'password';
+    this.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
+    var eye = this.querySelector('.icon-eye');
+    var eyeOff = this.querySelector('.icon-eye-off');
+    if (eye && eyeOff) {
+      eye.style.display = isPassword ? 'none' : 'block';
+      eyeOff.style.display = isPassword ? 'block' : 'none';
+    }
+  });
 });
+
+// Client-Side Validation, Password Strength & Loading States
+(function() {
+  var form = document.getElementById('register-form');
+  var usernameInput = document.getElementById('username');
+  var emailInput = document.getElementById('email');
+  var passwordInput = document.getElementById('password');
+  var password2Input = document.getElementById('password2');
+
+  var usernameError = document.getElementById('username-error');
+  var emailError = document.getElementById('email-error');
+  var passwordError = document.getElementById('password-error');
+  var password2Error = document.getElementById('password2-error');
+
+  var strengthContainer = document.getElementById('password-strength-container');
+  var strengthText = document.getElementById('strength-text');
+  var bars = [
+    document.getElementById('strength-bar-1'),
+    document.getElementById('strength-bar-2'),
+    document.getElementById('strength-bar-3'),
+    document.getElementById('strength-bar-4')
+  ];
+
+  var registerBtn = document.getElementById('register-btn');
+
+  function clearError(input, errEl) {
+    input.classList.remove('is-invalid');
+    var wrapper = input.closest('.auth-input-wrapper');
+    if (wrapper) wrapper.classList.remove('is-invalid');
+    errEl.textContent = '';
+    errEl.style.display = 'none';
+  }
+
+  function showError(input, errEl, msg) {
+    input.classList.add('is-invalid');
+    var wrapper = input.closest('.auth-input-wrapper');
+    if (wrapper) wrapper.classList.add('is-invalid');
+    errEl.textContent = msg;
+    errEl.style.display = 'flex';
+  }
+
+  function validateEmail(val) {
+    if (!val || !val.trim()) return 'Please enter your email address.';
+    var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!re.test(val.trim())) return 'Please enter a valid email address.';
+    return '';
+  }
+
+  function checkStrength(val) {
+    if (!val) return { score: 0, text: '', color: '' };
+    var points = 0;
+    if (val.length >= 8) points++;
+    if (val.length >= 12) points++;
+    if (/[a-z]/.test(val) && /[A-Z]/.test(val)) points++;
+    if (/\d/.test(val)) points++;
+    if (/[^a-zA-Z0-9]/.test(val)) points++;
+
+    if (points <= 2) {
+      return { score: 1, text: 'Weak', color: '#ef4444' };
+    } else if (points <= 3) {
+      return { score: 2, text: 'Fair', color: '#f59e0b' };
+    } else {
+      return { score: 4, text: 'Strong', color: '#10b981' };
+    }
+  }
+
+  usernameInput.addEventListener('input', function() {
+    clearError(usernameInput, usernameError);
+  });
+
+  emailInput.addEventListener('input', function() {
+    clearError(emailInput, emailError);
+  });
+
+  passwordInput.addEventListener('input', function() {
+    clearError(passwordInput, passwordError);
+    var val = this.value;
+    if (!val) {
+      strengthContainer.style.display = 'none';
+      return;
+    }
+    strengthContainer.style.display = 'flex';
+    var res = checkStrength(val);
+    strengthText.textContent = 'Password strength: ' + res.text;
+    strengthText.style.color = res.color;
+    bars.forEach(function(bar, idx) {
+      if (idx < res.score) {
+        bar.style.backgroundColor = res.color;
+      } else {
+        bar.style.backgroundColor = 'var(--border-subtle)';
+      }
+    });
+
+    if (password2Input.value) {
+      validateMatch();
+    }
+  });
+
+  function validateMatch() {
+    if (!password2Input.value) return true;
+    if (password2Input.value !== passwordInput.value) {
+      showError(password2Input, password2Error, 'Passwords do not match.');
+      return false;
+    } else {
+      clearError(password2Input, password2Error);
+      return true;
+    }
+  }
+
+  password2Input.addEventListener('input', function() {
+    if (this.value) {
+      validateMatch();
+    } else {
+      clearError(password2Input, password2Error);
+    }
+  });
+
+  form.addEventListener('submit', function(e) {
+    var hasError = false;
+
+    if (!usernameInput.value.trim()) {
+      showError(usernameInput, usernameError, 'Please enter a username.');
+      hasError = true;
+    }
+
+    var emailMsg = validateEmail(emailInput.value);
+    if (emailMsg) {
+      showError(emailInput, emailError, emailMsg);
+      if (!hasError) usernameInput.value.trim() ? emailInput.focus() : null;
+      hasError = true;
+    }
+
+    if (!passwordInput.value) {
+      showError(passwordInput, passwordError, 'Please enter a password.');
+      hasError = true;
+    } else if (passwordInput.value.length < 8) {
+      showError(passwordInput, passwordError, 'Password must be at least 8 characters.');
+      hasError = true;
+    }
+
+    if (!password2Input.value) {
+      showError(password2Input, password2Error, 'Please confirm your password.');
+      hasError = true;
+    } else if (password2Input.value !== passwordInput.value) {
+      showError(password2Input, password2Error, 'Passwords do not match.');
+      hasError = true;
+    }
+
+    if (hasError) {
+      e.preventDefault();
+      return;
+    }
+
+    registerBtn.innerHTML = '<span class="spinner"></span> Creating account...';
+    registerBtn.disabled = true;
+  });
+})();
 </script>
 {% endblock %}

@@ -77,6 +77,8 @@ def api_profile(request):
 def login_view(request):
     """Django session login page."""
     if request.user.is_authenticated:
+        if request.user.is_staff or request.user.is_superuser:
+            return redirect('admin_dashboard')
         return redirect('dashboard')
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -84,7 +86,14 @@ def login_view(request):
         user = authenticate(request, username=email, password=password)
         if user:
             login(request, user)
-            return redirect(request.GET.get('next', 'dashboard'))
+            next_url = request.GET.get('next')
+            if user.is_staff or user.is_superuser:
+                if next_url and not next_url.startswith('/dashboard'):
+                    return redirect(next_url)
+                return redirect('admin_dashboard')
+            if next_url:
+                return redirect(next_url)
+            return redirect('dashboard')
         messages.error(request, 'Invalid email or password.')
     return render(request, 'auth/login.html')
 

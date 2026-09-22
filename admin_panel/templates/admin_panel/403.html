@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>403 Forbidden — SENTRA Admin Console</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'admin_panel/css/admin.css' %}">
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background-color: var(--admin-bg-base);
+      font-family: var(--admin-font-sans);
+    }
+    .forbidden-box {
+      background: var(--admin-bg-surface);
+      border: 1px solid var(--admin-border);
+      border-radius: 16px;
+      padding: 40px;
+      max-width: 480px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+    .shield-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: rgba(239, 68, 68, 0.12);
+      color: #dc2626;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    h1 {
+      font-size: 22px;
+      color: var(--admin-text-title);
+      margin: 0 0 12px;
+    }
+    p {
+      color: var(--admin-text-secondary);
+      font-size: 14px;
+      line-height: 1.5;
+      margin: 0 0 24px;
+    }
+  </style>
+</head>
+<body>
+  <div class="forbidden-box">
+    <div class="shield-icon">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+    </div>
+    <h1>{{ error_title|default:"Access Restricted" }}</h1>
+    <p>{{ error_message|default:"You do not possess the administrative privileges required to access the SENTRA Admin Console." }}</p>
+    <div>
+      <a href="{% url 'dashboard' %}" class="admin-btn admin-btn-primary">Return to SENTRA</a>
+    </div>
+  </div>
+</body>
+</html>

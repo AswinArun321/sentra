@@ -1,0 +1,398 @@
+{% extends "admin_panel/base.html" %}
+
+{% block title %}Dashboard — SENTRA Admin{% endblock %}
+
+{% block content %}
+<div class="admin-page-header">
+  <div>
+    <h1 class="admin-page-title">Platform Operations &amp; Intelligence</h1>
+    <p class="admin-page-subtitle">Real-time telemetry, user management, and security posture across SENTRA.</p>
+  </div>
+  <div style="display:flex; gap:10px;">
+    <a href="{% url 'admin_users' %}" class="admin-btn admin-btn-secondary admin-btn-sm">Manage Users</a>
+    <a href="{% url 'admin_system_health' %}" class="admin-btn admin-btn-primary admin-btn-sm">System Health</a>
+  </div>
+</div>
+
+<!-- KPI Cards -->
+<div class="admin-kpi-grid">
+  <!-- Users -->
+  <div class="admin-kpi-card">
+    <div class="admin-kpi-header">
+      <span class="admin-kpi-label">Total Users</span>
+      <div class="admin-kpi-icon" style="color:#3b82f6;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      </div>
+    </div>
+    <div class="admin-kpi-value">{{ metrics.users.total }}</div>
+    <div class="admin-kpi-subtext">
+      <span style="color:#10b981;">{{ metrics.users.active }} active</span> &bull; 
+      <span style="color:#ef4444;">{{ metrics.users.suspended }} suspended</span>
+    </div>
+  </div>
+
+  <!-- Projects -->
+  <div class="admin-kpi-card">
+    <div class="admin-kpi-header">
+      <span class="admin-kpi-label">Total Projects</span>
+      <div class="admin-kpi-icon" style="color:#06b6d4;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+      </div>
+    </div>
+    <div class="admin-kpi-value">{{ metrics.projects.total }}</div>
+    <div class="admin-kpi-subtext">
+      {{ metrics.projects.github }} via GitHub &bull; {{ metrics.projects.with_critical_vulns }} with critical vulns
+    </div>
+  </div>
+
+  <!-- Scans -->
+  <div class="admin-kpi-card">
+    <div class="admin-kpi-header">
+      <span class="admin-kpi-label">Total Scans</span>
+      <div class="admin-kpi-icon" style="color:#a855f7;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+    </div>
+    <div class="admin-kpi-value">{{ metrics.scans.total }}</div>
+    <div class="admin-kpi-subtext">
+      <span style="color:#10b981;">{{ metrics.scans.completed }} completed</span> &bull; 
+      <span style="color:#ef4444;">{{ metrics.scans.failed }} failed</span>
+    </div>
+  </div>
+
+  <!-- Critical Vulnerabilities -->
+  <div class="admin-kpi-card">
+    <div class="admin-kpi-header">
+      <span class="admin-kpi-label">Critical Findings</span>
+      <div class="admin-kpi-icon" style="color:#ef4444;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </div>
+    </div>
+    <div class="admin-kpi-value" style="color:#f87171;">{{ metrics.vulnerabilities.critical }}</div>
+    <div class="admin-kpi-subtext">
+      {{ metrics.vulnerabilities.high }} high &bull; {{ metrics.vulnerabilities.total }} total findings
+    </div>
+  </div>
+</div>
+
+<!-- Charts Grid -->
+<div class="admin-charts-grid">
+  <!-- Scan Activity Chart -->
+  <div class="admin-chart-card">
+    <div class="admin-chart-card-header">
+      <h3 class="admin-chart-title">Scan Activity (Last 7 Days)</h3>
+      <span class="admin-badge badge-neutral">Completed vs Failed</span>
+    </div>
+    <div style="height: 240px; position: relative;">
+      <canvas id="scanActivityChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Vulnerability Severity Distribution -->
+  <div class="admin-chart-card">
+    <div class="admin-chart-card-header">
+      <h3 class="admin-chart-title">Vulnerability Severity Distribution</h3>
+      <span class="admin-badge badge-neutral">Risk Breakdown</span>
+    </div>
+    <div style="height: 240px; position: relative;">
+      <canvas id="vulnSeverityChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<div class="admin-charts-grid" style="margin-bottom: 24px;">
+  <!-- User Growth Chart -->
+  <div class="admin-chart-card">
+    <div class="admin-chart-card-header">
+      <h3 class="admin-chart-title">New User Registrations (14 Days)</h3>
+      <span class="admin-badge badge-neutral">Platform Growth</span>
+    </div>
+    <div style="height: 220px; position: relative;">
+      <canvas id="userGrowthChart"></canvas>
+    </div>
+  </div>
+
+  <!-- License Compliance Distribution -->
+  <div class="admin-chart-card">
+    <div class="admin-chart-card-header">
+      <h3 class="admin-chart-title">Observed Open Source Licenses</h3>
+      <span class="admin-badge badge-neutral">Top Licenses</span>
+    </div>
+    <div style="height: 220px; position: relative;">
+      <canvas id="licenseDistChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Tables (2 Columns) -->
+<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(460px, 1fr)); gap:20px; margin-bottom: 24px;">
+  <!-- Recent Users -->
+  <div class="admin-card" style="margin-bottom:0;">
+    <div class="admin-card-header">
+      <h3 class="admin-card-title">Recent Users</h3>
+      <a href="{% url 'admin_users' %}" style="font-size:12px; color:#3b82f6;">View All &rarr;</a>
+    </div>
+    <div class="admin-table-container">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Status</th>
+            <th>Role</th>
+            <th>Joined</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for u in recent_users %}
+          <tr>
+            <td>
+              <div style="font-weight:700; color:#fff;">{{ u.username }}</div>
+              <div style="font-size:11px; color:var(--admin-text-muted);">{{ u.email }}</div>
+            </td>
+            <td>
+              {% if u.admin_status.status == 'SUSPENDED' %}
+                <span class="admin-badge badge-suspended">SUSPENDED</span>
+              {% elif u.is_active %}
+                <span class="admin-badge badge-active">ACTIVE</span>
+              {% else %}
+                <span class="admin-badge badge-inactive">INACTIVE</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if u.is_staff or u.is_superuser %}
+                <span class="admin-badge badge-info">STAFF</span>
+              {% else %}
+                <span class="admin-badge badge-neutral">USER</span>
+              {% endif %}
+            </td>
+            <td style="font-size:11px; color:var(--admin-text-muted);">{{ u.date_joined|date:"M d, Y" }}</td>
+            <td>
+              <a href="{% url 'admin_user_detail' u.id %}" class="admin-btn admin-btn-secondary admin-btn-sm">View</a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5" style="text-align:center; color:var(--admin-text-muted); padding:24px;">No users found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Recent Scans -->
+  <div class="admin-card" style="margin-bottom:0;">
+    <div class="admin-card-header">
+      <h3 class="admin-card-title">Recent Scans</h3>
+      <a href="{% url 'admin_scans' %}" style="font-size:12px; color:#3b82f6;">View All &rarr;</a>
+    </div>
+    <div class="admin-table-container">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Scan</th>
+            <th>Project</th>
+            <th>Status</th>
+            <th>Risk Level</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in recent_scans %}
+          <tr>
+            <td class="font-mono">#{{ s.id }}</td>
+            <td>
+              <div style="font-weight:600; color:#fff;">{{ s.project.name }}</div>
+              <div style="font-size:11px; color:var(--admin-text-muted);">{{ s.project.owner.username }}</div>
+            </td>
+            <td>
+              {% if s.status == 'COMPLETED' %}
+                <span class="admin-badge badge-completed">COMPLETED</span>
+              {% elif s.status == 'RUNNING' %}
+                <span class="admin-badge badge-running">RUNNING</span>
+              {% elif s.status == 'FAILED' %}
+                <span class="admin-badge badge-failed">FAILED</span>
+              {% else %}
+                <span class="admin-badge badge-pending">{{ s.status }}</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if s.risk_level == 'CRITICAL' %}
+                <span class="admin-badge badge-critical">CRITICAL</span>
+              {% elif s.risk_level == 'HIGH' %}
+                <span class="admin-badge badge-high">HIGH</span>
+              {% elif s.risk_level == 'MEDIUM' %}
+                <span class="admin-badge badge-medium">MEDIUM</span>
+              {% elif s.risk_level == 'LOW' %}
+                <span class="admin-badge badge-low">LOW</span>
+              {% else %}
+                <span class="admin-badge badge-neutral">{{ s.risk_level }}</span>
+              {% endif %}
+            </td>
+            <td style="font-size:11px; color:var(--admin-text-muted);">{{ s.created_at|timesince }} ago</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5" style="text-align:center; color:var(--admin-text-muted); padding:24px;">No recent scans recorded.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Administrative Activity -->
+<div class="admin-card" style="margin-top:20px;">
+  <div class="admin-card-header">
+    <h3 class="admin-card-title">Recent Administrative Actions</h3>
+    <a href="{% url 'admin_audit_logs' %}" style="font-size:12px; color:#3b82f6;">Full Audit Trail &rarr;</a>
+  </div>
+  <div class="admin-table-container">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Timestamp</th>
+          <th>Actor</th>
+          <th>Action</th>
+          <th>Target</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in recent_audit_logs %}
+        <tr>
+          <td style="font-size:11px; color:var(--admin-text-muted); white-space:nowrap;">{{ log.created_at|date:"Y-m-d H:i" }}</td>
+          <td>
+            <span class="admin-badge badge-info">{{ log.admin_user.username|default:"System" }}</span>
+          </td>
+          <td class="font-mono" style="font-size:11px; font-weight:700;">{{ log.action }}</td>
+          <td>
+            {% if log.target_user %}
+              {{ log.target_user.username }}
+            {% elif log.target_object_type %}
+              {{ log.target_object_type }} #{{ log.target_object_id }}
+            {% else %}
+              &mdash;
+            {% endif %}
+          </td>
+          <td style="color:var(--admin-text-secondary); max-width:320px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+            {{ log.description }}
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" style="text-align:center; color:var(--admin-text-muted); padding:24px;">No administrative audit events recorded yet.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const chartData = {{ chart_data_json|safe }};
+
+  // 1. Scan Activity
+  new Chart(document.getElementById('scanActivityChart'), {
+    type: 'bar',
+    data: {
+      labels: chartData.scan_activity.labels,
+      datasets: [
+        {
+          label: 'Completed',
+          data: chartData.scan_activity.completed,
+          backgroundColor: '#10b981',
+          borderRadius: 4,
+        },
+        {
+          label: 'Failed',
+          data: chartData.scan_activity.failed,
+          backgroundColor: '#ef4444',
+          borderRadius: 4,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: '#475569' } } },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#475569' } },
+        y: { grid: { color: 'rgba(0,0,0,0.06)' }, ticks: { color: '#475569' } }
+      }
+    }
+  });
+
+  // 2. Vulnerability Severity
+  new Chart(document.getElementById('vulnSeverityChart'), {
+    type: 'doughnut',
+    data: {
+      labels: chartData.vulnerabilities.labels,
+      datasets: [{
+        data: chartData.vulnerabilities.data,
+        backgroundColor: ['#ef4444', '#f97316', '#eab308', '#10b981'],
+        borderColor: '#ffffff',
+        borderWidth: 2,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'right', labels: { color: '#475569' } }
+      }
+    }
+  });
+
+  // 3. User Growth
+  new Chart(document.getElementById('userGrowthChart'), {
+    type: 'line',
+    data: {
+      labels: chartData.user_growth.labels,
+      datasets: [{
+        label: 'New Users',
+        data: chartData.user_growth.data,
+        borderColor: '#1d5cff',
+        backgroundColor: 'rgba(29, 92, 255, 0.08)',
+        fill: true,
+        tension: 0.3,
+        pointRadius: 3,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#475569' } },
+        y: { grid: { color: 'rgba(0,0,0,0.06)' }, ticks: { color: '#475569' }, beginAtZero: true }
+      }
+    }
+  });
+
+  // 4. Licenses
+  new Chart(document.getElementById('licenseDistChart'), {
+    type: 'pie',
+    data: {
+      labels: chartData.licenses.labels.length ? chartData.licenses.labels : ['No Licenses'],
+      datasets: [{
+        data: chartData.licenses.data.length ? chartData.licenses.data : [1],
+        backgroundColor: ['#0284c7', '#1d5cff', '#7c3aed', '#10b981', '#d97706', '#64748b'],
+        borderColor: '#ffffff',
+        borderWidth: 2,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'right', labels: { color: '#475569' } }
+      }
+    }
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,109 @@
+{% extends "admin_panel/base.html" %}
+
+{% block title %}Audit Logs — SENTRA Admin{% endblock %}
+
+{% block content %}
+<div class="admin-page-header">
+  <div>
+    <h1 class="admin-page-title">Administrative Audit Logs</h1>
+    <p class="admin-page-subtitle">Immutable audit trail of all security-sensitive administrative operations, privilege adjustments, and state modifications.</p>
+  </div>
+</div>
+
+<div class="admin-card">
+  <!-- Filters Bar -->
+  <form method="GET" class="admin-filters-bar">
+    <input type="text" name="q" value="{{ query_params.q|default:'' }}" class="admin-input" placeholder="Search by actor, target, IP, or description..." style="min-width: 280px;">
+    
+    <select name="action" class="admin-select">
+      <option value="">Action: All</option>
+      {% for act in actions %}
+        <option value="{{ act }}" {% if query_params.action == act %}selected{% endif %}>{{ act }}</option>
+      {% endfor %}
+    </select>
+
+    <button type="submit" class="admin-btn admin-btn-secondary admin-btn-sm">Filter</button>
+    {% if query_params.q or query_params.action %}
+      <a href="{% url 'admin_audit_logs' %}" class="admin-btn admin-btn-secondary admin-btn-sm" style="color:var(--admin-text-muted);">Clear</a>
+    {% endif %}
+  </form>
+
+  <div class="admin-table-container">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Timestamp (UTC)</th>
+          <th>Admin Actor</th>
+          <th>Action</th>
+          <th>Target</th>
+          <th>IP Address</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in logs_page %}
+        <tr>
+          <td style="font-size:11px; color:var(--admin-text-muted); white-space:nowrap;">
+            {{ log.created_at|date:"Y-m-d H:i:s" }}
+          </td>
+          <td>
+            <div style="font-weight:700; color:#fff;">
+              {{ log.admin_user.username|default:"System" }}
+            </div>
+          </td>
+          <td>
+            {% if 'SUSPEND' in log.action or 'DEACTIVATE' in log.action %}
+              <span class="admin-badge badge-suspended">{{ log.action }}</span>
+            {% elif 'ACTIVATE' in log.action %}
+              <span class="admin-badge badge-active">{{ log.action }}</span>
+            {% elif 'SETTING' in log.action or 'PRIVILEGE' in log.action %}
+              <span class="admin-badge badge-high">{{ log.action }}</span>
+            {% else %}
+              <span class="admin-badge badge-info">{{ log.action }}</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if log.target_user %}
+              <a href="{% url 'admin_user_detail' log.target_user.id %}" style="color:#60a5fa;">
+                {{ log.target_user.username }}
+              </a>
+            {% elif log.target_object_type %}
+              <span class="font-mono" style="font-size:11px;">{{ log.target_object_type }} #{{ log.target_object_id }}</span>
+            {% else %}
+              <span style="color:var(--admin-text-muted);">&mdash;</span>
+            {% endif %}
+          </td>
+          <td class="font-mono" style="font-size:11px; color:var(--admin-text-secondary); white-space:nowrap;">
+            {{ log.ip_address|default:"Local" }}
+          </td>
+          <td style="color:var(--admin-text-primary); font-size:12px; line-height:1.4; max-width:340px;">
+            {{ log.description }}
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" style="text-align:center; color:var(--admin-text-muted); padding:32px;">No audit log events found matching the criteria.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  {% if logs_page.has_other_pages %}
+  <div class="admin-pagination">
+    <div>
+      Showing page {{ logs_page.number }} of {{ logs_page.paginator.num_pages }}
+    </div>
+    <div class="admin-pagination-links">
+      {% if logs_page.has_previous %}
+        <a href="?page={{ logs_page.previous_page_number }}{% for key, val in query_params.items %}{% if key != 'page' %}&{{ key }}={{ val }}{% endif %}{% endfor %}" class="admin-btn admin-btn-secondary admin-btn-sm">&larr; Prev</a>
+      {% endif %}
+      {% if logs_page.has_next %}
+        <a href="?page={{ logs_page.next_page_number }}{% for key, val in query_params.items %}{% if key != 'page' %}&{{ key }}={{ val }}{% endif %}{% endfor %}" class="admin-btn admin-btn-secondary admin-btn-sm">Next &rarr;</a>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

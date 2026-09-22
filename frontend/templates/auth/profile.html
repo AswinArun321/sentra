@@ -31,7 +31,11 @@
     </p>
 
     <div class="flex gap-12" style="justify-content:center;">
-      <a href="{% url 'dashboard' %}" class="btn btn-secondary">← Back to Dashboard</a>
+      {% if user.is_staff or user.is_superuser %}
+        <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary">← Back to Admin Console</a>
+      {% else %}
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary">← Back to Dashboard</a>
+      {% endif %}
       <a href="{% url 'logout' %}" class="btn btn-danger">Sign Out</a>
     </div>
   </div>

@@ -1,0 +1,141 @@
+{% extends "admin_panel/base.html" %}
+
+{% block title %}Vulnerabilities — SENTRA Admin{% endblock %}
+
+{% block content %}
+<div class="admin-page-header">
+  <div>
+    <h1 class="admin-page-title">Security Findings &amp; Vulnerabilities</h1>
+    <p class="admin-page-subtitle">Global intelligence on CVEs, GHSAs, affected packages, and severity distribution across all user projects.</p>
+  </div>
+</div>
+
+<!-- Severity Counters -->
+<div class="admin-kpi-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 20px;">
+  <div class="admin-kpi-card" style="padding:14px; border-left: 3px solid #ef4444;">
+    <div class="admin-kpi-label" style="color:#ef4444;">Critical</div>
+    <div class="admin-kpi-value" style="font-size:24px; color:#f87171;">{{ severity_counts.critical|default:0 }}</div>
+  </div>
+  <div class="admin-kpi-card" style="padding:14px; border-left: 3px solid #f97316;">
+    <div class="admin-kpi-label" style="color:#f97316;">High</div>
+    <div class="admin-kpi-value" style="font-size:24px; color:#fb923c;">{{ severity_counts.high|default:0 }}</div>
+  </div>
+  <div class="admin-kpi-card" style="padding:14px; border-left: 3px solid #eab308;">
+    <div class="admin-kpi-label" style="color:#eab308;">Medium</div>
+    <div class="admin-kpi-value" style="font-size:24px; color:#facc15;">{{ severity_counts.medium|default:0 }}</div>
+  </div>
+  <div class="admin-kpi-card" style="padding:14px; border-left: 3px solid #10b981;">
+    <div class="admin-kpi-label" style="color:#10b981;">Low</div>
+    <div class="admin-kpi-value" style="font-size:24px; color:#34d399;">{{ severity_counts.low|default:0 }}</div>
+  </div>
+</div>
+
+<div class="admin-card">
+  <!-- Filters Bar -->
+  <form method="GET" class="admin-filters-bar">
+    <input type="text" name="q" value="{{ query_params.q|default:'' }}" class="admin-input" placeholder="Search CVE, package, or summary..." style="min-width: 260px;">
+    
+    <select name="severity" class="admin-select">
+      <option value="">Severity: All</option>
+      <option value="CRITICAL" {% if query_params.severity == 'CRITICAL' %}selected{% endif %}>Critical</option>
+      <option value="HIGH" {% if query_params.severity == 'HIGH' %}selected{% endif %}>High</option>
+      <option value="MEDIUM" {% if query_params.severity == 'MEDIUM' %}selected{% endif %}>Medium</option>
+      <option value="LOW" {% if query_params.severity == 'LOW' %}selected{% endif %}>Low</option>
+    </select>
+
+    <select name="ecosystem" class="admin-select">
+      <option value="">Ecosystem: All</option>
+      <option value="PyPI" {% if query_params.ecosystem == 'PyPI' %}selected{% endif %}>PyPI (Python)</option>
+      <option value="npm" {% if query_params.ecosystem == 'npm' %}selected{% endif %}>npm (Node.js)</option>
+      <option value="Maven" {% if query_params.ecosystem == 'Maven' %}selected{% endif %}>Maven (Java)</option>
+    </select>
+
+    <button type="submit" class="admin-btn admin-btn-secondary admin-btn-sm">Filter</button>
+    {% if query_params.q or query_params.severity or query_params.ecosystem %}
+      <a href="{% url 'admin_vulnerabilities' %}" class="admin-btn admin-btn-secondary admin-btn-sm" style="color:var(--admin-text-muted);">Clear</a>
+    {% endif %}
+  </form>
+
+  <!-- Vulnerabilities Table -->
+  <div class="admin-table-container">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Identifier</th>
+          <th>Severity</th>
+          <th>CVSS</th>
+          <th>Package</th>
+          <th>Project / Owner</th>
+          <th>Summary</th>
+          <th>Fixed In</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for v in vulns_page %}
+        <tr>
+          <td>
+            <span class="font-mono" style="font-weight:700; color:#fff;">{{ v.identifier }}</span>
+            <div style="font-size:10px; color:var(--admin-text-muted);">Source: {{ v.source }}</div>
+          </td>
+          <td>
+            {% if v.severity == 'CRITICAL' %}
+              <span class="admin-badge badge-critical">CRITICAL</span>
+            {% elif v.severity == 'HIGH' %}
+              <span class="admin-badge badge-high">HIGH</span>
+            {% elif v.severity == 'MEDIUM' %}
+              <span class="admin-badge badge-medium">MEDIUM</span>
+            {% elif v.severity == 'LOW' %}
+              <span class="admin-badge badge-low">LOW</span>
+            {% else %}
+              <span class="admin-badge badge-neutral">{{ v.severity }}</span>
+            {% endif %}
+          </td>
+          <td class="font-mono">
+            {% if v.cvss_score %}{{ v.cvss_score|floatformat:1 }}{% else %}&mdash;{% endif %}
+          </td>
+          <td>
+            <div style="font-weight:600; color:#fff;">{{ v.dependency.name }}</div>
+            <div class="font-mono" style="font-size:11px; color:var(--admin-text-secondary);">
+              v{{ v.dependency.version }} ({{ v.dependency.ecosystem }})
+            </div>
+          </td>
+          <td>
+            <div style="font-weight:600; color:#fff;">{{ v.dependency.scan.project.name }}</div>
+            <div style="font-size:11px; color:var(--admin-text-muted);">
+              {{ v.dependency.scan.project.owner.username }}
+            </div>
+          </td>
+          <td style="max-width:300px; color:var(--admin-text-secondary); font-size:12px; line-height:1.4;">
+            {{ v.summary|truncatechars:120 }}
+          </td>
+          <td class="font-mono" style="font-size:11px; color:#34d399;">
+            {{ v.fixed_version|default:"None listed" }}
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" style="text-align:center; color:var(--admin-text-muted); padding:32px;">No matching vulnerabilities found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  {% if vulns_page.has_other_pages %}
+  <div class="admin-pagination">
+    <div>
+      Showing page {{ vulns_page.number }} of {{ vulns_page.paginator.num_pages }}
+    </div>
+    <div class="admin-pagination-links">
+      {% if vulns_page.has_previous %}
+        <a href="?page={{ vulns_page.previous_page_number }}{% for key, val in query_params.items %}{% if key != 'page' %}&{{ key }}={{ val }}{% endif %}{% endfor %}" class="admin-btn admin-btn-secondary admin-btn-sm">&larr; Prev</a>
+      {% endif %}
+      {% if vulns_page.has_next %}
+        <a href="?page={{ vulns_page.next_page_number }}{% for key, val in query_params.items %}{% if key != 'page' %}&{{ key }}={{ val }}{% endif %}{% endfor %}" class="admin-btn admin-btn-secondary admin-btn-sm">Next &rarr;</a>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

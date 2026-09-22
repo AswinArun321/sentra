@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'scanner',
     'frontend',
     'github_integration',
+    'admin_panel',
 ]
 
 MIDDLEWARE = [

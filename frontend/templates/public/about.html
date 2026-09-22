@@ -2,26 +2,23 @@
 {% load static %}
 
 {% block title %}About SENTRA — Repository Security & Intelligence{% endblock %}
-{% block meta_description %}Learn how SENTRA helps developers understand repository security, dependencies, vulnerabilities, licenses and repository health.{% endblock %}
+{% block meta_description %}Learn how SENTRA brings dependencies, vulnerabilities, licenses, and repository health into one focused, understandable security workflow.{% endblock %}
 
 {% block content %}
 <!-- =========================================================================
-     1. ABOUT HERO
+     01. ABOUT HERO
      ========================================================================= -->
-<section class="public-section" style="padding-bottom: 50px;">
-  <div class="public-container">
-    <div class="section-header" style="max-width: 800px; margin: 0 auto 36px;">
-      <div class="sentira-tag">
-        <span class="sentira-tag-dot"></span>
-        About SENTRA
-      </div>
-      <h1 class="sentira-display-title">
+<section class="alta-section alta-hero" id="about-hero">
+  <div class="alta-container">
+    <div style="max-width: 960px;">
+      <div class="alta-eyebrow">About SENTRA</div>
+      <h1 class="alta-hero-title" style="text-transform: none; letter-spacing: -1.5px;">
         Repository security,<br>made understandable.
       </h1>
-      <p class="section-subtitle" style="font-size: 18px; line-height: 1.65; max-width: 680px; margin: 0 auto 18px;">
-        SENTRA is a repository security and intelligence platform that helps developers understand their dependencies, vulnerabilities, licenses and repository health.
+      <p class="alta-hero-desc" style="max-width: 760px; font-size: 19px; margin-bottom: 16px;">
+        SENTRA is a repository security and intelligence platform that connects dependencies, vulnerabilities, licenses, and repository health into one focused workflow.
       </p>
-      <div style="font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--accent-primary);">
+      <div style="font-family: var(--font-mono, monospace); font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-primary); margin-top: 12px;">
         Our Mission &middot; Know your code. Secure what you ship.
       </div>
     </div>
@@ -29,163 +26,146 @@
 </section>
 
 <!-- =========================================================================
-     2. WHAT SENTRA DOES
+     02. WHAT SENTRA IS (Four Core Pillars)
      ========================================================================= -->
-<section class="public-section public-section-alt" id="what-we-do">
-  <div class="public-container">
-    <div class="section-header" style="margin-bottom: 44px;">
-      <div class="sentira-tag">
-        <span class="sentira-tag-dot"></span>
-        Capabilities
-      </div>
-      <h2 class="sentira-display-title">What SENTRA does</h2>
-      <p class="section-subtitle">
-        Four core pillars that transform complex repository data into clear, actionable security posture.
-      </p>
-    </div>
+<section class="alta-section alta-section-alt" id="pillars">
+  <div class="alta-container">
+    <div class="alta-eyebrow">Capabilities</div>
+    <h2 class="alta-section-title">Built for developer clarity and security rigor.</h2>
+    <p class="alta-section-desc">
+      Four foundational pillars designed to eliminate alert fatigue and give teams clear, actionable visibility into their codebases.
+    </p>
 
-    <div class="about-grid-2x2">
+    <div class="alta-cap-list">
       <!-- 01 -->
-      <div class="sentira-card-numbered" style="padding: 32px 28px;">
-        <div class="sentira-card-index">01</div>
-        <h3 style="font-size: 19px; font-weight: 700; color: var(--text-title); margin: 0 0 8px 0;">Repository Analysis</h3>
-        <p style="font-size: 15px; color: var(--text-secondary); line-height: 1.6; margin: 0;">Connect and analyze GitHub repositories.</p>
+      <div class="alta-cap-row">
+        <div class="alta-cap-num">01</div>
+        <div class="alta-cap-title">Repository Analysis</div>
+        <p class="alta-cap-desc">Direct codebase parsing, manifest discovery, and branch-level telemetry without requiring build agents or CI/CD friction.</p>
+        <div class="alta-cap-arrow">&rarr;</div>
       </div>
 
       <!-- 02 -->
-      <div class="sentira-card-numbered" style="padding: 32px 28px;">
-        <div class="sentira-card-index">02</div>
-        <h3 style="font-size: 19px; font-weight: 700; color: var(--text-title); margin: 0 0 8px 0;">Security Intelligence</h3>
-        <p style="font-size: 15px; color: var(--text-secondary); line-height: 1.6; margin: 0;">Identify dependency and vulnerability risks.</p>
+      <div class="alta-cap-row">
+        <div class="alta-cap-num">02</div>
+        <div class="alta-cap-title">Security Intelligence</div>
+        <p class="alta-cap-desc">Continuous vulnerability matching, severity classification, and CVE tracking against the latest security advisories.</p>
+        <div class="alta-cap-arrow">&rarr;</div>
       </div>
 
       <!-- 03 -->
-      <div class="sentira-card-numbered" style="padding: 32px 28px;">
-        <div class="sentira-card-index">03</div>
-        <h3 style="font-size: 19px; font-weight: 700; color: var(--text-title); margin: 0 0 8px 0;">Repository Health</h3>
-        <p style="font-size: 15px; color: var(--text-secondary); line-height: 1.6; margin: 0;">Understand documentation and repository health.</p>
+      <div class="alta-cap-row">
+        <div class="alta-cap-num">03</div>
+        <div class="alta-cap-title">Repository Health</div>
+        <p class="alta-cap-desc">Standardized posture evaluations across documentation, README completeness, branch configurations, and code hygiene.</p>
+        <div class="alta-cap-arrow">&rarr;</div>
       </div>
 
       <!-- 04 -->
-      <div class="sentira-card-numbered" style="padding: 32px 28px;">
-        <div class="sentira-card-index">04</div>
-        <h3 style="font-size: 19px; font-weight: 700; color: var(--text-title); margin: 0 0 8px 0;">Reports</h3>
-        <p style="font-size: 15px; color: var(--text-secondary); line-height: 1.6; margin: 0;">Generate structured security reports.</p>
+      <div class="alta-cap-row">
+        <div class="alta-cap-num">04</div>
+        <div class="alta-cap-title">Security Reports &amp; SBOM</div>
+        <p class="alta-cap-desc">Generate industry-standard CycloneDX JSON/XML Software Bill of Materials and verifiable compliance audit summaries.</p>
+        <div class="alta-cap-arrow">&rarr;</div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- =========================================================================
-     3. HOW IT WORKS
+     03. HOW IT WORKS TIMELINE
      ========================================================================= -->
-<section class="public-section" id="how-it-works">
-  <div class="public-container">
-    <div class="section-header" style="margin-bottom: 44px;">
-      <div class="sentira-tag">
-        <span class="sentira-tag-dot"></span>
-        Process
-      </div>
-      <h2 class="sentira-display-title">How it works</h2>
-      <p class="section-subtitle">
-        A seamless 4-step workflow from OAuth connection to clear risk remediation.
-      </p>
-    </div>
+<section class="alta-section" id="process">
+  <div class="alta-container">
+    <div class="alta-eyebrow">How It Works</div>
+    <h2 class="alta-section-title">A direct, four-stage workflow.</h2>
+    <p class="alta-section-desc">
+      From initial repository connection to verified risk remediation, SENTRA keeps every stage understandable.
+    </p>
 
-    <div class="about-steps-grid-4">
+    <div class="alta-process-grid" style="grid-template-columns: repeat(4, 1fr);">
       <!-- Step 01 -->
-      <div class="sentira-card-numbered" style="padding: 28px 22px;">
-        <div class="sentira-card-index" style="font-size: 30px; margin-bottom: 12px;">01</div>
-        <h3 style="font-size: 17px; font-weight: 700; color: var(--text-title); margin: 0 0 8px 0;">Connect</h3>
-        <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.55; margin: 0;">Connect your GitHub account.</p>
+      <div class="alta-process-card">
+        <div class="alta-process-num">01</div>
+        <div>
+          <h3 class="alta-process-title">Connect</h3>
+          <p class="alta-process-desc">Authorize GitHub with granular OAuth scopes and select the repositories you wish to audit.</p>
+        </div>
       </div>
 
       <!-- Step 02 -->
-      <div class="sentira-card-numbered" style="padding: 28px 22px;">
-        <div class="sentira-card-index" style="font-size: 30px; margin-bottom: 12px;">02</div>
-        <h3 style="font-size: 17px; font-weight: 700; color: var(--text-title); margin: 0 0 8px 0;">Analyze</h3>
-        <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.55; margin: 0;">SENTRA inspects your repository and dependencies.</p>
+      <div class="alta-process-card">
+        <div class="alta-process-num">02</div>
+        <div>
+          <h3 class="alta-process-title">Analyze</h3>
+          <p class="alta-process-desc">SENTRA extracts package manifests, resolves dependency trees, and cross-references vulnerability feeds.</p>
+        </div>
       </div>
 
       <!-- Step 03 -->
-      <div class="sentira-card-numbered" style="padding: 28px 22px;">
-        <div class="sentira-card-index" style="font-size: 30px; margin-bottom: 12px;">03</div>
-        <h3 style="font-size: 17px; font-weight: 700; color: var(--text-title); margin: 0 0 8px 0;">Understand</h3>
-        <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.55; margin: 0;">Review vulnerabilities, licenses and risk insights.</p>
+      <div class="alta-process-card">
+        <div class="alta-process-num">03</div>
+        <div>
+          <h3 class="alta-process-title">Understand</h3>
+          <p class="alta-process-desc">Review aggregated security scores, vulnerability vectors, copyleft flags, and documentation health.</p>
+        </div>
       </div>
 
       <!-- Step 04 -->
-      <div class="sentira-card-numbered" style="padding: 28px 22px;">
-        <div class="sentira-card-index" style="font-size: 30px; margin-bottom: 12px;">04</div>
-        <h3 style="font-size: 17px; font-weight: 700; color: var(--text-title); margin: 0 0 8px 0;">Secure</h3>
-        <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.55; margin: 0;">Use the findings to improve your repository.</p>
+      <div class="alta-process-card">
+        <div class="alta-process-num">04</div>
+        <div>
+          <h3 class="alta-process-title">Secure</h3>
+          <p class="alta-process-desc">Take targeted remediation steps, export CycloneDX SBOMs, and ensure continuous compliance.</p>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- =========================================================================
-     4. DOCUMENTATION CTA
+     04. DOCUMENTATION CALLOUT
      ========================================================================= -->
-<section class="public-section public-section-alt" id="documentation-cta" style="padding: 64px 0;">
-  <div class="public-container">
-    <div style="max-width: 680px; margin: 0 auto; text-align: center;">
-      <div class="sentira-tag" style="margin-bottom: 16px;">
-        <span class="sentira-tag-dot"></span>
-        Documentation
+<section class="alta-section alta-section-alt" id="docs-callout">
+  <div class="alta-container">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 40px; flex-wrap: wrap;">
+      <div style="max-width: 640px;">
+        <div class="alta-eyebrow">Documentation</div>
+        <h2 class="alta-section-title">Need the details?</h2>
+        <p class="alta-section-desc" style="margin: 0;">
+          Explore the SENTRA documentation to understand repositories, scans, dependency resolution, CVE feeds, and SBOM exports in depth.
+        </p>
       </div>
-      <h2 class="sentira-display-title" style="font-size: clamp(2rem, 3.8vw, 3rem); margin-bottom: 14px;">
-        Documentation
-      </h2>
-      <p style="font-size: 16.5px; color: var(--text-secondary); line-height: 1.65; margin: 0 auto 28px; max-width: 540px;">
-        Everything you need to understand how SENTRA works and how to use its main features.
-      </p>
-      <a href="{% url 'documentation' %}" class="btn btn-secondary btn-lg" style="border-radius: 9999px;">
-        <span>View Documentation</span>
-        <span class="btn-arrow-circle">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M5 12h14"></path>
-            <path d="m12 5 7 7-7 7"></path>
-          </svg>
-        </span>
-      </a>
+      <div>
+        <a href="{% url 'documentation' %}" class="btn btn-secondary btn-lg" style="padding: 14px 28px; font-size: 15px;">
+          View Documentation &rarr;
+        </a>
+      </div>
     </div>
   </div>
 </section>
 
 <!-- =========================================================================
-     5. FINAL CTA
+     05. FINAL EDITORIAL CTA
      ========================================================================= -->
-<section class="public-section section-dark-cta" id="cta">
-  <div class="public-container">
-    <div class="sentira-tag" style="margin: 0 auto 20px;">
-      <span class="sentira-tag-dot"></span>
-      Get Started
-    </div>
-
-    <h2 class="sentira-display-title" style="margin-bottom: 14px;">
-      Ready to understand your repositories?
+<section class="alta-cta-section" id="about-cta">
+  <div class="alta-container">
+    <div class="alta-eyebrow" style="justify-content: center;">Get Started</div>
+    <h2 class="alta-cta-title">
+      READY TO UNDERSTAND<br>YOUR REPOSITORIES?
     </h2>
-    <p class="cta-banner-desc" style="margin-bottom: 32px;">
-      Know your code. Secure what you ship.
+    <p class="alta-cta-desc">
+      Connect your repository. Experience automated dependency inspection and risk intelligence without the complexity.
     </p>
 
-    <div class="hero-cta-group" style="justify-content: center;">
+    <div>
       {% if user.is_authenticated %}
-      <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg" id="about-cta-btn-dashboard">
-        Open Dashboard
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M5 12h14"></path>
-          <path d="m12 5 7 7-7 7"></path>
-        </svg>
+      <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg" style="padding: 14px 32px; font-size: 15px;">
+        Open Dashboard &rarr;
       </a>
       {% else %}
-      <a href="{% url 'register' %}" class="btn btn-primary btn-lg" id="about-cta-btn-register">
-        Get Started
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M5 12h14"></path>
-          <path d="m12 5 7 7-7 7"></path>
-        </svg>
+      <a href="{% url 'register' %}" class="btn btn-primary btn-lg" style="padding: 14px 32px; font-size: 15px;">
+        Get Started with SENTRA &rarr;
       </a>
       {% endif %}
     </div>

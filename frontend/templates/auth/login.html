@@ -28,19 +28,19 @@
           <div class="auth-feature-icon">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
-          <span>Automated dependency tree inspection across branches</span>
+          <span>Automated repository analysis &amp; dependency trees</span>
         </div>
         <div class="auth-feature-item">
           <div class="auth-feature-icon">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
-          <span>OSV.dev real-time vulnerability &amp; CVE correlation</span>
+          <span>Real-time vulnerability &amp; CVE correlation</span>
         </div>
         <div class="auth-feature-item">
           <div class="auth-feature-icon">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
-          <span>Open-source license compliance &amp; copyleft isolation</span>
+          <span>License intelligence &amp; copyleft isolation</span>
         </div>
       </div>
     </div>
@@ -49,44 +49,85 @@
     <div class="auth-card">
       <div class="auth-card-header">
         <div class="auth-title">Welcome back</div>
-        <div class="auth-subtitle">Sign in to your SENTRA security workspace</div>
+        <div class="auth-subtitle">Sign in to your SENTRA security workspace.</div>
       </div>
 
       {% if messages %}
       {% for message in messages %}
-      <div class="alert alert-{{ message.tags|default:'error' }} mb-16">{{ message }}</div>
+      <div class="alert alert-{{ message.tags|default:'error' }} mb-16">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
+          {% if message.tags == 'success' %}
+          <polyline points="20 6 9 17 4 12"></polyline>
+          {% else %}
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="15" y1="9" x2="9" y2="15"></line>
+          <line x1="9" y1="9" x2="15" y2="15"></line>
+          {% endif %}
+        </svg>
+        <span>{{ message }}</span>
+      </div>
       {% endfor %}
       {% endif %}
 
-      <form method="POST" action="{% url 'login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}" id="login-form">
+      <form method="POST" action="{% url 'login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}" id="login-form" novalidate>
         {% csrf_token %}
 
         <div class="form-group">
-          <label class="form-label" for="email">Email Address</label>
-          <input id="email" type="email" name="email" class="form-control"
-                 required autocomplete="email" placeholder="name@company.com"
-                 value="{{ request.POST.email|default:'' }}">
+          <label class="form-label" for="email">Email address</label>
+          <div class="auth-input-wrapper">
+            <span class="auth-input-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+              </svg>
+            </span>
+            <input id="email" type="email" name="email" class="form-control auth-input"
+                   required autocomplete="email"
+                   value="{{ request.POST.email|default:'' }}">
+          </div>
+          <div class="auth-field-error" id="email-error" style="display:none;"></div>
         </div>
 
         <div class="form-group">
           <label class="form-label" for="password">Password</label>
-          <input id="password" type="password" name="password" class="form-control"
-                 required autocomplete="current-password" placeholder="••••••••">
+          <div class="auth-input-wrapper">
+            <span class="auth-input-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+            </span>
+            <input id="password" type="password" name="password" class="form-control auth-input has-toggle"
+                   required autocomplete="current-password">
+            <button type="button" class="auth-password-toggle" aria-label="Show password" data-target="password" tabindex="0">
+              <svg class="icon-eye" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              <svg class="icon-eye-off" style="display:none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
+                <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
+                <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
+                <line x1="2" y1="2" x2="22" y2="22"></line>
+              </svg>
+            </button>
+          </div>
+          <div class="auth-field-error" id="password-error" style="display:none;"></div>
         </div>
 
-        <button type="submit" class="btn btn-primary btn-lg" style="width:100%; justify-content:center; margin-top:12px;" id="login-btn">
+        <button type="submit" class="btn btn-primary btn-lg" style="width:100%; justify-content:center; margin-top:14px;" id="login-btn">
           Sign In &rarr;
         </button>
       </form>
 
       <div class="divider"></div>
 
-      <p class="text-center text-sm text-secondary">
-        Don't have an account?
-        <a href="{% url 'register' %}" class="text-accent" style="font-weight:700;">Create one free</a>
+      <p class="text-center text-sm text-secondary" style="margin: 0;">
+        New to SENTRA?
+        <a href="{% url 'register' %}" class="text-accent" style="font-weight:700;">Create your account &rarr;</a>
       </p>
 
-      <div class="text-center" style="margin-top: 14px;">
+      <div class="text-center" style="margin-top: 18px;">
         <a href="{% url 'home' %}" class="text-secondary" style="font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: color 0.15s ease;">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="19" y1="12" x2="5" y2="12"></line>
@@ -100,10 +141,92 @@
 </div>
 
 <script>
-document.getElementById('login-form').addEventListener('submit', function() {
-  const btn = document.getElementById('login-btn');
-  btn.innerHTML = '<span class="spinner"></span> Signing in...';
-  btn.disabled = true;
+// Password Visibility Toggle
+document.querySelectorAll('.auth-password-toggle').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var targetId = this.getAttribute('data-target');
+    var input = document.getElementById(targetId);
+    if (!input) return;
+    var isPassword = input.type === 'password';
+    input.type = isPassword ? 'text' : 'password';
+    this.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
+    var eye = this.querySelector('.icon-eye');
+    var eyeOff = this.querySelector('.icon-eye-off');
+    if (eye && eyeOff) {
+      eye.style.display = isPassword ? 'none' : 'block';
+      eyeOff.style.display = isPassword ? 'block' : 'none';
+    }
+  });
 });
+
+// Client-Side Validation & Loading States
+(function() {
+  var form = document.getElementById('login-form');
+  var emailInput = document.getElementById('email');
+  var passwordInput = document.getElementById('password');
+  var emailError = document.getElementById('email-error');
+  var passwordError = document.getElementById('password-error');
+  var loginBtn = document.getElementById('login-btn');
+
+  function validateEmail(val) {
+    if (!val || !val.trim()) return 'Please enter your email address.';
+    var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!re.test(val.trim())) return 'Please enter a valid email address.';
+    return '';
+  }
+
+  function validatePassword(val) {
+    if (!val) return 'Please enter your password.';
+    return '';
+  }
+
+  function clearError(input, errEl) {
+    input.classList.remove('is-invalid');
+    var wrapper = input.closest('.auth-input-wrapper');
+    if (wrapper) wrapper.classList.remove('is-invalid');
+    errEl.textContent = '';
+    errEl.style.display = 'none';
+  }
+
+  function showError(input, errEl, msg) {
+    input.classList.add('is-invalid');
+    var wrapper = input.closest('.auth-input-wrapper');
+    if (wrapper) wrapper.classList.add('is-invalid');
+    errEl.textContent = msg;
+    errEl.style.display = 'flex';
+  }
+
+  emailInput.addEventListener('input', function() {
+    clearError(emailInput, emailError);
+  });
+
+  passwordInput.addEventListener('input', function() {
+    clearError(passwordInput, passwordError);
+  });
+
+  form.addEventListener('submit', function(e) {
+    var hasError = false;
+    var emailMsg = validateEmail(emailInput.value);
+    if (emailMsg) {
+      showError(emailInput, emailError, emailMsg);
+      hasError = true;
+    }
+    var passMsg = validatePassword(passwordInput.value);
+    if (passMsg) {
+      showError(passwordInput, passwordError, passMsg);
+      if (!hasError) passwordInput.focus();
+      hasError = true;
+    }
+
+    if (hasError) {
+      e.preventDefault();
+      if (emailMsg) emailInput.focus();
+      return;
+    }
+
+    loginBtn.innerHTML = '<span class="spinner"></span> Signing in...';
+    loginBtn.disabled = true;
+  });
+})();
 </script>
 {% endblock %}

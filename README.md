@@ -118,6 +118,53 @@ Password: SentraPassword2026!
 | GET | `/api/scans/{id}/dependencies/` | List detected dependencies |
 | GET | `/api/scans/{id}/vulnerabilities/` | List detected vulnerabilities |
 | GET | `/api/scans/{id}/report/` | Get JSON report |
+| GET | `/api/admin/dashboard/` | Platform-wide admin telemetry & KPIs (Staff only) |
+| GET | `/api/admin/users/` | List and search all platform users (Staff only) |
+| POST | `/api/admin/users/{id}/suspend/` | Suspend user account with reason (Staff only) |
+| POST | `/api/admin/users/{id}/activate/` | Activate user account (Staff only) |
+| GET | `/api/admin/audit-logs/` | Query administrative audit logs (Staff only) |
+| GET | `/api/admin/system/` | System diagnostic & health checks (Staff only) |
+
+---
+
+## SENTRA Admin Console
+
+SENTRA includes a dedicated, secure **Admin Console** accessible at:
+
+```text
+Web Console:  /admin-console/
+REST API:     /api/admin/
+```
+
+Django's built-in administrative interface remains available at `/admin/`.
+
+### Administrative Capabilities
+
+1. **Platform Overview & Telemetry** — Real-time KPI cards and Chart.js graphs tracking user growth, scan execution velocity, vulnerability severity distribution, and open-source license usage.
+2. **User Account Governance** — Search, filter, and paginate users; inspect individual profiles, scan history, and project risk; safely activate, deactivate, suspend, or reactivate accounts with audit records.
+3. **Repository & Project Monitoring** — Inspect all software projects across user workspaces with risk scoring, analysis statuses, and GitHub sources.
+4. **Scan Execution Monitoring** — Live monitoring of running, completed, pending, and failed scans with duration metrics and error diagnostics.
+5. **Vulnerability & Supply-Chain Intelligence** — Global aggregation of CVEs, GHSAs, CVSS severity ratings, and affected packages across all repositories.
+6. **Dependency & License Governance** — Cross-project package frequency tracking and open-source license compliance categorization (Permissive, Copyleft, Unknown).
+7. **Reports & SBOM Management** — Controlled inspection and audited downloads of CycloneDX 1.4 SBOMs and JSON security assessments.
+8. **GitHub Connection Monitoring** — Connection status telemetry without ever exposing OAuth access tokens, client secrets, or refresh tokens.
+9. **Administrative Audit Trail** — Immutable `AdminAuditLog` logging every status adjustment, privilege modification, report download, and configuration change with actor, IP address, and timestamp.
+10. **System Health Diagnostics** — Live health probes verifying database latency, Django runtime, media storage, OSV.dev API connectivity, and GitHub API status.
+11. **Safe Runtime Platform Settings** — Administrative UI controls for platform name, maintenance mode, upload limits, scan timeouts, and report retention windows without exposing environment secrets.
+
+### Role-Based Access Control
+
+- **Standard User (`USER`)**: Strict isolation limited solely to their personal workspaces, repositories, and scan findings. Non-staff attempts to access the admin console are rejected with `403 Forbidden`.
+- **Administrator (`STAFF`)**: Authorized platform operators with access to the SENTRA Admin Console and administrative APIs.
+- **Superuser (`SUPERADMIN`)**: Full platform control and administrative delegation.
+
+### Creating Administrators
+
+To grant administrative access, create or promote a user with Django's management commands:
+
+```bash
+python manage.py createsuperuser
+```
 
 ---
 
@@ -127,6 +174,15 @@ Password: SentraPassword2026!
 SENTRA/
 ├── config/              # Django project settings & URLs
 ├── accounts/            # User authentication & profile management
+├── admin_panel/         # Dedicated SENTRA Admin Console & API
+│   ├── models.py        # AdminAuditLog, PlatformSetting, UserAccountStatus
+│   ├── permissions.py   # IsSENTRAAdminUser & @admin_required
+│   ├── services.py      # Telemetry, User governance, Audit, and Health services
+│   ├── serializers.py   # Safe REST API serializers (zero secret leakage)
+│   ├── views.py         # Admin console template views (/admin-console/)
+│   ├── api_views.py     # Admin REST API views (/api/admin/)
+│   ├── templates/       # Dark-first admin operational templates
+│   └── static/          # Dedicated admin CSS & JavaScript
 ├── projects/            # Repository project workspaces
 ├── scans/               # Scan lifecycle & tracking
 ├── dependencies/        # Dependency models & catalog
@@ -134,12 +190,6 @@ SENTRA/
 ├── github_integration/  # GitHub OAuth, repository sync & auto-analysis
 ├── reports/             # Report generation (JSON + CycloneDX SBOM)
 ├── scanner/             # Core scanning engine & parsers
-│   ├── parsers/         # Manifest parsers (package.json, requirements.txt)
-│   ├── vulnerability.py # OSV API integration
-│   ├── license_analyzer.py # License detection & categorization
-│   ├── maintenance.py   # Maintenance health & metrics
-│   ├── risk_engine.py   # Multi-factor risk engine
-│   └── orchestrator.py  # Pipeline orchestrator
 └── frontend/            # Adaptive UI templates & static assets
 ```
 
