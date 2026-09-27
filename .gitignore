@@ -14,11 +14,13 @@ ENV/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
+*.sqlite3
 media/
 staticfiles/
 
-# Environment
+# Environment — keep only the example template
 .env
+.env.*
 !.env.example
 
 # IDE
@@ -40,3 +42,6 @@ build/
 .coverage
 htmlcov/
 .pytest_cache/
+
+# Deployment plan document (not part of the app)
+SENTRA_Pre_Deployment_Production_Hardening_Plan.md

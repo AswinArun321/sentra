@@ -1,0 +1,59 @@
+﻿# SENTRA -- Render Blueprint
+# Infrastructure-as-code configuration for deploying SENTRA on Render.
+# https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: sentra
+    runtime: python
+    plan: free
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn config.wsgi:application --bind 0.0.0.0:\ --workers 2 --timeout 120"
+    healthCheckPath: /health/
+    envVars:
+      # Core Django settings
+      - key: SECRET_KEY
+        generateValue: true        # Render auto-generates a secure value
+
+      - key: DEBUG
+        value: "False"
+
+      - key: RENDER
+        value: "true"             # Signals settings.py to allow *.onrender.com
+
+      # ALLOWED_HOSTS and CSRF_TRUSTED_ORIGINS must be set after
+      # Render assigns a domain. Update these in the Render dashboard.
+      - key: ALLOWED_HOSTS
+        value: ""                 # e.g. sentra.onrender.com
+
+      - key: CSRF_TRUSTED_ORIGINS
+        value: ""                 # e.g. https://sentra.onrender.com
+
+      # Database — populated automatically from the linked PostgreSQL instance
+      - key: DATABASE_URL
+        fromDatabase:
+          name: sentra-db
+          property: connectionString
+
+      # GitHub OAuth — set these in the Render dashboard (not here)
+      - key: GITHUB_CLIENT_ID
+        sync: false
+
+      - key: GITHUB_CLIENT_SECRET
+        sync: false
+
+      - key: GITHUB_REDIRECT_URI
+        sync: false               # e.g. https://sentra.onrender.com/github/callback/
+
+      # Optional external APIs
+      - key: OSV_API_URL
+        value: "https://api.osv.dev/v1/query"
+
+      - key: NVD_API_KEY
+        sync: false
+
+databases:
+  - name: sentra-db
+    plan: free
+    databaseName: sentra
+    user: sentra

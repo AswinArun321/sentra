@@ -143,7 +143,10 @@ The goal is to turn individual findings into a clear, actionable view of reposit
 | Backend | Django 5.1.4 |
 | API | Django REST Framework 3.15.2 |
 | Authentication | Django Sessions + SimpleJWT |
-| Database | SQLite for development |
+| Database (Dev) | SQLite |
+| Database (Prod) | PostgreSQL |
+| Production Server | Gunicorn |
+| Static Files | WhiteNoise |
 | Frontend | Django Templates, HTML, CSS, Vanilla JavaScript |
 | Charts | Chart.js |
 | Vulnerability Intelligence | OSV.dev API |
@@ -151,6 +154,7 @@ The goal is to turn individual findings into a clear, actionable view of reposit
 | SBOM Standard | CycloneDX 1.4 |
 | Reports | JSON + PDF/report generation |
 | External Integration | GitHub OAuth / GitHub API |
+| Deployment | Render (Web Service + PostgreSQL) |
 
 ---
 
@@ -465,24 +469,105 @@ python manage.py test
 
 ---
 
-## Deployment Notes
+## Deployment
 
-The default project setup is intended for development.
+SENTRA is designed for deployment on **Render** using PostgreSQL, Gunicorn, and WhiteNoise.
 
-For production deployment, configure:
+### Architecture
 
-- PostgreSQL or another production-ready database
-- Secure environment variables
-- HTTPS
-- Secure Django settings
-- Proper `ALLOWED_HOSTS`
-- Static file serving
-- Production WSGI/ASGI configuration
-- Database backups
-- Logging and monitoring
-- Secure GitHub OAuth configuration
+```text
+User → HTTPS → Render Web Service (Django + Gunicorn + WhiteNoise) → PostgreSQL
+```
 
-SQLite is suitable for local development but should not be treated as the default choice for a production deployment of a multi-user platform.
+### Prerequisites
+
+- A [Render](https://render.com) account
+- A GitHub OAuth application (see GitHub OAuth section below)
+- The repository pushed to GitHub
+
+### Environment Variables
+
+Set the following in Render's environment variable configuration. Do not commit real secrets to version control.
+
+| Variable | Required | Description |
+|---|---|---|
+| `SECRET_KEY` | ✅ | Strong random Django secret key (Render can auto-generate this) |
+| `DEBUG` | ✅ | Must be `False` in production |
+| `ALLOWED_HOSTS` | ✅ | Your Render domain, e.g. `sentra.onrender.com` |
+| `CSRF_TRUSTED_ORIGINS` | ✅ | Your HTTPS origin, e.g. `https://sentra.onrender.com` |
+| `DATABASE_URL` | ✅ | PostgreSQL connection string (auto-set by Render Blueprint) |
+| `GITHUB_CLIENT_ID` | ✅ | GitHub OAuth application client ID |
+| `GITHUB_CLIENT_SECRET` | ✅ | GitHub OAuth application client secret |
+| `GITHUB_REDIRECT_URI` | ✅ | `https://your-domain.onrender.com/github/callback/` |
+| `OSV_API_URL` | — | Defaults to `https://api.osv.dev/v1/query` |
+| `NVD_API_KEY` | — | Optional NVD API key for enhanced vulnerability data |
+
+### Render Blueprint Deployment
+
+1. Push this repository to GitHub.
+2. In Render, select **New → Blueprint** and connect the repository.
+3. Render reads `render.yaml` and creates the web service and PostgreSQL database automatically.
+4. Set the secret environment variables (`GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `GITHUB_REDIRECT_URI`) in the Render dashboard.
+5. Deploy.
+
+### Manual Deployment Steps
+
+If not using the Blueprint:
+
+1. Create a **PostgreSQL** instance in Render. Copy the external connection string.
+2. Create a **Web Service** connected to the repository.
+3. Set **Build Command** to `./build.sh`
+4. Set **Start Command** to:
+   ```bash
+   gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+   ```
+5. Set the environment variables listed above.
+6. Deploy.
+
+### Build Script
+
+`build.sh` runs automatically on each deploy:
+
+```bash
+pip install -r requirements.txt
+python manage.py collectstatic --no-input
+python manage.py migrate
+```
+
+### Static Files
+
+WhiteNoise serves static files directly from Gunicorn — no separate CDN or Nginx required.
+
+### After First Deployment
+
+```bash
+# Create the superuser (run via Render's Shell)
+python manage.py createsuperuser
+```
+
+Then configure the SENTRA Admin Console at `/admin-console/`.
+
+### GitHub OAuth Configuration
+
+1. Go to [GitHub Developer Settings](https://github.com/settings/developers).
+2. Create a new OAuth App (or update your existing development app).
+3. Set the **Authorization callback URL** to:
+   ```text
+   https://your-domain.onrender.com/github/callback/
+   ```
+4. Set `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, and `GITHUB_REDIRECT_URI` in Render's environment variables.
+
+> **Important:** Never use an HTTP callback URL in production. GitHub OAuth requires HTTPS for production applications.
+
+### Health Check
+
+SENTRA exposes a lightweight health endpoint at `/health/` that returns:
+
+```json
+{"status": "ok"}
+```
+
+Render uses this endpoint to verify the service is healthy after deployment.
 
 ---
 
