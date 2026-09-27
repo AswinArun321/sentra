@@ -190,7 +190,10 @@ USE_TZ = True
 # ---------------------------------------------------------------------------
 
 STATIC_URL = "/static/"
-STATICFILES_DIRS = [BASE_DIR / "frontend" / "static"]
+# Note: frontend/static/ is discovered via AppDirectoriesFinder because
+# 'frontend' is in INSTALLED_APPS. Do NOT add it to STATICFILES_DIRS as
+# that would cause Django to find the same files twice and emit duplicate
+# destination warnings during collectstatic.
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # WhiteNoise: serve compressed, fingerprinted static files

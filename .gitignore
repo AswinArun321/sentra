@@ -43,5 +43,6 @@ build/
 htmlcov/
 .pytest_cache/
 
-# Deployment plan document (not part of the app)
+# Deployment plan documents (not part of the app)
 SENTRA_Pre_Deployment_Production_Hardening_Plan.md
+SENTRA_Production_Readiness_Fix_Plan.md
